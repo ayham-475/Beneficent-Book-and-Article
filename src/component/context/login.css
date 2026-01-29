@@ -1,0 +1,18 @@
+body{
+    background: #0f172a;
+}
+/* فقاعات المختبر الواضحة */
+.bubbles { position: fixed; width: 100%; height: 100%; z-index: -1; top: 0; left: 0; }
+.bubble {
+    position: absolute; bottom: -100px; 
+    background: rgba(255, 255, 255, 0.25); /* درجة وضوح عالية */
+    border: 1.5px solid rgba(255, 255, 255, 0.4); 
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    border-radius: 50%; animation: rise 8s infinite ease-in;
+}
+
+@keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    30% { opacity: 0.5; }
+    100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+}
