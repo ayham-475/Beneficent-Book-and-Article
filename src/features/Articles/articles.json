@@ -1,0 +1,30 @@
+{
+  "التقنية": {
+    "id": "tech_section",
+    "label": "التقنية",
+    "articles": [
+      { "id": 1, "layout": "featured", "title": "ثورة الذكاء الاصطناعي في 2026", "author": "م. أحمد خالد", "time": "8 د", "img": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000", "desc": "كيف سيعيد الذكاء الاصطناعي تشكيل سوق العمل العالمي؟" },
+      { "id": 2, "layout": "compact", "title": "الحواسيب الحيوية القادمة", "author": "د. عمر الجابري", "time": "12 د", "img": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000", "desc": "دمج الخلايا الحية بالمعالجات الرقمية." },
+      { "id": 3, "layout": "compact", "title": "الأمن السيبراني الكمي", "author": "سارة فيصل", "time": "10 د", "img": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000", "desc": "حماية بياناتك في عصر الحواسيب الكمومية." },
+      { "id": 4, "layout": "standard", "title": "عصر الويب 4.0", "author": "ياسين الفايد", "time": "15 د", "img": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000", "desc": "الإنترنت التكافلي والوعي اليومي." }
+    ]
+  },
+  "الحياة": {
+    "id": "life_section",
+    "label": "الحياة",
+    "articles": [
+      { "id": 5, "layout": "wide", "title": "سيكولوجية السعادة المستدامة", "author": "ليلى إبراهيم", "time": "6 د", "img": "https://images.unsplash.com/photo-1499209974431-9dac3adaf471?q=80&w=1000", "desc": "التوازن الداخلي والسكينة." },
+      { "id": 6, "layout": "compact", "title": "فن الصمت الواعي", "author": "د. باسل القحطاني", "time": "4 د", "img": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1000", "desc": "استعادة التوازن النفسي." },
+      { "id": 7, "layout": "compact", "title": "التبسيطية: عيش القليل", "author": "أمل السعيد", "time": "9 د", "img": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=1000", "desc": "تخلص من الزحام المادي." },
+      { "id": 8, "layout": "standard", "title": "الروابط الإنسانية في العصر الرقمي", "author": "ياسر العلي", "time": "7 د", "img": "https://images.unsplash.com/photo-1521791136064-7986c2959210?q=80&w=1000", "desc": "تحليل للعلاقات في القرن الحادي والعشرين." }
+    ]
+  },
+  "الفكر": {
+    "id": "thought_section",
+    "label": "الفكر",
+    "articles": [
+      { "id": 9, "layout": "featured", "title": "ما وراء الوعي البشري", "author": "د. ليان الهاشم", "time": "11 د", "img": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=1000", "desc": "دراسة فلسفية في كيفية تشكيل اللغة للواقع." },
+      { "id": 10, "layout": "standard", "title": "فلسفة الزمن وتسارع الأحداث", "author": "أحمد شاكر", "time": "8 د", "img": "https://images.unsplash.com/photo-1501139083538-0139583c060f?q=80&w=1000", "desc": "لماذا نشعر أن الوقت يمر بسرعة؟" }
+    ]
+  }
+}
