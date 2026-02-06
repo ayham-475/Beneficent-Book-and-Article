@@ -13,7 +13,7 @@ const RecentSales = () => {
       profit: "36.00",
       time: "منذ ساعتين",
       image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200&h=200&fit=crop",
-      status: "تم التأكيد"
+      status: "تم التأكيد" 
     },
     {
       id: "#INV-8859",

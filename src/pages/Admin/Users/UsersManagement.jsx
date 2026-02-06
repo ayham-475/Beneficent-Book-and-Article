@@ -25,6 +25,7 @@ const UsersManagement = () => {
             <UserCard key={index} user={user} index={index} />
           ))}
         </div>
+        
       </main>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, ChevronLeft, Sparkles } from 'lucide-react';
 import  '../Dashboard/Dashboard.css'
-import { ArticlesContextData } from '../../../features/Articles/ArticlesContext';
+import {ArticlesContextData} from '../../../features/Article/ArticlesContext' 
 import { Link } from 'react-router-dom';
   const ReviewList = ({ ChangeContentPreviewData }) => {
   // بيانات تجريبية مكثفة لاختبار السكرول

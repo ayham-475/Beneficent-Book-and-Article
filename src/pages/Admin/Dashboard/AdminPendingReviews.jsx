@@ -1,46 +1,52 @@
-import React, { useState ,useContext} from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import ReviewList from './ReviewList';
 import ContentPreview from './ContentPreview';
 import DecisionPanel from './DecisionPanel';
-// import Hedder from './App/Public/Layout/Hedder';
+import Footer from '../../../App/Public/Layout/Fotter';
 
 const AdminPendingReviews = () => {
-    const [ContentPreviewData,setContentPreviewData]=useState({});
+  const [ContentPreviewData, setContentPreviewData] = useState({});
   
-  function ChangeContentPreviewData(data){
-    setContentPreviewData(data)
+  function ChangeContentPreviewData(data) {
+    setContentPreviewData(data);
+    // في الموبايل، نريد السكرول أن يرتفع لأعلى عند اختيار مقال جديد
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
   return (
-    <>
-    
-    <div className="min-h-screen  bg-[#0f0f0f] text-gray-200" dir="rtl">
-      {/* السايدبار ثابت في مكانه */}
+    <div className="min-h-screen bg-[#0d0d0d] text-gray-200" dir="rtl">
       <Sidebar />
 
-      {/* المحتوى الرئيسي يتحرك بالكامل مع السكرول الطبيعي للمتصفح */}
-      <main className="pr-[110px] pl-8 py-12 max-w-[1600px] mx-auto transition-all duration-500">
+      {/* padding-right يتغير حسب السايدبار، و padding-left يتغير للموبايل */}
+      <main className="pr-0 md:pr-[110px] px-4 md:pl-10 py-6 md:py-10 transition-all duration-500">
         
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
-          
-         
+        {/* عنوان الصفحة - متجاوب */}
+        <div className="mb-8 px-2 md:px-0">
+          <h1 className="text-2xl md:text-3xl font-black text-white">مراجعة المحتوى</h1>
+          <p className="text-gray-500 text-[10px] md:text-xs mt-1 uppercase font-bold tracking-widest">Pending Approval Queue</p>
+        </div>
 
-          {/* منطقة العرض واتخاذ القرار - تتبع سكرول الصفحة */}
-          <div className="flex-1 space-y-10">
-            <ContentPreview  ContentPreviewData={ContentPreviewData} />
-            
-            {/* لوحة القرار تأتي في نهاية المقال بشكل جمالي */}
+        {/* الحاوية الرئيسية: عمودية في الموبايل، أفقية في الشاشات الكبيرة */}
+        <div className="flex flex-col-reverse lg:flex-row gap-6 md:gap-10 items-start">
+          
+          {/* منطقة العرض: flex-1 تجعلها تأخذ المساحة الكبرى */}
+        
+          {/* القائمة الجانبية: في الموبايل تأخذ عرض كامل، في الكبير عرض ثابت ومتحرك مع السكرول */}
+          <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
+             <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />
+          </aside>
+  <div className="w-full lg:flex-1 space-y-6 md:space-y-10">
+            <ContentPreview ContentPreviewData={ContentPreviewData} />
             <DecisionPanel />
           </div>
- {/* قائمة المراجعة - جانبية وثابتة مع الصفحة */}
-          <div className="w-full lg:w-[400px] lg:sticky lg:top-12">
-            <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />
-          </div>
+    
         </div>
       </main>
+                    <Footer />
+
     </div>
-    </>
   );
-  
 };
+
 export default AdminPendingReviews;
