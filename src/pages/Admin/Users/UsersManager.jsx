@@ -13,7 +13,7 @@ const UsersManager = () => {
     { name: "نورة فيصل", email: "noura@elite.com", avatar: "https://i.pravatar.cc/150?u=a5", role: "PREMIUM", balance: "$5,600", engagement: 91 },
     { name: "فهد الشهري", email: "fahad@elite.com", avatar: "https://i.pravatar.cc/150?u=a6", role: "ADMIN", balance: "$15,200", engagement: 99 },
   ];
-
+  
   return (
     <div className="min-h-screen bg-[#0d0d0f] flex overflow-hidden" dir="rtl">
       <Sidebar />

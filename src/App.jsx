@@ -1,5 +1,6 @@
 import React from 'react'
-import AuthPage from './features/login.jsx'
+import './App.css'; // تأكد من المسار الصحيح
+import AuthPage from'./features/auth/login.jsx';
 import AuthorDashboard from './pages/User/Dashboard/dashboard.jsx'
 import { Routes, Route } from 'react-router-dom';
 import { BookCardInfo } from './features/books/BookCardContext.jsx'
@@ -7,6 +8,8 @@ import BookCardDeatils from './features/books/BookCardDeatils.jsx'
 import CreativeArticleView from './features/Article/ArticleDeatiles.jsx'
 import { ArticlesContextData } from './features/Article/ArticlesContext.jsx';
 
+import { AuthProvider } from './features/auth/auther.jsx';
+import ProtectedRoute from './features/auth/ProtectedRoute.jsx';
 import ArticlesData from './features/Article/apiArticles.json'
 import CategoriesPage from './App/Public/HomePages/CosmicHero.jsx'
 import AdminPendingReviews from './pages/Admin/Dashboard/AdminPendingReviews.jsx'
@@ -18,7 +21,14 @@ import HomeH from './features/home/home.jsx'
 import HomeBook from './features/books/home.jsx'
 // import ArticlesHub from './features/Article/ArticlesHub.jsx'
 
-import Articles from './features/Article/ArticlesHub.jsx'
+import ArticlesManager from './pages/User/Content Adminstorition/ArticlesHome/ArticlesManager.jsx';
+
+import CreativeHub from './pages/User/Content Adminstorition/UserContentManager.jsx';
+import ArticleEditor from './pages/User/Content Adminstorition/ArticlesHome/ArticleEditor.jsx';
+// import ArticlesManager from './pages/User/Content Adminstorition/ArticlesManager.jsx';
+import UserLayout from './App/Public/Layout/MainLayout.jsx'; 
+import BookContentHome from './pages/User/Content Adminstorition/BooksHome/BookContentHome.jsx';
+import AddBookContent from './pages/User/Content Adminstorition/BooksHome/AddBookContent.jsx';
 function App() {
 
   const CardInfo=[
@@ -36,39 +46,46 @@ function App() {
   ];
   return (
     <div>
-      <BookCardInfo.Provider value={{CardInfo}}>
-      <ArticlesContextData.Provider  value={{ArticlesData}} >
-       <Routes>
-      {/* <Route path="/home" element={<Home />} /> */}
-      <Route path="/homeBook" element={<HomeBook />} />
-      <Route path="/content" element={<AdminPendingReviews />} />
-      <Route path="/content" element={<contentReturn />} />
-      <Route path="/AddDataContent" element={<AddDataContent />} />
-      <Route path="/UploadFiles" element={<UploadFiles />} />
-      <Route path="/users" element={<UsersManager />} />
-      <Route path="/dashboard" element={<AdminUsers />} />
-      <Route path="/dashboardUser" element={<AuthorDashboard />} />
-      <Route path="/" element={<HomeH />} />
+      <AuthProvider>
+        <BookCardInfo.Provider value={{CardInfo}}>
+          <ArticlesContextData.Provider value={{ArticlesData}}>
+            <Routes>
+              
+              {/* 1. المسارات العامة (بدون سلايد بار) */}
+              <Route path="/" element={<HomeH />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/category" element={<CategoriesPage />} />
+              {/* <Route path="/articlenew" element={<Articles />} /> */}
+              <Route path="/BookCardDeatils/:bookId" element={<BookCardDeatils />} />
+              <Route path="/ArticleDetail/:ArticleId" element={<CreativeArticleView />} />
+              <Route path="/homeBook" element={<HomeBook />} />
 
-      {/* <Route path="/h" element={<HomeAll />} /> */}
-      <Route path="/category" element={<CategoriesPage />} />
-      {/* <Route path="/articlesAll" element={<ArticlesHub />}/> */}
-      {/* <Route path="/articles" element={<ArticlesHubPremium />}/> */}
-      <Route path="/articlenew" element={<Articles />}/>
-      {/* <Route path="/s" element={<ArticleSection />} /> */}
-      {/* <Route path="/all" element={<AllArticles />} /> */}
-      <Route path="/BookCardDeatils/:bookId" element={<BookCardDeatils />} />
-      <Route path="/ArticleDetail/:ArticleId" element={<CreativeArticleView />} />
+              {/* 2. مسارات لوحة التحكم (هنا السحر! السلايد بار سيظهر في كل هؤلاء) */}
+              <Route element={<ProtectedRoute allowedRoles={['admin', 'user']}><UserLayout /></ProtectedRoute>}>
+                
+                {/* كل هذه الصفحات ستظهر داخل الـ Outlet وتأخذ السلايد بار تلقائياً */}
+                <Route path="/dashboardUser" element={<AuthorDashboard />} />
+                <Route path="/content_user" element={<CreativeHub />} />
+                <Route path="/ArticleEditor" element={<ArticleEditor />} />
+                <Route path="/ArticlesManager" element={<ArticlesManager />} />
+                <Route path="/AddDataContent" element={<AddDataContent />} />
+                <Route path="/UploadFiles" element={<UploadFiles />} />
+                <Route path="/BookContentHome" element={<BookContentHome />} />
+                <Route path="/AddBookContent" element={<AddBookContent />} />
+                
+              </Route>
 
-      {/* <Route path="/page" element={<Page />} /> */}
-      {/* <Route path="/h" element={<CardSm />} /> */}
-      {/* <Route path="/books" element={<HomePage/>} /> */}
-      <Route path="/user" element={<AuthPage />} />
-      <Route path="/dashboard_user" element={<AuthorDashboard />} />
-    </Routes>
-    </ArticlesContextData.Provider>
-      </BookCardInfo.Provider>
+              {/* 3. مسارات الأدمن (إذا أردت لها سلايد بار مختلف أو نفس الشيء) */}
+              <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} />
+              <Route path="/users" element={<UsersManager />} />
+              <Route path="/content" element={<AdminPendingReviews />} />
+
+            </Routes>
+          </ArticlesContextData.Provider>
+        </BookCardInfo.Provider>
+      </AuthProvider>
     </div>
-  )
+  );
+
 }
 export default App

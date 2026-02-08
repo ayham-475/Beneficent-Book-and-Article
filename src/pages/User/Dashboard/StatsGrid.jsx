@@ -4,12 +4,12 @@ import { DollarSign, Users, BookOpen, TrendingUp, ArrowUpRight, Award } from 'lu
 const StatsCard = ({ title, value, subValue, icon: Icon, colorClass, trend }) => (
   // md:w-full تجعل البطاقة تأخذ حجم العمود الثابت في الكمبيوتر
   // w-[48%] تجعلها تأخذ نصف الشاشة في الموبايل ليظهر 2 فقط
-  <div className="relative group  bg-white flex-shrink-0 w-[48%] h-[50%] md:w-full mt-10 md:mt-20 md:mr-45   rounded-[2rem] md:rounded-[2.8rem] p-4 md:p-7 border border-white shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(49,151,149,0.12)] transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+  <div className="relative group  bg-white flex-shrink-0 w-[48%] h-[50%] md:w-70 mt-10 md:mt-20  mr-18  rounded-[2rem] md:rounded-[2.8rem] p-4 md:p-7 border border-white shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(49,151,149,0.12)] transition-all duration-500 hover:-translate-y-2 overflow-hidden">
     
     <div className="absolute -right-10 -top-10 w-32 h-32 md:w-40 md:h-40 bg-[#E6FFFA]/40 rounded-full blur-2xl md:blur-3xl group-hover:bg-[#E6FFFA]/80 transition-all duration-700" />
 
-    <div className="relative z-10">
-      <div className="flex flex-col sm:flex-row justify-between items-start mb-6">
+    <div className="relative z-10 ">
+      <div className="flex flex-col sm:flex-row justify-between items-start ">
         <div className={`p-3 md:p-4 rounded-[1.2rem] md:rounded-[1.5rem] ${colorClass} shadow-sm border border-white/50 transition-transform duration-500 group-hover:scale-110`}>
           <Icon size={24} />
         </div>

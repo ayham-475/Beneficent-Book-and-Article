@@ -65,7 +65,7 @@ const UploadContent = () => {
                 </div>
               </Link>
 
-              <Link to='/AddDataContent' className="block">
+              <Link to='/ArticleEditor' className="block">
                 <div 
                   onClick={() => { setContentType('ARTICLE'); setStep(2); }}
                   className={`group p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border-2 transition-all cursor-pointer text-center h-full ${

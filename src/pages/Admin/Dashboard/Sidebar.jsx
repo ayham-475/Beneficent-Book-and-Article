@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, Users, DollarSign, 
   Settings, BarChart3, LayoutDashboard, Menu, X 
 } from 'lucide-react';
+import { AuthContext } from '../../../features/auth/auther';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
+  
   const [ActiveTab, setActiveTab] = useState("dashboard");
   const [isMobileOpen, setIsMobileOpen] = useState(false); 
   const [isMobile, setIsMobile] = useState(false);
-
+const {user}=useContext(AuthContext);
+console.log("user ",user)
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -135,7 +138,7 @@ const Sidebar = () => {
               <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#0d0d0d] rounded-full shadow-[0_0_5px_#10b981]" />
             </div>
             <div className={`flex flex-col transition-all duration-300 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-              <span className="text-xs font-black text-white whitespace-nowrap">م : الايهم اليعري</span>
+              <span className="text-xs font-black text-white whitespace-nowrap">م :  {user.profile.name}</span>
               <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter italic">Main Developer</span>
             </div>
           </div>

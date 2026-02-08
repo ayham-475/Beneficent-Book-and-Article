@@ -1,0 +1,153 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Edit3, Trash2, Eye, Star, BookOpen } from 'lucide-react';
+
+const BooksTable = () => {
+    const books = [
+    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
+    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
+    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
+    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
+    { id: 2, title: "علم النفس الرقمي", category: "علمي", price: "19$", sales: 850, rate: 4.5, status: "مسودة", img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=100" },
+  ];
+
+  return (
+    <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white shadow-2xl overflow-hidden">
+      
+      {/* تصميم الكمبيوتر - مع سكرول مخفي بديع */}
+      <div className="hidden md:block">
+        {/* الحاوية التي تحتوي على السكرول */}
+        <div className="max-h-[600px] overflow-y-auto no-scrollbar scroll-smooth">
+          <table className="w-full text-right border-collapse">
+            <thead className="sticky top-0 z-10 bg-white/90 backdrop-blur-md">
+              <tr className="text-gray-400 text-[10px] uppercase font-black tracking-[0.2em] border-b border-gray-100/50">
+                <th className="px-8 py-6">الكتاب والتصنيف</th>
+                <th className="px-8 py-6">الحالة</th>
+                <th className="px-8 py-6">الإحصائيات</th>
+                <th className="px-8 py-6">السعر</th>
+                <th className="px-8 py-6">الإجراءات</th>
+              </tr>
+            </thead>
+            
+            <tbody className="divide-y divide-gray-100/50">
+              {books.map((book, index) => (
+                <motion.tr 
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  key={book.id} 
+                  className="hover:bg-white/80 transition-all duration-300 group"
+                >
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-5">
+                      <div className="relative">
+                        <img 
+                          src={book.img} 
+                          className="w-14 h-20 object-cover rounded-xl shadow-lg group-hover:scale-105 group-hover:rotate-2 transition-transform duration-500" 
+                        />
+                        <div className="absolute inset-0 rounded-xl shadow-[inset_0_0_10px_rgba(0,0,0,0.1)]"></div>
+                      </div>
+                      <div>
+                        <p className="font-black text-gray-800 text-base mb-1 group-hover:text-[#319795] transition-colors">
+                          {book.title}
+                        </p>
+                        <span className="bg-gray-100 text-gray-500 text-[9px] px-2 py-1 rounded-lg font-black uppercase">
+                          {book.category}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${book.status === 'منشور' ? 'bg-green-500 animate-pulse' : 'bg-orange-400'}`}></span>
+                      <span className={`text-[10px] font-black ${book.status === 'منشور' ? 'text-green-600' : 'text-orange-600'}`}>
+                        {book.status}
+                      </span>
+                    </div>
+                  </td>
+                  
+                  <td className="px-8 py-5">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-blue-50 rounded-lg text-blue-500">
+                          <Eye size={14} />
+                        </div>
+                        <span className="text-xs font-black text-gray-700">{book.sales.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-orange-50 rounded-lg text-orange-500">
+                          <Star size={14} fill="currentColor" />
+                        </div>
+                        <span className="text-[10px] font-black text-gray-600">{book.rate}</span>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  <td className="px-8 py-5">
+                    <div className="inline-block px-4 py-2 bg-[#319795]/10 rounded-2xl">
+                      <span className="font-black text-[#319795] text-sm">{book.price}</span>
+                    </div>
+                  </td>
+                  
+                  <td className="px-8 py-5">
+                    <div className="flex gap-3">
+                      <button className="p-3 bg-white shadow-sm border border-gray-100 rounded-2xl text-gray-400 hover:text-[#319795] hover:shadow-md transition-all active:scale-90">
+                        <Edit3 size={18}/>
+                      </button>
+                      <button className="p-3 bg-white shadow-sm border border-gray-100 rounded-2xl text-gray-400 hover:text-red-500 hover:shadow-md transition-all active:scale-90">
+                        <Trash2 size={18}/>
+                      </button>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* تصميم الهاتف - سكرول عمودي للبطاقات */}
+      <div className="md:hidden">
+        <div className="max-h-[500px] overflow-y-auto no-scrollbar p-5 space-y-5">
+          {books.map((book) => (
+            <div key={book.id} className="bg-white/80 p-5 rounded-[2.5rem] shadow-sm border border-white relative group overflow-hidden">
+               <div className="flex gap-5">
+                  <img src={book.img} className="w-24 h-32 object-cover rounded-[1.5rem] shadow-xl" />
+                  <div className="flex-1 py-1">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-[9px] font-black bg-[#319795] text-white px-3 py-1 rounded-full uppercase tracking-tighter shadow-lg shadow-teal-500/20">
+                        {book.category}
+                      </span>
+                      <span className="font-black text-[#319795] text-sm">{book.price}</span>
+                    </div>
+                    <h3 className="text-base font-black text-gray-800 leading-tight mb-4">{book.title}</h3>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex gap-4">
+                        <div className="text-center">
+                          <p className="text-[8px] font-bold text-gray-400 uppercase">قراءات</p>
+                          <p className="text-xs font-black text-gray-700">{book.sales}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[8px] font-bold text-gray-400 uppercase">تقييم</p>
+                          <p className="text-xs font-black text-orange-500">{book.rate}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="p-2.5 bg-gray-50 rounded-xl text-gray-400"><Edit3 size={16}/></button>
+                        <button className="p-2.5 bg-red-50 text-red-500 rounded-xl"><Trash2 size={16}/></button>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BooksTable;

@@ -7,11 +7,7 @@ import StatsGrid from './StatsGrid';
 import RecentSales from './RecentSales';
 import Footer from '../../../App/Public/Layout/Fotter';
 const AuthorDashboard = () => {
-  const authorName = "م. أحمد خالد";
-  const totalEarnings = 1240.50;
-  const booksSold = 84;
-  const readersCount = 3500;
-  const publishedBooks = 12;
+  
 
   return (
     <div className="min-h-screen bg-[#EDF2F7] text-[#2D3748] font-sans flex" dir="rtl">

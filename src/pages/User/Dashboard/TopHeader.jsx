@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Bell, Search, ChevronDown, Sparkles, Globe, Menu } from 'lucide-react';
 
+import { AuthContext } from '../../../features/auth/auther';
 const TopHeader = ({ authorName = "د. أحمد خالد" }) => {
+  const {user}=useContext(AuthContext)
   return (
     // أزلنا w-320 واستبدلناها بـ w-full مع max-w لضمان عدم الخروج عن الإطار
     <div className="fixed top-1 left-0 right-14 z-50 px-4 md:px-8">
@@ -17,7 +19,7 @@ const TopHeader = ({ authorName = "د. أحمد خالد" }) => {
           <div className="flex flex-col"> 
             <div className="flex items-center gap-1">
               <h1 className="text-sm md:text-xl font-black text-[#1A202C] tracking-tight truncate max-w-[120px] md:max-w-none">
-                أهلاً، {authorName}
+                {user.profile.name} أهلاً،
               </h1>
               <Sparkles size={16} className="text-[#319795] animate-pulse hidden xs:block" />
             </div>
@@ -57,7 +59,7 @@ const TopHeader = ({ authorName = "د. أحمد خالد" }) => {
           <div className="flex items-center gap-2 md:gap-3 bg-white sm:bg-gradient-to-r sm:from-[#F7FAFC] sm:to-white p-1 sm:p-1.5 sm:pr-4 rounded-xl md:rounded-2xl border border-transparent sm:border-white shadow-none sm:shadow-sm hover:shadow-md transition-all cursor-pointer group">
              <div className="hidden sm:flex flex-col text-left items-end">
                 <span className="text-[11px] font-black text-[#2D3748] group-hover:text-[#319795] transition-colors whitespace-nowrap">
-                  {authorName}
+                  {user.profile.name}
                 </span>
                 <span className="text-[8px] text-[#38A169] font-black uppercase tracking-tighter">
                   موثق ✓

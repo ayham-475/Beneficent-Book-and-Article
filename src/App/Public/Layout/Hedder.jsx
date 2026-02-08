@@ -33,7 +33,7 @@ const Navbar = () => {
         </div>
 
         {/* 3. زر تسجيل الدخول - واضح ومباشر */}
-        <Link to='/user'>
+        <Link to='/login'>
           <motion.button
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-[3.5vw] md:px-[1.8vw] py-[1.8vw] md:py-[0.7vw] rounded-[2.5vw] md:rounded-full shadow-lg transition-all"

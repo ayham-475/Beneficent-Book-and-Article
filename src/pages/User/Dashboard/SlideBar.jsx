@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart2, BookOpen, DollarSign, 
   ChevronLeft, Layout, PieChart, LogOut, Menu, X 
 } from 'lucide-react';
-
+import { AuthContext } from '../../../features/auth/auther';
 const Sidebar = () => {
   const [activeItem, setActiveItem] = useState('الرئيسية');
   const [openSubMenu, setOpenSubMenu] = useState(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false); // حالة الهاتف
   const [isMobile, setIsMobile] = useState(false);
-
+     const {user} =useContext(AuthContext);
   // كشف نوع الشاشة (جوال أم كمبيوتر)
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -26,9 +26,10 @@ const Sidebar = () => {
       title: 'إدارة المحتوى', 
       icon: <BookOpen size={22} />, 
       subItems: [
-        { title: 'كتبي الرقمية', path: '/books' },
-        { title: 'مقالاتي', path: '/articles' },
-        { title: 'إضافة جديد', path: '/add' }
+        { title: 'المحتوى', path: '/content_user' },
+        { title: 'كتبي الرقمية', path: '/BookContentHome' },
+        { title: 'مقالاتي', path: '/ArticlesManager' },
+        
       ]
     },
     { 
@@ -165,7 +166,7 @@ const Sidebar = () => {
               A
             </div>
             <div className={`mr-3 flex flex-col ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500`}>
-              <span className="text-xs font-black text-gray-800 whitespace-nowrap">أحمد خالد</span>
+              <span className="text-xs font-black text-gray-800 whitespace-nowrap">{user.profile.name}</span>
               <span className="text-[9px] text-[#319795] font-bold mt-1 uppercase whitespace-nowrap">مؤلف مميز</span>
             </div>
             <button className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} text-gray-300 hover:text-red-500 transition-all`}>
