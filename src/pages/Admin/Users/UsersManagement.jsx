@@ -1,7 +1,7 @@
 import React from 'react';
-import Sidebar from '../Dashboard/Sidebar';// السايدبار الخاص بك
+// السايدبار الخاص بك
 import UserCard from './UserIdentityCard';
-import UserHeader from './UsersManager';
+
 
 const UsersManagement = () => {
   const usersData = [
@@ -15,9 +15,8 @@ const UsersManagement = () => {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] flex text-right" dir="rtl">
-      <Sidebar />
       <main className="flex-1 pr-[110px] pl-10 py-12">
-        <UserHeader />
+      
         
         {/* شبكة البطاقات (The Grid) */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">

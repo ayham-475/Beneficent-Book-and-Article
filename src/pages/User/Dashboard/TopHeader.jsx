@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Bell, Search, ChevronDown, Sparkles, Globe, Menu } from 'lucide-react';
 
 import { AuthContext } from '../../../features/auth/auther';
+import { Link } from 'react-router-dom';
 const TopHeader = ({ authorName = "د. أحمد خالد" }) => {
   const {user}=useContext(AuthContext)
   return (
@@ -29,14 +30,19 @@ const TopHeader = ({ authorName = "د. أحمد خالد" }) => {
           </div>
         </div>
 
-        {/* شريط البحث: يختفي في الهواتف ويتحول لأيقونة أو يظهر فقط في الشاشات الكبيرة */}
-        <div className="hidden lg:flex items-center relative group flex-1 max-w-md mx-10">
-          <Search className="absolute right-4 text-gray-300 group-hover:text-[#319795] transition-colors" size={18} />
-          <input 
-            type="text" 
-            placeholder="ابحث عن محتواك..."
-            className="w-full bg-[#F0F4F4]/50 border border-transparent focus:border-[#319795]/20 focus:bg-white rounded-2xl py-2.5 pr-12 pl-5 text-xs font-bold outline-none transition-all duration-300 shadow-inner"
-          />
+          <div className="flex items-center gap-[3vw] md:gap-[2.5vw]">
+          <Link to="/" className="text-black font-black text-[3.2vw] md:text-[1vw] hover:text-blue-400 transition-colors">
+            الرئيسية
+          </Link>
+
+
+          <Link to="/homeBook" className="text-black/80 font-black text-[3.2vw] md:text-[1vw] hover:text-blue-400 transition-colors">
+            الكُتّاب
+          </Link>
+
+          <Link to="/articlenew" className="text-black/80 font-black text-[3.2vw] md:text-[1vw] hover:text-blue-400 transition-colors">
+            المقالات
+          </Link>
         </div>
 
         {/* الجزء الأيسر: الإشعارات والبروفايل */}

@@ -14,6 +14,7 @@ const Articles = () => {
       <ArticleHero />   
       <ArticleCategories />
       <TrendingArticles /> {/* مقالات شائعة بسلايدر */}
+      <TrendingArticles /> {/* مقالات شائعة بسلايدر */}
       <EliteAuthors /> {/* نخبة الكتاب */}
       <ArticleCTA /> {/* زر لنشر مقالات جديدة */}
       <Footer />

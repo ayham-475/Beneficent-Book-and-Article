@@ -1,10 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, FileText, Activity, BarChart3, Bell, Search } from 'lucide-react';
-import Sidebar from './Dashboard/Sidebar';
+import { Users, FileText, Activity, BarChart3, Bell} from 'lucide-react';
 import StatCard from './Dashboard/StatCard';
 import RecentUsers from './Dashboard/RecentUsers'
-import Footer from '../../App/Public/Layout/Fotter';
 const Dashboard = () => {
   const statsData = [
     {
@@ -40,40 +38,15 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-gray-200 font-sans flex overflow-hidden" dir="rtl">
       {/* 1. السايدبار العائم - لا يقطع مساحة الشاشة */}
-      <Sidebar />
+
 
       {/* 2. المحتوى الرئيسي - استعدنا العرض الكامل pr-[90px] فقط للأيقونات */}
       <main className="flex-1 pr-0 md:pr-[85px] pl-4 md:pl-10 py-6 md:py-1 0 h-screen overflow-y-auto no-scrollbar">
 
         {/* Topbar - استعادة التصميم الأصلي */}
-        {/* Topbar */}
-        {/* الهيدر الثابت - تم استخدام sticky لضمان بقائه في الأعلى عند السكرول */}
-        <header className="sticky top-0 z-[50] flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-[#0d0d0d]/80 p-4 rounded-3xl border border-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+   
 
-          {/* قسم البحث أو العنوان الجانبي (إذا وجد) */}
-          <div className="hidden md:block">
-            <h2 className="text-white font-black italic tracking-wider">نظام النخبة الإداري</h2>
-          </div>
 
-          {/* الأزرار والبروفايل */}
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            {/* زر التنبيهات */}
-            <button className="p-3 bg-white/5 rounded-xl text-gray-400 hover:text-emerald-400 transition-all relative border border-white/5 group">
-              <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-              <span className="absolute top-3 left-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#161616] shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
-            </button>
-
-            <div className="h-8 w-px bg-white/10 mx-2 hidden md:block" />
-
-            {/* معلومات المسؤول */}
-            <div className="flex items-center gap-3 bg-black/20 p-1 pr-4 rounded-2xl border border-white/5">
-              <p className="text-[10px] md:text-xs font-black text-white uppercase tracking-tighter">لوحة الإدارة العليا</p>
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                <BarChart3 size={20} />
-              </div>
-            </div>
-          </div>
-        </header>
         {/* Banner - استعادة الارتفاع والفخامة (3rem) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
@@ -144,7 +117,7 @@ const Dashboard = () => {
           </div>
           <RecentUsers />
         </div>
-              <Footer />
+            
 
       </main>
     </div>

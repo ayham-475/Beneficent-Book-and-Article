@@ -1,16 +1,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Edit3, Trash2, Eye, Star, BookOpen } from 'lucide-react';
-
+import { AuthContext } from '../../../../features/auth/auther';
+import { useContext ,useState ,useEffect } from 'react';
 const BooksTable = () => {
-    const books = [
-    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
-    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
-    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
-    { id: 1, title: "أسرار ما وراء الطبيعة", category: "رواية", price: "29$", sales: 1540, rate: 4.8, status: "منشور", img: "https://images.unsplash.com/photo-1543004629-142a76c50c7e?q=80&w=100" },
-    { id: 2, title: "علم النفس الرقمي", category: "علمي", price: "19$", sales: 850, rate: 4.5, status: "مسودة", img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=100" },
-  ];
+    const { user } = useContext(AuthContext);
+    const [articles, setArticles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    
+    // const API_URL = "http://localhost:3000/contents"; 
+    const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
 
+    useEffect(() => {
+      const fetchArticles = async () => {
+        try {
+          const res = await fetch(API_URL);
+          const contents = await res.json();
+          const userArticles = contents.filter(
+            (item) => item.author_id === user.id && item.content_type === "ARTICLE"
+          );
+          setArticles(userArticles);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching articles:", error);
+          setLoading(false);
+        }
+      };
+  
+      if (user?.id) fetchArticles();
+    }, [user?.id]);
+  
+    if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
+  console.log("books ",articles)
   return (
     <div className="bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white shadow-2xl overflow-hidden">
       
@@ -30,7 +51,7 @@ const BooksTable = () => {
             </thead>
             
             <tbody className="divide-y divide-gray-100/50">
-              {books.map((book, index) => (
+              {articles.map((book, index) => (
                 <motion.tr 
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -43,7 +64,7 @@ const BooksTable = () => {
                     <div className="flex items-center gap-5">
                       <div className="relative">
                         <img 
-                          src={book.img} 
+                          src={book.img_path} 
                           className="w-14 h-20 object-cover rounded-xl shadow-lg group-hover:scale-105 group-hover:rotate-2 transition-transform duration-500" 
                         />
                         <div className="absolute inset-0 rounded-xl shadow-[inset_0_0_10px_rgba(0,0,0,0.1)]"></div>
@@ -53,7 +74,7 @@ const BooksTable = () => {
                           {book.title}
                         </p>
                         <span className="bg-gray-100 text-gray-500 text-[9px] px-2 py-1 rounded-lg font-black uppercase">
-                          {book.category}
+                          {book.category_id}
                         </span>
                       </div>
                     </div>
@@ -74,13 +95,13 @@ const BooksTable = () => {
                         <div className="p-1.5 bg-blue-50 rounded-lg text-blue-500">
                           <Eye size={14} />
                         </div>
-                        <span className="text-xs font-black text-gray-700">{book.sales.toLocaleString()}</span>
+                        <span className="text-xs font-black text-gray-700">{book.price}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="p-1.5 bg-orange-50 rounded-lg text-orange-500">
                           <Star size={14} fill="currentColor" />
                         </div>
-                        <span className="text-[10px] font-black text-gray-600">{book.rate}</span>
+                        <span className="text-[10px] font-black text-gray-600">{book.price}</span>
                       </div>
                     </div>
                   </td>
@@ -111,14 +132,14 @@ const BooksTable = () => {
       {/* تصميم الهاتف - سكرول عمودي للبطاقات */}
       <div className="md:hidden">
         <div className="max-h-[500px] overflow-y-auto no-scrollbar p-5 space-y-5">
-          {books.map((book) => (
-            <div key={book.id} className="bg-white/80 p-5 rounded-[2.5rem] shadow-sm border border-white relative group overflow-hidden">
+          {articles.map((book) => (
+            <div key={book.content_id} className="bg-white/80 p-5 rounded-[2.5rem] shadow-sm border border-white relative group overflow-hidden">
                <div className="flex gap-5">
-                  <img src={book.img} className="w-24 h-32 object-cover rounded-[1.5rem] shadow-xl" />
+                  <img src={book.img_path} className="w-24 h-32 object-cover rounded-[1.5rem] shadow-xl" />
                   <div className="flex-1 py-1">
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-[9px] font-black bg-[#319795] text-white px-3 py-1 rounded-full uppercase tracking-tighter shadow-lg shadow-teal-500/20">
-                        {book.category}
+                        {book.category_id}
                       </span>
                       <span className="font-black text-[#319795] text-sm">{book.price}</span>
                     </div>
@@ -128,11 +149,11 @@ const BooksTable = () => {
                       <div className="flex gap-4">
                         <div className="text-center">
                           <p className="text-[8px] font-bold text-gray-400 uppercase">قراءات</p>
-                          <p className="text-xs font-black text-gray-700">{book.sales}</p>
+                          <p className="text-xs font-black text-gray-700">{book.price}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-[8px] font-bold text-gray-400 uppercase">تقييم</p>
-                          <p className="text-xs font-black text-orange-500">{book.rate}</p>
+                          <p className="text-xs font-black text-orange-500">{book.price}</p>
                         </div>
                       </div>
                       <div className="flex gap-2">

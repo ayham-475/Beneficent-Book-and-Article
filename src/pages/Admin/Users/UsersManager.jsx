@@ -2,7 +2,6 @@ import React from 'react';
 import Sidebar from '../Dashboard/Sidebar';
 import UserIdentityCard from '../Users/UserIdentityCard';
 import { Search, Filter, Plus, LayoutGrid, List, Users } from 'lucide-react';
-import Footer from '../../../App/Public/Layout/Fotter';
 
 const UsersManager = () => {
   const users = [
@@ -90,7 +89,7 @@ const UsersManager = () => {
             ))}
           </div>
         </div>
-<Footer />
+
       </main>
     </div>
   );

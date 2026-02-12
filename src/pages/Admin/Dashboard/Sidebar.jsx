@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FileText, Users, DollarSign, 
+  FileText, Users, DollarSign, LogOut,
   Settings, BarChart3, LayoutDashboard, Menu, X 
 } from 'lucide-react';
 import { AuthContext } from '../../../features/auth/auther';
-import { Link } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
+import LogoutModal from '../../../features/auth/LogoutModal';
 const Sidebar = () => {
   
   const [ActiveTab, setActiveTab] = useState("dashboard");
   const [isMobileOpen, setIsMobileOpen] = useState(false); 
   const [isMobile, setIsMobile] = useState(false);
-const {user}=useContext(AuthContext);
+const {user,logout}=useContext(AuthContext);
+const [Showlogout,setShowLogout]=useState(false)
 console.log("user ",user)
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -125,7 +127,6 @@ console.log("user ",user)
             );
           })}
         </nav>
-
         {/* البروفايل السفلي */}
         <div className="p-5 border-t border-white/5 bg-black/20">
           <div className="flex items-center gap-3">
@@ -139,9 +140,19 @@ console.log("user ",user)
             </div>
             <div className={`flex flex-col transition-all duration-300 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
               <span className="text-xs font-black text-white whitespace-nowrap">م :  {user.profile.name}</span>
-              <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter italic">Main Developer</span>
+              <span  className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter italic">Main Developer</span>
             </div>
+            <div className='mr-10'> <button  onClick={()=>{setShowLogout(true)}} className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} text-gray-300 hover:text-red-500 transition-all`}>
+              <LogOut size={18} />
+            </button></div>
+            <LogoutModal 
+                    isOpen={Showlogout} 
+                    onClose={() => setShowLogout(false)} // إذا ضغط "إلغاء" يعيدها لـ false
+                    onConfirm={logout}       // إذا ضغط "تأكيد" ينفذ الدالة
+                  />
+
           </div>
+          
         </div>
       </motion.aside>
     </>

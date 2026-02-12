@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState ,useEffect } from 'react';
 import { 
-  Plus, Search, Filter, MoreHorizontal, 
-  Eye, MessageSquare, Share2, Edit2, 
-  Trash2, ChevronRight, FileText, Globe, Clock
+  Plus, Search, Filter, Clock
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ArticlesTable from './ArticlesTable'
-import { Link } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
+import ArticlesTable from "./ArticlesTable"
 const ArticlesManager = () => {
+  
   const [searchTerm, setSearchTerm] = useState("");
 
   // بيانات تجريبية تحاكي الواقع
@@ -17,7 +15,6 @@ const ArticlesManager = () => {
     { id: 2, title: "كيف تبني براند شخصي كمبرمج؟", status: "مسودة", views: "0", comments: 0, date: "2026-02-05", image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=200" },
     { id: 3, title: "أسرار تجربة المستخدم في التطبيقات", status: "مراجعة", views: "850", comments: 12, date: "2026-01-28", image: "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=200" },
   ];
-
   const cardStyle = {
     background: "rgba(255, 255, 255, 0.4)",
     backdropFilter: "blur(15px)",
@@ -27,7 +24,7 @@ const ArticlesManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] p-6 md:p-12" dir="rtl">
+    <div className="min-h-screen mt-10 bg-[#F0F2F5] p-6 md:p-12" dir="rtl">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
@@ -64,7 +61,7 @@ const ArticlesManager = () => {
         </div>
 
         {/* Articles List / Grid */}
-       <ArticlesTable />
+       <ArticlesTable  />
       </div>
     </div>
   );

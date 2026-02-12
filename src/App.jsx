@@ -1,6 +1,7 @@
 import React from 'react'
 import './App.css'; // تأكد من المسار الصحيح
 import AuthPage from'./features/auth/login.jsx';
+import Articles from './features/Article/ArticlesHub.jsx'
 import AuthorDashboard from './pages/User/Dashboard/dashboard.jsx'
 import { Routes, Route } from 'react-router-dom';
 import { BookCardInfo } from './features/books/BookCardContext.jsx'
@@ -26,9 +27,11 @@ import ArticlesManager from './pages/User/Content Adminstorition/ArticlesHome/Ar
 import CreativeHub from './pages/User/Content Adminstorition/UserContentManager.jsx';
 import ArticleEditor from './pages/User/Content Adminstorition/ArticlesHome/ArticleEditor.jsx';
 // import ArticlesManager from './pages/User/Content Adminstorition/ArticlesManager.jsx';
-import UserLayout from './App/Public/Layout/MainLayout.jsx'; 
+import UserLayout from './App/Public/Layout/MainLayoutUser.jsx'; 
+import AdminLayout from './App/Public/Layout/MainLayoutAdmin.jsx';
 import BookContentHome from './pages/User/Content Adminstorition/BooksHome/BookContentHome.jsx';
 import AddBookContent from './pages/User/Content Adminstorition/BooksHome/AddBookContent.jsx';
+import FinancialHome from './pages/User/Financial Management/FinancialHome.jsx';
 function App() {
 
   const CardInfo=[
@@ -55,13 +58,13 @@ function App() {
               <Route path="/" element={<HomeH />} />
               <Route path="/login" element={<AuthPage />} />
               <Route path="/category" element={<CategoriesPage />} />
-              {/* <Route path="/articlenew" element={<Articles />} /> */}
+              <Route path="/articlenew" element={<Articles />} />
               <Route path="/BookCardDeatils/:bookId" element={<BookCardDeatils />} />
               <Route path="/ArticleDetail/:ArticleId" element={<CreativeArticleView />} />
               <Route path="/homeBook" element={<HomeBook />} />
 
               {/* 2. مسارات لوحة التحكم (هنا السحر! السلايد بار سيظهر في كل هؤلاء) */}
-              <Route element={<ProtectedRoute allowedRoles={['admin', 'user']}><UserLayout /></ProtectedRoute>}>
+              <Route element={<ProtectedRoute allowedRoles={['user']}><UserLayout /></ProtectedRoute>}>
                 
                 {/* كل هذه الصفحات ستظهر داخل الـ Outlet وتأخذ السلايد بار تلقائياً */}
                 <Route path="/dashboardUser" element={<AuthorDashboard />} />
@@ -72,13 +75,16 @@ function App() {
                 <Route path="/UploadFiles" element={<UploadFiles />} />
                 <Route path="/BookContentHome" element={<BookContentHome />} />
                 <Route path="/AddBookContent" element={<AddBookContent />} />
+                <Route path="/FinancialHome" element={<FinancialHome />} />
                 
               </Route>
 
               {/* 3. مسارات الأدمن (إذا أردت لها سلايد بار مختلف أو نفس الشيء) */}
-              <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} />
+              <Route element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
+              <Route path="/dashboard" element={<AdminUsers />} />
               <Route path="/users" element={<UsersManager />} />
               <Route path="/content" element={<AdminPendingReviews />} />
+              </Route>
 
             </Routes>
           </ArticlesContextData.Provider>

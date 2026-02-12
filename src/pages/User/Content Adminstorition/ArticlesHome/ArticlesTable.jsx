@@ -1,74 +1,93 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { 
   Edit3, Trash2, Eye, Calendar, 
-  ChevronLeft, ExternalLink, MessageSquare, Tag 
+  MessageSquare, MoreVertical, Share2
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AuthContext } from '../../../../features/auth/auther';
 
 const SmartArticlesManager = () => {
-  const articles = [
-    { id: 1, title: "مستقبل الذكاء الاصطناعي في 2026", category: "تقنية", status: "منشور", views: "1.5k", comments: "24", date: "2026/02/01" },
-    { id: 2, title: "كيف تبني براند شخصي كمبرمج؟", category: "مهني", status: "مسودة", views: "0", comments: "0", date: "2026/02/05" },
-    { id: 3, title: "أسرار تجربة المستخدم الحديثة", category: "تصميم", status: "قيد المراجعة", views: "850", comments: "12", date: "2026/01/28" },
-    { id: 3, title: "أسرار تجربة المستخدم الحديثة", category: "تصميم", status: "قيد المراجعة", views: "850", comments: "12", date: "2026/01/28" },
-    { id: 3, title: "أسرار تجربة المستخدم الحديثة", category: "تصميم", status: "قيد المراجعة", views: "850", comments: "12", date: "2026/01/28" },
-    { id: 3, title: "أسرار تجربة المستخدم الحديثة", category: "تصميم", status: "قيد المراجعة", views: "850", comments: "12", date: "2026/01/28" },
-  ];
+  const { user } = useContext(AuthContext);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  
+  const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
+  // const API_URL = "http://localhost:3000/contents"; 
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const res = await fetch(API_URL);
+        const contents = await res.json();
+        const userArticles = contents.filter(
+          (item) => item.author_id === user.id && item.content_type === "ARTICLE"
+        );
+        setArticles(userArticles);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) fetchArticles();
+  }, [user?.id]);
+
+  if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
 
   return (
     <div className="p-2 md:p-8" dir="rtl">
-      {/* الحاوية الكبيرة بتأثير Glassmorphism */}
-      <div className="bg-white/40 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] border border-white/50 shadow-2xl overflow-hidden">
+      <div className="bg-white/40 backdrop-blur-2xl rounded-[2.5rem] md:rounded-[3rem] border border-white/50 shadow-2xl overflow-hidden">
         
-        {/* Header - متجاوب */}
+        {/* --- Header --- */}
         <div className="p-6 md:p-10 border-b border-white/40 flex justify-between items-center bg-white/20">
           <div>
             <h2 className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter">إدارة المقالات</h2>
-            <p className="text-[10px] md:text-sm font-bold text-gray-500 mt-1">تحكم في محتواك الإبداعي من هنا</p>
+            <p className="text-[10px] md:text-sm font-bold text-gray-500 mt-1">لديك {articles.length} أعمال إبداعية</p>
           </div>
-          <button className="bg-[#319795] text-white px-5 py-2 md:px-8 md:py-4 rounded-2xl md:rounded-3xl font-black text-xs md:text-base shadow-lg shadow-[#319795]/30 hover:scale-105 transition-transform">
-            إضافة +
+          <button className="bg-[#319795] text-white p-3 md:px-8 md:py-4 rounded-2xl md:rounded-3xl font-black text-xs md:text-base shadow-lg shadow-[#319795]/30 hover:scale-105 transition-all active:scale-95">
+            <span className="hidden md:inline">إضافة مقال جديد</span>
+            <span className="md:hidden text-lg">+</span>
           </button>
         </div>
 
-        {/* محتوى المقالات مع سكرول مخفي */}
-        <div className="max-h-[70vh] overflow-y-auto no-scrollbar">
+        {/* --- Main Content Container --- */}
+        <div className="max-h-[75vh] overflow-y-auto no-scrollbar">
           
-          {/* --- أولاً: تصميم الكمبيوتر (Desktop Table) --- */}
+          {/* 1. تصميم الكمبيوتر (Desktop View) */}
           <div className="hidden md:block">
             <table className="w-full text-right border-collapse">
-              <thead className="sticky top-0 bg-white/50 backdrop-blur-xl z-10">
-                <tr className="text-gray-500 text-xs uppercase tracking-widest">
-                  <th className="px-10 py-6 font-black">المقال</th>
+              <thead className="sticky top-0 bg-white/60 backdrop-blur-xl z-10">
+                <tr className="text-gray-400 text-[10px] uppercase tracking-[0.2em]">
+                  <th className="px-10 py-6 font-black">المقال التفصيلي</th>
                   <th className="px-10 py-6 font-black">التصنيف</th>
-                  <th className="px-10 py-6 font-black">الإحصائيات</th>
+                  <th className="px-10 py-6 font-black">التفاعل</th>
                   <th className="px-10 py-6 font-black">الحالة</th>
-                  <th className="px-10 py-6 font-black">الإجراءات</th>
+                  <th className="px-10 py-6 font-black text-left">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/30">
                 {articles.map((art) => (
-                  <tr key={art.id} className="hover:bg-white/40 transition-all group">
+                  <tr key={art.content_id} className="hover:bg-white/40 transition-all group">
                     <td className="px-10 py-6">
-                      <span className="font-bold text-gray-800 text-lg group-hover:text-[#319795] transition-colors">{art.title}</span>
-                      <div className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Calendar size={12}/> {art.date}</div>
+                      <div className="font-bold text-gray-800 text-lg group-hover:text-[#319795] transition-colors">{art.title}</div>
+                      <div className="text-[10px] text-gray-400 mt-1 flex items-center gap-1 font-medium italic"><Calendar size={12}/> {art.created_at}</div>
                     </td>
                     <td className="px-10 py-6">
-                      <span className="bg-white/60 px-4 py-1.5 rounded-xl text-xs font-black text-gray-600 border border-white">{art.category}</span>
+                      <span className="bg-white/60 px-4 py-1.5 rounded-xl text-[10px] font-black text-gray-500 border border-white shadow-sm uppercase">{art.category_id}</span>
                     </td>
                     <td className="px-10 py-6">
-                      <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1.5 text-sm font-bold text-gray-600"><Eye size={16} className="text-blue-500"/> {art.views}</span>
-                        <span className="flex items-center gap-1.5 text-sm font-bold text-gray-600"><MessageSquare size={16} className="text-purple-500"/> {art.comments}</span>
+                      <div className="flex items-center gap-5">
+                        <span className="flex items-center gap-1.5 text-xs font-black text-gray-600"><Eye size={14} className="text-blue-400"/> {art.views || 0}</span>
+                        <span className="flex items-center gap-1.5 text-xs font-black text-gray-600"><MessageSquare size={14} className="text-purple-400"/> {art.comments_count || 0}</span>
                       </div>
                     </td>
                     <td className="px-10 py-6">
-                       <StatusBadge status={art.status} />
+                       <StatusBadge status={art.status || "مسودة"} />
                     </td>
-                    <td className="px-10 py-6 text-left text-gray-400 hover:text-gray-900 transition-colors">
+                    <td className="px-10 py-6">
                       <div className="flex gap-2 justify-end">
-                        <button className="p-2 bg-white rounded-xl shadow-sm hover:text-[#319795]"><Edit3 size={18}/></button>
-                        <button className="p-2 bg-white rounded-xl shadow-sm hover:text-red-500"><Trash2 size={18}/></button>
+                        <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-[#319795] hover:shadow-md transition-all"><Edit3 size={18}/></button>
+                        <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-rose-500 hover:shadow-md transition-all"><Trash2 size={18}/></button>
                       </div>
                     </td>
                   </tr>
@@ -77,34 +96,47 @@ const SmartArticlesManager = () => {
             </table>
           </div>
 
-          {/* --- ثانياً: تصميم الهاتف (Mobile Cards) --- */}
-          <div className="md:hidden p-4 flex flex-col gap-4">
+          {/* 2. تصميم الهاتف الإبداعي (Mobile View) */}
+          <div className="md:hidden p-4 space-y-4">
             {articles.map((art) => (
-              <div key={art.id} className="bg-white/60 p-5 rounded-[2rem] border border-white/80 shadow-sm relative">
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[9px] font-black bg-[#319795]/10 text-[#319795] px-3 py-1 rounded-full border border-[#319795]/10">
-                    {art.category}
+              <div key={art.content_id} className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/80 shadow-sm relative group active:scale-[0.98] transition-transform">
+                
+                {/* الجزء العلوي: التصنيف والإجراءات */}
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-[9px] font-black bg-white/80 text-[#319795] px-3 py-1 rounded-full border border-[#319795]/10 shadow-sm uppercase tracking-wider">
+                    {art.category_id}
                   </span>
                   <div className="flex gap-3 text-gray-400">
-                    <Edit3 size={16} />
-                    <Trash2 size={16} className="text-red-400" />
+                    <button className="p-1 hover:text-[#319795]"><Edit3 size={16} /></button>
+                    <button className="p-1 hover:text-rose-500"><Trash2 size={16} /></button>
                   </div>
                 </div>
 
-                <h3 className="text-sm font-black text-gray-800 leading-snug mb-4">
+                {/* العنوان */}
+                <h3 className="text-[15px] font-black text-gray-800 leading-tight mb-5 line-clamp-2">
                   {art.title}
                 </h3>
 
-                <div className="flex justify-between items-center pt-3 border-t border-white/40">
-                  <div className="flex gap-3">
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-gray-500"><Eye size={12}/> {art.views}</span>
-                    <span className="flex items-center gap-1 text-[10px] font-bold text-gray-500"><Calendar size={12}/> {art.date}</span>
+                {/* الإحصائيات والحالة */}
+                <div className="flex justify-between items-center pt-4 border-t border-white/40">
+                  <div className="flex gap-4">
+                    <span className="flex items-center gap-1 text-[10px] font-black text-gray-500">
+                      <Eye size={12} className="text-blue-400"/> {art.views || 0}
+                    </span>
+                    <span className="flex items-center gap-1 text-[10px] font-black text-gray-500">
+                      <Calendar size={12} className="text-teal-400"/> {art.created_at?.split('T')[0]}
+                    </span>
                   </div>
-                  <StatusBadge status={art.status} isMobile />
+                  <StatusBadge status={art.status || "مسودة"} isMobile />
                 </div>
               </div>
             ))}
           </div>
+
+          {/* في حال عدم وجود بيانات */}
+          {articles.length === 0 && (
+            <div className="p-20 text-center text-gray-400 font-bold">لم تكتب أي مقالات بعد.. ابدأ رحلتك الآن!</div>
+          )}
 
         </div>
       </div>
@@ -112,15 +144,18 @@ const SmartArticlesManager = () => {
   );
 };
 
-// مكون الحالة (Status Badge) المتجاوب
+// مكون الحالة (Status Badge)
 const StatusBadge = ({ status, isMobile }) => {
   const styles = {
-    "منشور": "bg-emerald-100 text-emerald-600 border-emerald-200",
-    "مسودة": "bg-gray-100 text-gray-600 border-gray-200",
-    "قيد المراجعة": "bg-amber-100 text-amber-600 border-amber-200",
+    "منشور": "bg-emerald-50 text-emerald-600 border-emerald-100/50",
+    "مسودة": "bg-gray-50 text-gray-500 border-gray-100",
+    "قيد المراجعة": "bg-amber-50 text-amber-600 border-amber-100/50",
   };
+  
+  const currentStyle = styles[status] || styles["مسودة"];
+  
   return (
-    <span className={`rounded-full font-black border ${isMobile ? 'px-2 py-0.5 text-[8px]' : 'px-4 py-1.5 text-[11px]'} ${styles[status]}`}>
+    <span className={`rounded-full font-black border tracking-tighter ${isMobile ? 'px-3 py-1 text-[9px]' : 'px-4 py-1.5 text-[11px]'} ${currentStyle} shadow-sm inline-block`}>
       {status}
     </span>
   );
