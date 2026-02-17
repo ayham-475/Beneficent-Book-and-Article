@@ -4,6 +4,7 @@ import {
   Compass, Zap, BookOpen, PenTool, Globe, 
   BrainCircuit, Rocket, Palette, Landmark 
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ArticleCategoriesElite = () => {
   const categories = [
@@ -29,7 +30,7 @@ const ArticleCategoriesElite = () => {
 
       {/* حاوية السلايدر */}
       <div className="relative">
-        <div 
+     <Link to='/CategoriesArticle'>   <div 
           className="flex flex-row gap-[5vw] md:gap-[3vw] overflow-x-auto scroll-smooth pb-[10vw] md:pb-[4vw] px-[2vw]"
           style={{ 
             scrollbarWidth: 'none', // Firefox
@@ -86,7 +87,7 @@ const ArticleCategoriesElite = () => {
             </motion.div>
           ))}
         </div>
-
+        </Link>
         {/* تظليل الأطراف */}
         <div className="absolute top-0 right-[-2vw] h-full w-[15vw] bg-gradient-to-l from-[#020617] to-transparent pointer-events-none z-20"></div>
         <div className="absolute top-0 left-[-2vw] h-full w-[15vw] bg-gradient-to-r from-[#020617] to-transparent pointer-events-none z-20"></div>

@@ -20,7 +20,7 @@ const ContentPreview = ({ ContentPreviewData }) => {
       <div className="p-10 md:p-16 space-y-12">
         {/* الصورة الرئيسية - تأثير الفخامة */}
         <div className="relative h-[270px] rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
-          <img src={ContentPreviewData.img}
+          <img src={ContentPreviewData.img_path}
             
             className="w-full h-full object-cover" 
             alt="Article Header" 
@@ -46,7 +46,7 @@ const ContentPreview = ({ ContentPreviewData }) => {
             </div>
             <div>
               <p className="text-[10px] text-gray-500 font-bold uppercase">التصنيف</p>
-              <p className="text-white font-black text-emerald-400">الذكاء الاصطناعي</p>
+              <p className="text-white font-black text-emerald-400">{ContentPreviewData.category_id}</p>
             </div>
           </div>
 
@@ -56,7 +56,7 @@ const ContentPreview = ({ ContentPreviewData }) => {
             </div>
             <div>
               <p className="text-[10px] text-gray-500 font-bold uppercase">تاريخ النشر</p>
-              <p className="text-white font-black text-gray-300">29 يناير 2026</p>
+              <p className="text-white font-black text-gray-300">{ContentPreviewData.created_at}</p>
             </div>
           </div>
         </div>

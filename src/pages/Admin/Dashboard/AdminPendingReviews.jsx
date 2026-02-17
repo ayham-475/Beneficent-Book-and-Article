@@ -30,13 +30,14 @@ const AdminPendingReviews = () => {
           {/* منطقة العرض: flex-1 تجعلها تأخذ المساحة الكبرى */}
 
           {/* القائمة الجانبية: في الموبايل تأخذ عرض كامل، في الكبير عرض ثابت ومتحرك مع السكرول */}
-          <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
-            <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />
-          </aside>
+         
           <div className="w-full lg:flex-1 space-y-6 md:space-y-10">
             <ContentPreview ContentPreviewData={ContentPreviewData} />
             <DecisionPanel />
           </div>
+           <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
+            <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />
+          </aside>
 
         </div>
       </main>

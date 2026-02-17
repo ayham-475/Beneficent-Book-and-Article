@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const CategorySliderResponsive = () => {
   const cats = [
@@ -27,7 +28,7 @@ const CategorySliderResponsive = () => {
 
       {/* حاوية السلايدر */}
       <div className="relative overflow-visible">
-        <div 
+      <Link to='/Categories' >  <div 
           className="flex flex-row gap-[3vw] md:gap-[2.5vw] overflow-x-auto no-scrollbar scroll-smooth pb-[4vw] md:pb-[2vw]"
           style={{ 
             scrollbarWidth: 'none', 
@@ -66,6 +67,7 @@ const CategorySliderResponsive = () => {
             </motion.div>
           ))}
         </div>
+        </Link>
 
         {/* تلاشي الأطراف لجمالية التصميم (Amazon Style) */}
         <div className="absolute top-0 right-0 h-full w-[10vw] bg-gradient-to-l from-[#020617] via-[#020617]/50 to-transparent pointer-events-none z-10 md:block"></div>

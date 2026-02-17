@@ -1,18 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Plus, Search, Book, ShieldCheck, 
-  BarChart, Globe, Edit3, Trash2, 
-  Eye, Star, ArrowUpRight, Zap
+import {
+  Plus, Search, Book, ShieldCheck, Globe,
+  ArrowUpRight, Zap
 } from 'lucide-react';
 import BooksTable from './BooksTable';
 
 import { Link } from 'react-router-dom';
 const SuperBooksManager = () => {
-  
+
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-10 mt-20"  dir="rtl">
-      
+    <div className="w-full max-w-7xl mx-auto space-y-10 mt-20" dir="rtl">
+
       {/* 1. قسم مميزات الإدارة (Platform Features) - الإبداع هنا */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
@@ -20,10 +19,10 @@ const SuperBooksManager = () => {
           { title: "تحليلات عالمية", desc: "تتبع جغرافيا القراء ومصادر المبيعات فوراً.", icon: Globe, color: "text-[#319795]", bg: "bg-teal-50" },
           { title: "توزيع ذكي", desc: "تحويل تلقائي لصيغ الكتب (PDF, Epub).", icon: Zap, color: "text-orange-500", bg: "bg-orange-50" },
         ].map((feat, i) => (
-          <motion.div 
+          <motion.div
             whileHover={{ y: -5 }}
-            key={i} 
-            className="bg-white/60 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white shadow-xl flex items-start gap-4"
+            key={i}
+            className="bg-white/60 backdrop-blur-xl p-6 r ounded-[2.5rem] border border-white shadow-xl flex items-start gap-4"
           >
             <div className={`${feat.bg} ${feat.color} p-4 rounded-2xl`}>
               <feat.icon size={24} />
@@ -44,34 +43,34 @@ const SuperBooksManager = () => {
           </div>
           <h2 className="text-2xl font-black text-gray-800">إدارة المخطوطات</h2>
         </div>
-        
+
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input type="text" placeholder="بحث عن كتاب..." className="w-full bg-gray-50 border-none rounded-2xl py-3 pr-10 text-sm focus:ring-2 ring-[#319795]/20" />
           </div>
           <Link to="/AddDataContent" >
-          <button className="bg-[#319795] text-white px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2">
-            <Plus size={18} /> جديد
-          </button>
+            <button className="bg-[#319795] text-white px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2">
+              <Plus size={18} /> جديد
+            </button>
           </Link>
         </div>
       </div>
-<BooksTable />
+      <BooksTable />
 
       {/* 4. قسم "لماذا نحن؟" (Footer Features) */}
-      <div className="bg-black rounded-[3rem] p-8 md:p-12 text-white relative overflow-hidden">
-         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="text-center md:text-right">
-               <h2 className="text-2xl md:text-4xl font-black mb-4">أدوات احترافية بين يديك</h2>
-               <p className="text-gray-400 font-bold max-w-md">نحن لا نوفر مجرد جدول، بل منظومة كاملة تدعم رحلتك من الكتابة إلى البيع العالمي.</p>
-            </div>
-            <button className="px-10 py-5 bg-[#319795] rounded-3xl font-black hover:scale-105 transition-transform flex items-center gap-2 shadow-2xl shadow-[#319795]/40">
-               ابدأ النشر الآن <ArrowUpRight />
-            </button>
-         </div>
-         {/* Decorative Element */}
-         <div className="absolute top-0 left-0 w-64 h-64 bg-[#319795]/20 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="bg-black rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="text-center md:text-right">
+            <h2 className="text-2xl md:text-4xl font-black mb-4">أدوات احترافية بين يديك</h2>
+            <p className="text-gray-400 font-bold max-w-md">نحن لا نوفر مجرد جدول، بل منظومة كاملة تدعم رحلتك من الكتابة إلى البيع العالمي.</p>
+          </div>
+          <button className="px-10 py-5 bg-[#319795] rounded-3xl font-black hover:scale-105 transition-transform flex items-center gap-2 shadow-2xl shadow-[#319795]/40">
+            ابدأ النشر الآن <ArrowUpRight />
+          </button>
+        </div>
+        {/* Decorative Element */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-[#319795]/20 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
       </div>
 
     </div>

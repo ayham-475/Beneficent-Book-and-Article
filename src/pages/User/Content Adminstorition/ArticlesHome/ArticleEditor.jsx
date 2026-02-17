@@ -1,36 +1,55 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import {
-  ArrowLeft, Edit3, Save, UploadCloud,
-  Maximize2, Minimize2, Text,
-  Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon, Image, AlignLeft, AlignCenter, AlignRight
+  ArrowLeft, Edit3, 
+  Maximize2, Minimize2,
+  Bold, Italic, Underline, List, ListOrdered, Link as AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 
-import { Link } from 'react-router-dom';
 function ArticleEditor() {
+  const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dataArticle = location.state?.articledata; // البيانات القادمة من صفحة الإدارة
+
   const [message, setMessage] = useState({ text: "", type: "" });
-    const {user }=useContext(AuthContext);
-
-  const numID =104;
-  const [articleData, setArticleData] = useState({
-    content_id: numID+1,
-    author_id: user.id,
-    category_id: 1,
-    title: '',
-    description: '',
-    content_type: '',
-    price: 20,
-    TextContent: "",
-    img_path: "",
-    status: 'DRAFT',
-    created_at: new Date().toISOString().split('T')[0],
-    id: ""
-  });
-
-
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef(null);
-  // أنماط التصميم المدمجة لضمان الظهور (Inline Styles)
+
+  // الحالة الابتدائية (للإضافة)
+  const [articleData, setArticleData] = useState({
+    content_id: Math.floor(Math.random() * 10000), // توليد ID عشوائي مؤقت
+    author_id: user?.id,
+    category_id: "مقالة تكنلوجيا",
+    title: '',
+    description: '',
+    content_type: 'ARTICLE',
+    price: 20,
+    TextContent: "",
+    content: "", // المحتوى الخاص بالمحرر
+    img_path: "",
+    status: 'DRAFT',
+    created_at: new Date().toISOString().split('T')[0]
+  });
+
+  // معالجة البيانات القادمة من التعديل (تستخدم useEffect لمنع الـ Infinite Loop)
+  useEffect(() => {
+    if (dataArticle) {
+      setArticleData({
+        ...dataArticle,
+        // نضمن أن الحقول ليست undefined لتجنب الأخطاء في الـ Input
+        title: dataArticle.title || "",
+        content_type: dataArticle.content_type || "ARTICLE",
+        img_path: dataArticle.img_path || "",
+        category_id: dataArticle.category_id || "مقالة تكنلوجيا",
+        TextContent: dataArticle.TextContent || "",
+        content: dataArticle.content || ""
+      });
+    }
+  }, [dataArticle]);
+
+  // أنماط التصميم
   const glassStyle = {
     background: "rgba(255, 255, 255, 0.25)",
     backdropFilter: "blur(12px)",
@@ -59,50 +78,54 @@ function ArticleEditor() {
 
   const handleEditorCommand = (command, value = null) => {
     document.execCommand(command, false, value);
+    // تحديث المحتوى في الـ State عند التنسيق
     setArticleData(prev => ({ ...prev, content: editorRef.current.innerHTML }));
   };
 
-  const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents";
+  const API_URL = "http://localhost:3000/contents";
 
-  const AddArticle = async (e) => {
-    console.log("articl  ", articleData);
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    // تحديد النوع: إذا كان هناك ID فهو تعديل (PUT)، وإلا فهو إضافة (POST)
+    const method = dataArticle ? "PUT" : "POST";
+    const url = dataArticle ? `${API_URL}/${dataArticle.id}` : API_URL;
+
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
+      const res = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          articleData
-        )
-      })
+        body: JSON.stringify(articleData)
+      });
+
       if (res.ok) {
-        setMessage({ text: "تم إنشاء المقالة بنجاح. ", type: "success" });
-        setTimeout(() => {
-          setMessage({ text: "", type: "" });
-        }, 2000);
+        setMessage({ 
+          text: dataArticle ? "تم تحديث المقالة بنجاح!" : "تم إنشاء المقالة بنجاح!", 
+          type: "success" 
+        });
+        setTimeout(() => navigate('/ArticlesManager'), 2000);
       }
     } catch (error) {
       setMessage({ text: "حدث خطأ أثناء الاتصال بالسيرفر.", type: "error" });
     }
-  }
+  };
 
   return (
     <div className={`min-h-screen bg-[#E0E5EC] pb-20 font-sans text-gray-800 ${isFullscreen ? 'fixed inset-0 z-[999] overflow-y-auto' : ''}`}>
       <div className={`max-w-6xl mx-auto pt-16 px-4 ${isFullscreen ? 'w-full' : ''}`} dir="rtl">
 
-        {/* رأس الصفحة الزجاجي الفاخر */}
+        {/* رأس الصفحة */}
         <div style={glassStyle} className="p-8 md:p-10 mb-12 flex flex-col md:flex-row items-start md:items-center justify-between">
           <div>
             <h1 className="text-4xl font-black tracking-tighter text-gray-900 mb-2 flex items-center gap-3">
               <span className="p-3 bg-[#319795]/10 rounded-2xl text-[#319795]">
                 <Edit3 size={32} />
               </span>
-              كتابة مقال جديد
+              {dataArticle ? "تعديل المقال" : "كتابة مقال جديد"}
             </h1>
-            <p className="text-gray-600 font-medium mr-16">ابدأ في صياغة أفكارك ونشرها للعالم. هنا مساحتك للإبداع.</p>
+            <p className="text-gray-600 font-medium mr-16 italic">مرحباً {user?.name}، محتواك الإبداعي يبدأ من هنا.</p>
           </div>
           <button
+            type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="mt-4 md:mt-0 px-6 py-3 bg-white/40 hover:bg-white/60 backdrop-blur-md border border-white/50 rounded-2xl flex items-center gap-2 font-bold transition-all active:scale-95"
           >
@@ -110,86 +133,84 @@ function ArticleEditor() {
             <span>{isFullscreen ? 'تصغير' : 'ملء الشاشة'}</span>
           </button>
         </div>
-        <form onSubmit={AddArticle} action="">
-          {/* حقول المعلومات (Neumorphism) */}
+
+        <form onSubmit={handleSubmit}>
+          {/* تفاصيل المقال */}
           <div style={neumorphicCardStyle} className="p-8 md:p-12 mb-10">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-2 h-8 bg-[#319795] rounded-full"></div>
-              <h2 className="text-2xl font-black text-gray-700">تفاصيل المقال</h2>
+              <h2 className="text-2xl font-black text-gray-700">تفاصيل المقال الأساسية</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8">
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2">عنوان المقال *</label>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">عنوان المقال *</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.title}
+                  value={articleData.title || ""}
                   onChange={(e) => setArticleData({ ...articleData, title: e.target.value })}
                   type="text"
+                  required
                   placeholder="أدخل عنواناً ملهماً..."
                 />
               </div>
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2"> نوع المحتوى *</label>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">نوع المحتوى *</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.content_type}
-                  onChange={(e) => setArticleData({ ...articleData,content_type: e.target.value })}
+                  value={articleData.content_type || ""}
+                  onChange={(e) => setArticleData({ ...articleData, content_type: e.target.value })}
                   type="text"
-                   placeholder="أدخل نوع المحتوى ..."
+                  placeholder="ARTICLE, NEWS..."
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8">
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2">رابط الصوره *</label>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">رابط صورة الغلاف *</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.img_path}
+                  value={articleData.img_path || ""}
                   onChange={(e) => setArticleData({ ...articleData, img_path: e.target.value })}
                   type="text"
-                  placeholder="أدخل عنواناً ملهماً..."
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
-              
-          
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2"> نوع الفئة *</label>
-                <select 
-                value={articleData.category_id}
-                onChange={(e) => setArticleData({...articleData, category_id: e.target.value})}
-                className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400 transition-all font-bold text-gray-600 appearance-none shadow-sm"
-              >
-                <option value="مقالة تكنلوجيا </">مقالة تكنلوجيا </option>
-                <option value="مقالة اسلامية">مقالة اسلامية</option>
-                <option value="مقالة رياضة">مقالة رياضة</option>
-                <option value="مقالة عن الطبيعة ">مقالة عن الطبيعة </option>
-              </select>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">التصنيف المختص *</label>
+                <select
+                  value={articleData.category_id}
+                  onChange={(e) => setArticleData({ ...articleData, category_id: e.target.value })}
+                  className="w-full p-5 bg-[#E0E5EC] border-none rounded-2xl outline-none focus:ring-2 ring-[#319795]/20 transition-all font-bold text-gray-600 appearance-none shadow-[inset_6px_6px_12px_#b8c1cc,inset_-6px_-6px_12px_#ffffff]"
+                >
+                  <option value="مقالة تكنلوجيا">مقالة تكنولوجيا</option>
+                  <option value="مقالة اسلامية">مقالة إسلامية</option>
+                  <option value="مقالة رياضة">مقالة رياضة</option>
+                  <option value="مقالة عن الطبيعة">مقالة عن الطبيعة</option>
+                </select>
               </div>
             </div>
 
             <div className="space-y-4">
-              <label className="text-sm font-black text-gray-500 mr-2">وصف قصير/ملخص</label>
+              <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">ملخص سريع (Description)</label>
               <textarea
                 style={neumorphicInputStyle}
-                value={articleData.TextContent}
+                value={articleData.TextContent || ""}
                 onChange={(e) => setArticleData({ ...articleData, TextContent: e.target.value })}
                 rows="3"
-                placeholder="عن ماذا يتحدث هذا المقال؟"
-                className="resiz"
+                placeholder="اكتب نبذة مختصرة تجذب القراء..."
               ></textarea>
             </div>
           </div>
 
-          {/* محرر النصوص الاحترافي */}
+          {/* محرر النص الغني */}
           <div style={neumorphicCardStyle} className="p-8 md:p-12 mb-10">
-            <div className="flex items-center gap-3 mb-8 text-purple-600">
-              <div className="w-2 h-8 bg-purple-500 rounded-full"></div>
-              <h2 className="text-2xl font-black">محتوى المقال</h2>
+            <div className="flex items-center gap-3 mb-8 text-[#319795]">
+              <div className="w-2 h-8 bg-[#319795] rounded-full"></div>
+              <h2 className="text-2xl font-black text-gray-700">محتوى المقال التفصيلي</h2>
             </div>
 
-            {/* شريط الأدوات */}
             <div className="flex flex-wrap gap-2 p-4 bg-white/30 rounded-2xl mb-6 shadow-inner border border-white/20">
               <EditorButton icon={<Bold size={18} />} onClick={() => handleEditorCommand('bold')} />
               <EditorButton icon={<Italic size={18} />} onClick={() => handleEditorCommand('italic')} />
@@ -203,42 +224,46 @@ function ArticleEditor() {
               <EditorButton icon={<AlignRight size={18} />} onClick={() => handleEditorCommand('justifyRight')} />
             </div>
 
-            {/* المحرر */}
             <div
               ref={editorRef}
               contentEditable={true}
               onInput={(e) => setArticleData({ ...articleData, content: e.target.innerHTML })}
               className="w-full min-h-[400px] p-8 bg-white/80 rounded-3xl shadow-inner border border-gray-100 outline-none focus:ring-2 ring-[#319795]/20 text-xl leading-relaxed transition-all"
               dangerouslySetInnerHTML={{ __html: articleData.content }}
-            >
-            </div>
+            ></div>
           </div>
 
-          {/* الأزرار النهائية */}
+          {/* أزرار التحكم والرسائل */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Link to="/user-content-manager">
-              <button className="flex items-center gap-2 text-gray-500 font-bold hover:text-gray-800 transition-colors">
-                <ArrowLeft size={20} /> إلغاء وحذف
-              </button>
+            <Link to="/user-content-manager" className="flex items-center gap-2 text-gray-500 font-bold hover:text-rose-500 transition-colors">
+              <ArrowLeft size={20} /> إلغاء وحذف التغييرات
             </Link>
 
             <div className="flex gap-4 w-full md:w-auto">
-              <button className="flex-1 md:flex-none px-10 py-4 bg-gray-800 text-white rounded-2xl font-bold shadow-xl hover:bg-black transition-all active:scale-95">
-                حفظ كمسودة
+              <button 
+                type="button" 
+                onClick={() => setArticleData({...articleData, status: 'DRAFT'})}
+                className="flex-1 md:flex-none px-10 py-4 bg-gray-400 text-white rounded-2xl font-black shadow-lg hover:bg-gray-500 transition-all active:scale-95"
+              >
+                حفظ مسودة
               </button>
-              <button type='submit' className="flex-1 md:flex-none px-10 py-4 bg-[#319795] text-white rounded-2xl font-bold shadow-lg shadow-[#319795]/30 hover:shadow-[#319795]/50 transition-all active:scale-95">
-                نشر الآن
+              <button 
+                type="submit" 
+                onClick={() => setArticleData({...articleData, status: 'PUBLISHED'})}
+                className="flex-1 md:flex-none px-10 py-4 bg-[#319795] text-white rounded-2xl font-black shadow-xl shadow-[#319795]/30 hover:bg-[#2a8381] transition-all active:scale-95"
+              >
+                {dataArticle ? "تحديث الآن" : "نشر المقال"}
               </button>
             </div>
-            {message.text && (
-              <div className={`mt-6 p-4 rounded-2xl text-center text-xs font-bold ${message.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
-                  message.type === "success" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                    "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                }`}>
-                {message.text}
-              </div>
-            )}
           </div>
+
+          {message.text && (
+            <div className={`mt-10 p-5 rounded-3xl text-center font-black shadow-lg animate-bounce ${
+              message.type === "error" ? "bg-rose-100 text-rose-600 border border-rose-200" : "bg-emerald-100 text-emerald-600 border border-emerald-200"
+            }`}>
+              {message.text}
+            </div>
+          )}
         </form>
       </div>
     </div>

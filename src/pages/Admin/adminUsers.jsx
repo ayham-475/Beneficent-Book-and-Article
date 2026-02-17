@@ -1,20 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, FileText, Activity, BarChart3, Bell} from 'lucide-react';
+import { Users, FileText, Activity, BarChart3, Bell } from 'lucide-react';
 import StatCard from './Dashboard/StatCard';
 import RecentUsers from './Dashboard/RecentUsers'
+
 const Dashboard = () => {
+
+  const [CountUser, SetCountUser] = useState(0);
+  const [CountConent, SetCountContent] = useState(0);
+  const [CountOrganizers, SetCountOrganizers] = useState(0);
+ 
+  const  GetCountUser=async()=>{
+   const Users=await fetch("http://localhost:3000/users");
+   const DataUser=await Users.json();
+   SetCountUser(DataUser)
+  }
+
+  const GetCountContent=async()=>{
+   const content=await fetch("http://localhost:3000/contents");
+   const DataContent=await content.json();
+   SetCountContent(DataContent)
+  }
+  const  GetCountOrganizers=async()=>{
+   const organizers=await fetch("http://localhost:3000/users");
+   const DataUser=await organizers.json();
+   SetCountOrganizers(DataUser)
+  }
   const statsData = [
     {
       title: " المستخدمين",
-      value: "1,250",
+      value: CountUser.length,
       change: "Live Now",
       icon: <Users size={24} />,
       color: { text: "text-blue-400", bg: "bg-blue-500/20", glow: "bg-blue-500", shadow: "bg-blue-500/20", dot: "bg-blue-400", brand: "blue-500" }
     },
     {
       title: "المحتوى المعتمد",
-      value: "482",
+      value: CountConent.length,
       change: "Updated",
       icon: <FileText size={24} />,
       color: { text: "text-emerald-400", bg: "bg-emerald-500/20", glow: "bg-emerald-400", shadow: "bg-emerald-500/20", dot: "bg-emerald-400", brand: "emerald-500" }
@@ -28,13 +50,19 @@ const Dashboard = () => {
     },
     {
       title: "طلبات الانضمام",
-      value: "24",
+      value:  CountOrganizers.length,
       change: "Pending",
       icon: <Users size={24} />,
       color: { text: "text-amber-400", bg: "bg-amber-500/20", glow: "bg-amber-400", shadow: "bg-amber-500/20", dot: "bg-amber-400", brand: "amber-500" }
     }
   ];
 
+  useEffect(()=>{
+  GetCountUser();
+  GetCountContent();
+  GetCountOrganizers();
+  },[])
+  
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-gray-200 font-sans flex overflow-hidden" dir="rtl">
       {/* 1. السايدبار العائم - لا يقطع مساحة الشاشة */}
@@ -44,7 +72,7 @@ const Dashboard = () => {
       <main className="flex-1 pr-0 md:pr-[85px] pl-4 md:pl-10 py-6 md:py-1 0 h-screen overflow-y-auto no-scrollbar">
 
         {/* Topbar - استعادة التصميم الأصلي */}
-   
+
 
 
         {/* Banner - استعادة الارتفاع والفخامة (3rem) */}
@@ -117,7 +145,7 @@ const Dashboard = () => {
           </div>
           <RecentUsers />
         </div>
-            
+
 
       </main>
     </div>

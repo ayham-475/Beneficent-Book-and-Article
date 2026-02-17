@@ -14,12 +14,31 @@ const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const [showLogout, setShowLogout] = useState(false);
-  
+  const [loading, setloading] = useState(false)
+
+  const [profile, SetProfile] = useState([]);
+
+  const API_URL = "http://localhost:3000/profiles";
+
+  const GetProfiles = async () => {
+    const profiles = await fetch(API_URL);
+    const DataProfile = await profiles.json();
+    const userCurrent = DataProfile.filter((profile) => {
+      return profile.user_id == user.id;
+
+    })
+    SetProfile(userCurrent)
+    setloading(true)
+
+  }
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
+    GetProfiles();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+
   }, []);
 
   const menuItems = [
@@ -118,8 +137,8 @@ const Sidebar = () => {
                     if (item.subItems) setOpenSubMenu(openSubMenu === item.id ? null : item.id);
                   }}
                   className={`flex items-center h-14 rounded-2xl cursor-pointer transition-all duration-300 relative ${isActive
-                      ? 'bg-[#E6FFFA] text-[#319795] border border-[#B2F5EA]/30'
-                      : 'text-gray-400 hover:bg-gray-50'
+                    ? 'bg-[#E6FFFA] text-[#319795] border border-[#B2F5EA]/30'
+                    : 'text-gray-400 hover:bg-gray-50'
                     }`}
                 >
                   <div className="min-w-[60px] flex justify-center items-center">
@@ -167,7 +186,10 @@ const Sidebar = () => {
         <div className="p-4 border-t border-gray-50 shrink-0">
           <div className="flex items-center bg-[#F7FAFC] p-3 rounded-[2rem] border border-gray-100 overflow-hidden">
             <div className="min-w-[42px] h-[42px] bg-white rounded-xl flex items-center justify-center shadow-sm font-black text-[#319795] shrink-0">
-              A
+              <img src={loading ? profile[0].avatar_url : ''}
+                className="w-[45px] h-[45px] rounded-xl object-cover border border-white/10"
+                alt="User"
+              />
             </div>
             <div className={`mr-3 flex flex-col ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500`}>
               <span className="text-xs font-black text-gray-800 whitespace-nowrap">{user.profile.name}</span>
@@ -176,11 +198,11 @@ const Sidebar = () => {
             <button onClick={() => setShowLogout(true)} className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}  bg-black text-gray-300 hover:text-red-500 transition-all`}>
               <LogOut size={18} />
             </button>
-          <LogoutModal 
-        isOpen={showLogout} 
-        onClose={() => setShowLogout(false)} // إذا ضغط "إلغاء" يعيدها لـ false
-        onConfirm={logout}       // إذا ضغط "تأكيد" ينفذ الدالة
-      />
+            <LogoutModal
+              isOpen={showLogout}
+              onClose={() => setShowLogout(false)} // إذا ضغط "إلغاء" يعيدها لـ false
+              onConfirm={logout}       // إذا ضغط "تأكيد" ينفذ الدالة
+            />
           </div>
         </div>
       </motion.aside>

@@ -4,15 +4,16 @@ import {
   MessageSquare, MoreVertical, Share2
 } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
-
+import ArticleEditor from './ArticleEditor';
+import { Link } from 'react-router-dom';
 const SmartArticlesManager = () => {
   const { user } = useContext(AuthContext);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   
   
-  const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
-  // const API_URL = "http://localhost:3000/contents"; 
+  // const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
+  const API_URL = "http://localhost:3000/contents"; 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
@@ -32,8 +33,27 @@ const SmartArticlesManager = () => {
     if (user?.id) fetchArticles();
   }, [user?.id]);
 
-  if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
+  const handlDelete =async(id)=>{
+    const confirmDelete=window.confirm("هل انت متاكد من حذف هذه المقالة ؟");
 
+    try{
+      const articlesData=await fetch(API_URL,{
+        method:"DELETE"
+      })
+      if(confirmDelete){
+       setArticles(articles.filter(item=> item.content_id!=id))
+      }
+
+    }catch(error){
+      alert(error)
+    }
+
+  }
+  if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
+  function handlupdateArticle(art){
+     
+
+  }
   return (
     <div className="p-2 md:p-8" dir="rtl">
       <div className="bg-white/40 backdrop-blur-2xl rounded-[2.5rem] md:rounded-[3rem] border border-white/50 shadow-2xl overflow-hidden">
@@ -86,8 +106,8 @@ const SmartArticlesManager = () => {
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex gap-2 justify-end">
-                        <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-[#319795] hover:shadow-md transition-all"><Edit3 size={18}/></button>
-                        <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-rose-500 hover:shadow-md transition-all"><Trash2 size={18}/></button>
+                     <Link to="/ArticleEditor"  state={{articledata:art}} >  <button  className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-[#319795] hover:shadow-md transition-all"><Edit3 size={18}/></button> </Link> 
+                        <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-rose-500 hover:shadow-md transition-all"  onClick={()=>handlDelete(art.content_id)}><Trash2 size={18}/></button>
                       </div>
                     </td>
                   </tr>
@@ -107,7 +127,7 @@ const SmartArticlesManager = () => {
                     {art.category_id}
                   </span>
                   <div className="flex gap-3 text-gray-400">
-                    <button className="p-1 hover:text-[#319795]"><Edit3 size={16} /></button>
+                    <button  onClick={()=>{handlupdateArticle(art)}}   className="p-1 hover:text-[#319795]"><Edit3 size={16} /></button>
                     <button className="p-1 hover:text-rose-500"><Trash2 size={16} /></button>
                   </div>
                 </div>
