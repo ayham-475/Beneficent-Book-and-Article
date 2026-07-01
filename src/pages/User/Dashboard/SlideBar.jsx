@@ -187,6 +187,7 @@ const Sidebar = () => {
           <div className="flex items-center bg-[#F7FAFC] p-3 rounded-[2rem] border border-gray-100 overflow-hidden">
             <div className="min-w-[42px] h-[42px] bg-white rounded-xl flex items-center justify-center shadow-sm font-black text-[#319795] shrink-0">
               <img src={loading ? profile[0].avatar_url : ''}
+              
                 className="w-[45px] h-[45px] rounded-xl object-cover border border-white/10"
                 alt="User"
               />

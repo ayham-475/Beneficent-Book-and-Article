@@ -1,85 +1,125 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  ArrowRight, Tag, DollarSign, FileText,
+  ArrowRight, Tag, DollarSign, FileText, Image, Globe, FileDown
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../../../features/auth/auther';
+import { ToastContext } from '../../../App/Public/Contexts/ToastContext';
 
 function AddDataContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const bookdata = location.state?.BookData; // البيانات القادمة من صفحة الإدارة عند التعديل
   const { user } = useContext(AuthContext);
-    const [message, setMessage] = useState({ text: "", type: "" });
-  
+  const { showHideToast } = useContext(ToastContext);
+
+  // 1. تعريف الكيان الأول (المحتوى الأساسي)
   const [ContentData, SetContentData] = useState({
-    content_id: Math.floor(Math.random() * 10000), // توليد ID عشوائي مؤقت
-    author_id: user?.id,
+    author_id: user?.id || "",
     category_id: "",
     title: '',
     description: '',
     content_type: 'BOOK',
     price: 20,
-    TextContent: "",
-    content: "", // المحتوى الخاص بالمحرر
+    TextContent: "عملي", // القيمة الافتراضية متطابقة مع أول خيار في الـ Select
     img_path: "",
+    language: "العربية",
     status: 'DRAFT',
     created_at: new Date().toISOString().split('T')[0]
   });
 
-  // 1. تصحيح منطق الـ useEffect لمنع أخطاء الـ undefined
+  // 2. تعريف الكيان الثاني (تفاصيل الملف الرقمي)
+  const [dataBookDetails, SetDataBookDetails] = useState({
+    file_url: "",
+    pages_count: 320,
+  });
+
+  // 3. منطق التعديل (تعبئة الحقول بالبيانات القادمة)
   useEffect(() => {
     if (bookdata) {
       SetContentData({
-        ...bookdata, // نأخذ كل بيانات الكتاب القادم
+        author_id: bookdata.author_id || user?.id || "",
+        category_id: bookdata.category_id || "",
         title: bookdata.title || "",
         content_type: bookdata.content_type || "BOOK",
-        category_id: bookdata.category_id || "مقالة تكنلوجيا",
-        description: bookdata.description || "", // تم تصحيح المسمى هنا
-        price: bookdata.price || ""
+        description: bookdata.description || "",
+        price: bookdata.price || 20,
+        img_path: bookdata.img_path || "",
+        TextContent: bookdata.TextContent || "عملي",
+        language: bookdata.language || "العربية",
+        status: bookdata.status || 'DRAFT',
+        id: bookdata.id // المحافظة على المعرف الرئيسي للتعديل
+      });
+
+      // جلب تفاصيل الكتاب المرتبطة بالتعديل إذا كانت متوفرة
+      SetDataBookDetails({
+        file_url: bookdata.file_url || "",
+        pages_count: bookdata.pages_count || 320,
+        id: bookdata.detail_id // المعرف الفريد لجدول التفاصيل
       });
     }
-  }, [bookdata]);
+  }, [bookdata, user]);
 
+  // روابط الـ API الخاصة بـ Beeceptor
+  const urlContents = "http://localhost:3000/contents";
+  const urlBookDetails = "http://localhost:3000/contents";
+
+  // دالة المعالجة وحفظ البيانات في الجدولين بشكل مترابط ومتزامن
   const handlAddContent = async (e) => {
     if (e) e.preventDefault();
 
-    // تحديد هل هي عملية إضافة (POST) أم تعديل (PUT)
     const isEdit = Boolean(bookdata?.id);
     const method = isEdit ? "PUT" : "POST";
-    const url = isEdit
-      ? `http://localhost:3000/contents/${bookdata.id}`
-      : "http://localhost:3000/contents";
 
-    const dataToSubmit = {
+    // توليد معرفات موحدة وآمنة لإرسالها فوراً دون انتظار تحديث الـ State
+    const currentContentId = isEdit ? bookdata.id : String(Date.now());
+    const currentDetailId = isEdit ? (bookdata.detail_id || String(Date.now() + 1)) : String(Date.now() + 1);
+
+    // تجهيز بيانات جدول contents الفريد بأعمدته
+    const contentPayload = {
       ...ContentData,
+      id: currentContentId,
       price: parseFloat(ContentData.price) || 0,
-      id: isEdit ? ContentData.id : String(Date.now())
     };
 
+    // تجهيز بيانات جدول book_details الفريد بأعمدته والربط عبر التمرير المباشر لـ content_id
+    const detailsPayload = {
+      ...dataBookDetails,
+      id: currentDetailId,
+      content_id: currentContentId
+    };
+
+    // روابط الإرسال حسب نمط العملية (إضافة أم تعديل)
+    const contentTargetUrl = isEdit ? `${urlContents}${bookdata.id}` : urlContents;
+    const detailsTargetUrl = isEdit ? `${urlBookDetails}${currentDetailId}` : urlBookDetails;
+
     try {
-      const res = await fetch(url, {
+      // أولاً: إنشاء أو تحديث جدول contents
+      const resContent = await fetch(contentTargetUrl, {
         method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSubmit)
+        body: JSON.stringify(contentPayload)
       });
 
-      if (res.ok) {
-              if (res.ok) {
-          setMessage({
-            text: message ? "تم تحديث الكتاب بنجاح!" : "تم إنشاء الكتاب بنجاح!",
-            type: "success"
-          });
-          setTimeout(() => navigate('/BookContentHome'), 2000);
+      if (!resContent.ok) throw new Error("فشل في إنشاء أو تحديث البيانات الأساسية (contents)");
 
-        }
-      } else {
-        alert("فشل الإرسال: تأكد أن السيرفر يعمل");
-      }
+      // ثانياً: إنشاء أو تحديث جدول book_details تلقائياً
+      const resDetails = await fetch(detailsTargetUrl, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(detailsPayload)
+      });
+
+      if (!resDetails.ok) throw new Error("فشل في إنشاء أو تحديث تفاصيل الملف الرقمي (book_details)");
+
+      // نجاح العملية بالكامل
+      showHideToast(isEdit ? "تم تحديث البيانات والداول بنجاح" : "تم إنشاء الجداول وحفظ البيانات بنجاح");
+      setTimeout(() => navigate('/BookContentHome'), 2000);
+
     } catch (error) {
-      console.error("خطأ في الاتصال:", error);
-      alert("تعذر الوصول للسيرفر");
+      console.error("خطأ أثناء الاتصال بالسيرفر:", error);
+      alert(error.message || "تعذر الوصول للسيرفر، يرجى التحقق من الشبكة");
     }
   };
 
@@ -97,7 +137,7 @@ function AddDataContent() {
         </div>
 
         <form onSubmit={handlAddContent} className="space-y-8">
-          {/* البطاقة الأولى */}
+          {/* البطاقة الأولى: المعلومات الأساسية */}
           <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-gray-200/50 border border-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-2 h-full bg-[#319795]"></div>
             <div className="flex items-center gap-3 mb-8">
@@ -133,7 +173,66 @@ function AddDataContent() {
             </div>
           </div>
 
-          {/* البطاقة الثانية */}
+          {/* البطاقة الثانية: الروابط والملفات الرقمية ولغة العمل */}
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-gray-200/50 border border-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-2 h-full bg-blue-500"></div>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-3 bg-blue-50 rounded-2xl text-blue-500">
+                <Globe size={24} />
+              </div>
+              <h2 className="text-xl font-black text-gray-700">الروابط واللغة</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-gray-500 mr-2">
+                  <Image size={16} className="text-gray-400" />
+                  <label className="text-sm font-bold">رابط صورة الغلاف *</label>
+                </div>
+                <input
+                  value={ContentData.img_path}
+                  onChange={(e) => SetContentData({ ...ContentData, img_path: e.target.value })}
+                  type="url"
+                  placeholder="https://example.com/cover.jpg"
+                  className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400/30 focus:bg-white transition-all font-bold text-gray-700 shadow-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-gray-500 mr-2">
+                  <FileDown size={16} className="text-gray-400" />
+                  <label className="text-sm font-bold">رابط ملف الكتاب (PDF) *</label>
+                </div>
+                <input
+                  value={dataBookDetails.file_url}
+                  onChange={(e) => SetDataBookDetails({ ...dataBookDetails, file_url: e.target.value })}
+                  type="url"
+                  placeholder="https://example.com/book.pdf"
+                  className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400/30 focus:bg-white transition-all font-bold text-gray-700 shadow-sm"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <div className="flex items-center gap-2 text-gray-500 mr-2">
+                  <Globe size={16} className="text-gray-400" />
+                  <label className="text-sm font-bold">لغة الكتاب</label>
+                </div>
+                <select
+                  value={ContentData.language}
+                  onChange={(e) => SetContentData({ ...ContentData, language: e.target.value })}
+                  className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400/30 focus:bg-white transition-all font-bold text-gray-600 shadow-sm"
+                >
+                  <option value="العربية">العربية</option>
+                  <option value="الإنجليزية">الإنجليزية</option>
+                  <option value="الفرنسية">الفرنسية</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* البطاقة الثالثة: السعر والنوع */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white rounded-[2.5rem] p-8 shadow-lg shadow-gray-200/40 border border-white">
               <div className="flex items-center gap-3 mb-6">
@@ -156,15 +255,15 @@ function AddDataContent() {
                 <div className="p-3 bg-blue-50 rounded-2xl text-blue-500">
                   <Tag size={22} />
                 </div>
-                <h3 className="font-black text-gray-700">نوع المحتوى</h3>
+                <h3 className="font-black text-gray-700">تصنيف المحتوى</h3>
               </div>
               <select
                 value={ContentData.TextContent}
                 onChange={(e) => SetContentData({ ...ContentData, TextContent: e.target.value })}
                 className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400 transition-all font-bold text-gray-600 shadow-sm"
               >
-                <option value="عملي">كتاب عن العلم  (PDF)</option>
-                <option value="ديني">كتاب عن الدين  </option>
+                <option value="عملي">كتاب عن العلم (PDF)</option>
+                <option value="ديني">كتاب عن الدين </option>
                 <option value="عن الحياة"> كتاب عن الحياة</option>
                 <option value="التكنولوجيا">كتاب عن التكنولوجيا </option>
               </select>
@@ -178,7 +277,6 @@ function AddDataContent() {
             </Link>
 
             <div className="flex gap-4 w-full md:w-auto order-1 md:order-2">
-              {/* زر ينقل لصفحة الرفع مع إرسال البيانات الحالية */}
               <Link to="/UploadFiles" state={{ currentData: ContentData }}>
                 <button type="button" className="bg-gray-800 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-900 shadow-lg">
                   التالي (رفع الملفات)
@@ -195,14 +293,6 @@ function AddDataContent() {
           </div>
         </form>
       </div>
-       {message.text && (
-            <div className={`mt-10 p-5 rounded-3xl text-center font-black shadow-lg animate-bounce ${
-              message.type === "error" ? "bg-rose-100 text-rose-600 border border-rose-200" : "bg-emerald-100 text-emerald-600 border border-emerald-200"
-            }`}>
-              {message.text}
-            </div>
-          )}
-      
     </div>
   );
 }

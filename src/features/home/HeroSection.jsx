@@ -1,17 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, Sparkles, ArrowLeft } from 'lucide-react';
+import { User, Sparkles, ArrowLeft, GraduationCap } from 'lucide-react';
 
 const HeroSectionFixed = () => {
   return (
     <div className="relative h-auto pt-29 py-[10vw] lg:min-h-screen flex items-center justify-center overflow-hidden bg-[#0f172a] px-[4vw] text-white font-sans" dir="rtl">
       
       {/* 1. الخلفية والنجوم */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none" 
-           style={{ 
-             backgroundImage: 'url("https://www.transparenttextures.com/patterns/stardust.png")',
-             backgroundColor: 'rgba(30,41,59,0.5)' 
-           }}></div>
+     <div className="absolute inset-0 opacity-40 pointer-events-none" 
+     style={{ 
+       backgroundImage: 'url("https://cdnjs.cloudflare.com/ajax/libs/subtlepatterns/4.1.2/stardust.png")',
+       backgroundRepeat: 'repeat'
+     }}></div>
       
       {/* توهجات النيون الخلفية */}
       <div className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] bg-blue-600/20 blur-[10vw] rounded-full animate-pulse"></div>
@@ -59,7 +59,7 @@ const HeroSectionFixed = () => {
             </div>
           </motion.div>
 
-          {/* المكون الأيسر: الكتاب والمدارات (45% من العرض) */}
+          {/* المكون الأيسر: الشعار البرمجي المطور والمدارات (45% من العرض) */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -69,14 +69,30 @@ const HeroSectionFixed = () => {
             {/* هالة الضوء المركزية */}
             <div className="absolute w-[35vw] h-[35vw] bg-blue-500/30 blur-[8vw] rounded-full animate-slow-glow"></div>
             
-            {/* صورة الكتاب المفتوح */}
-            <motion.img 
-              src="https://png.pngtree.com/png-vector/20240309/ourmid/pngtree-isolated-open-book-with-blank-white-pages-on-transparent-background-png-image_11920808.png" 
-              alt="Glowing Open Book"
-              className="w-[30vw] h-auto object-contain relative z-20"
+            {/* 🌟 هيكل الشعار البرمجي المحفز (المدمج كلياً بالصفحة) */}
+            <motion.div 
+              className="relative z-20 w-[24vw] h-[24vw] rounded-[4vw] bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 border-2 border-blue-500/40 shadow-2xl shadow-blue-500/50 flex flex-col items-center justify-center p-[2vw] overflow-hidden"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
+            >
+              {/* تأثير خطوط النيون المتقاطعة خلف الشعار */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:2vw_2vw] opacity-30" />
+              
+              {/* أيقونة التخرج والتطوير الكبرى المشعة */}
+              <div className="relative p-[1.5vw] bg-blue-500/10 border border-blue-400/30 rounded-3xl mb-[1vw] shadow-inner shadow-blue-400/20">
+                <GraduationCap size={"7vw"} className="text-blue-400 filter drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-pulse" />
+                {/* شرارة المعرفة الطافية */}
+                <Sparkles size={"2.5vw"} className="text-blue-200 absolute -top-1 -right-1 animate-bounce" />
+              </div>
+
+              {/* الاسم المصغر والشعار اللفظي التحفيزي */}
+              <span className="text-[2.2vw] font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-200 to-blue-400">
+                AL-YAARI
+              </span>
+              <p className="text-[1.1vw] text-blue-400/80 font-bold uppercase tracking-widest mt-[0.5vw]">
+                ELEVATE YOUR MIND
+              </p>
+            </motion.div>
 
             {/* المدارات وأيقونات المستخدمين - مقاسات vw دقيقة */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

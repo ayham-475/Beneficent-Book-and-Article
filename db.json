@@ -11,39 +11,10 @@
       "createdAt": "2026-01-29T13:34:29.276Z"
     },
     {
-      "id": "bf54",
-      "email": "Awad@gmail.com",
-      "password": "0987",
-      "profile": {
-        "name": "Awad Alyaari",
-        "type": "user"
-      },
-      "createdAt": "2026-01-29T13:50:08.851Z"
-    },
-    {
-      "id": "0719",
-      "email": "Mouth@gmail.com",
-      "password": "56789",
-      "profile": {
-        "name": "Mouth Alyaari",
-        "type": "user"
-      },
-      "createdAt": "2026-02-02T09:58:08.568Z"
-    },
-    {
-      "id": "8e64",
-      "email": "ayham@gmail.com",
-      "password": "1234",
-      "profile": {
-        "name": "الأيهم صالح سعيد اليعري",
-        "type": "user"
-      },
-      "createdAt": "2026-02-04T00:52:36.315Z"
-    },
-    {
       "id": "f126",
       "email": "awad@gmil.com",
       "password": "5678",
+      "is_active": "true",
       "profile": {
         "name": "awad ali alyaari",
         "type": "user"
@@ -51,494 +22,370 @@
       "createdAt": "2026-02-04T00:53:51.338Z"
     },
     {
-      "id": "a99f",
-      "email": "Sary@gmail.com",
+      "id": "d086",
+      "email": "mouth@gmil.com",
       "password": "5678",
       "profile": {
-        "name": "Sarh almalky",
+        "name": "معاذ محمد محمد اليعري",
         "type": "user"
       },
-      "createdAt": "2026-02-16T13:42:02.082Z"
+      "createdAt": "2026-06-28T20:12:08.648Z"
     },
     {
-      "id": "e784",
-      "email": "MOSA@gmail.com",
-      "password": "AAAA",
-      "profile": {
-        "name": "موسى احمد يحيى اليعري ",
-        "type": "user"
-      },
-      "createdAt": "2026-03-23T19:00:44.880Z"
+      "id": "1782939884369",
+      "author_id": "f126",
+      "category_id": "",
+      "title": "منهجية البحث",
+      "description": "يعلمك كيف تكون باحث يعرف كيف يستخرج المعلومات وصياغتها ",
+      "content_type": "BOOK",
+      "price": 20,
+      "TextContent": "عملي",
+      "img_path": "http://localhost:3000/users",
+      "language": "العربية",
+      "status": "DRAFT",
+      "created_at": "2026-07-01"
+    },
+    {
+      "id": "1782939884370",
+      "file_url": "http://localhost:3000/users",
+      "pages_count": 320,
+      "content_id": "1782939884369"
+    },
+    {
+      "id": "1782939925781",
+      "author_id": "f126",
+      "category_id": "",
+      "title": "س",
+      "description": "س",
+      "content_type": "BOOK",
+      "price": 20,
+      "TextContent": "عملي",
+      "img_path": "http://localhost:3000/users",
+      "language": "العربية",
+      "status": "DRAFT",
+      "created_at": "2026-07-01"
+    },
+    {
+      "id": "1782939925782",
+      "file_url": "http://localhost:3000/users",
+      "pages_count": 320,
+      "content_id": "1782939925781"
     }
   ],
   "profiles": [
     {
+      "id": "e152",
+      "profile_id": 1,
+      "user_id": "f126",
+      "display_name": "المهندس عواد اليعري",
+      "bio": "خبير في تطوير البرمجيات وكاتب تقني مهتم بنشر المعرفة الرقمية.",
+      "avatar_url": "public/imgs/Awad.jpg",
+      "payout_method": "PayPal",
+      "payout_details": "ayham.admin@example.com"
+    },
+    {
+      "id": "e152",
       "profile_id": 1,
       "user_id": "1a44",
       "display_name": "المهندس أيهم اليعري",
       "bio": "خبير في تطوير البرمجيات وكاتب تقني مهتم بنشر المعرفة الرقمية.",
       "avatar_url": "public/imgs/Ayham.jpg",
       "payout_method": "PayPal",
-      "payout_details": "ayham.admin@example.com",
-      "id": "e152"
+      "payout_details": "ayham.admin@example.com"
     },
     {
-      "profile_id": 2,
-      "user_id": "bf54",
-      "display_name": "عواد اليعري",
-      "bio": "متخصص في الاقتصاد الرقمي ومؤلفة سلسلة كتب 'مستقبل المال'.",
-      "avatar_url": "public/imgs/Awad.jpg",
-      "payout_method": "Bank Transfer",
-      "payout_details": "IBAN: SA1234567890123456789012",
-      "id": "7fa8"
-    },
-    {
-      "profile_id": 3,
-      "user_id": "0719",
-      "display_name": "شاكر اليعري",
-      "bio": "مصمم جرافيك ومعد محتوى بصري لتعلم التصميم من الصفر.",
-      "avatar_url": "public/imgs/٢٠٢٣٠٣٢٤_٢٢٤٢٢٧.jpg",
-      "payout_method": "Stripe",
-      "payout_details": "acct_123456789",
-      "id": "bfbf"
-    },
-    {
-      "profile_id": 4,
-      "user_id": "8e64",
-      "display_name": " رمزي اليعري",
-      "bio": "باحث في علم النفس التربوي، أشارككم مقالات ودورات في تطوير الذات.",
-      "avatar_url": "public/imgs/ramzy.jpg",
+      "id": "e152",
+      "profile_id": 1,
+      "user_id": "d086",
+      "display_name": "المهندس معاذ اليعري",
+      "bio": "خبير في تطوير البرمجيات وكاتب تقني مهتم بنشر المعرفة الرقمية.",
+      "avatar_url": "public/imgs/Ayham.jpg",
       "payout_method": "PayPal",
-      "payout_details": "ramzy@example.com",
-      "id": "028a"
-    },
-    {
-      "profile_id": 5,
-      "user_id": "a99f",
-      "display_name": "سارة المالكي",
-      "bio": "مدربة دولية في مجال الإدارة والقيادة المؤسسية.",
-      "avatar_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400",
-      "payout_method": "Bank Transfer",
-      "payout_details": "IBAN: SA9876543210987654321098",
-      "id": "1112"
+      "payout_details": "ayham.admin@example.com"
     }
   ],
   "contents": [
     {
+      "id": "f8e4",
       "content_id": 102,
-      "author_id": "bf54",
-      "category_id": "مقالة عن الطبيعة",
+      "author_id": "f126",
+      "category_id": 1,
       "title": "أساسيات تصميم UI/UX الحديث",
       "description": "مجموعة دروس تطبيقية في كيفية بناء واجهات مستخدم جذابة وتجربة مستخدم سلسة.",
       "content_type": "ARTICLE",
       "price": 15,
-      "TextContent": "/secure/downloads/ui_ux_course.zip",
       "img_path": "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?q=80&w=1000",
       "status": "PUBLISHED",
-      "created_at": "2026-01-15T10:00:00Z",
-      "id": "f8e4",
-      "content": ""
+      "created_at": "2026-01-15T10:00:00Z"
     },
     {
-      "content_id": 103,
-      "author_id": "0719",
-      "category_id": 3,
-      "title": "استراتيجيات التسويق الرقمي 2027",
-      "description": "دليل عملي حول كيفية استغلال الذكاء الاصطناعي في حملات التسويق عبر منصات التواصل.",
-      "content_type": "/secure/downloads/marketing_2026.pdf",
-      "price": 29,
-      "TextContent": "/secure/downloads/marketing_2026.pdf",
-      "img_path": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000",
-      "status": "APPROVED",
-      "created_at": "2026-01-20T14:45:00Z",
-      "id": "5909"
-    },
-    {
-      "content_id": 104,
-      "author_id": "bf54",
+      "id": "ac1c",
+      "content_id": 3971,
+      "author_id": "f126",
       "category_id": "مقالة تكنلوجيا",
-      "title": "بناء أنظمة Backend باستخدام Node.js",
-      "description": "شرح معمق لبناء قواعد البيانات والـ APIs القابلة للتوسع.",
+      "title": "كيف تتعلم الانجليزية في زمن الذكاء الاصطناعي",
+      "description": "",
       "content_type": "ARTICLE",
-      "price": 12.5,
-      "TextContent": "/secure/downloads/nodejs_backend.pdf",
-      "img_path": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000",
+      "price": 20,
+      "TextContent": "",
+      "content": "",
+      "img_path": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=400&h=600&auto=format&fit=crop",
       "status": "PUBLISHED",
-      "created_at": "2026-01-25T09:15:00Z",
-      "id": "97cb",
-      "content": ""
+      "created_at": "2026-06-28"
     },
     {
-      "content_id": 105,
-      "author_id": "0719",
-      "category_id": "مقالة عن الطبيعة",
-      "title": "علم النفس ",
-      "description": "دراسة حول تحسين الأداء الوظيفي والعلاقات المهنية داخل الشركات الناشئة.",
-      "content_type": "ARTICLE",
-      "price": 10.99,
-      "TextContent": "/secure/downloads/work_psychology.pdf",
-      "img_path": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000",
-      "status": "PUBLISHED",
-      "created_at": "2026-01-28T11:20:00Z",
-      "id": "bc5d",
-      "content": ""
-    },
-    {
-      "id": "1771164285249",
-      "content_id": 1965,
-      "author_id": "bf54",
+      "id": "1782677436107",
+      "content_id": 7846,
+      "author_id": "f126",
       "category_id": "",
-      "title": "الانجليزي اساس المستقبل ",
-      "description": "الانجليزي اساس المستقبل ",
-      "content_type": "COURSE",
+      "title": "كتاب تجد فيه كل القواعد الانجليزي",
+      "description": "هذا الكتاب يعلمك كيف تتكلم الغة بإحتراف",
+      "content_type": "BOOK",
       "price": 40,
       "TextContent": "",
       "content": "",
-      "img_path": "https://images.unsplash.com/photo-1543167664-40d21a6479e0?q=80&w=1000",
+      "img_path": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=400&h=600&auto=format&fit=crop",
+      "file_url": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=400&h=600&auto=format&fit=crop",
+      "language": "الإنجليزية",
       "status": "DRAFT",
-      "created_at": "2026-02-15"
+      "created_at": "2026-06-28"
     },
     {
-      "id": "1771164315482",
-      "content_id": 4414,
-      "author_id": "bf54",
+      "id": "c492",
+      "content_id": 6069,
+      "author_id": "f126",
       "category_id": "مقالة تكنلوجيا",
-      "title": "الانجليزي اساس المستقبل",
-      "description": "الانجليزي اساس المستقبل",
+      "title": "كيف يقوم الهاكرز باختراق انظمة الدفاع في عصر الذكاء الاصطناعي",
+      "description": "",
+      "content_type": "ARTICLE",
+      "price": 20,
+      "TextContent": "الهكرز هم ناس يقومون باختراق النظام لسرقة البيانات",
+      "content": "الهكرز هم ناس يقومون باختراق النظام لسرقة البيانات",
+      "img_path": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop",
+      "status": "PUBLISHED",
+      "created_at": "2026-06-28"
+    },
+    {
+      "id": "1782678868584",
+      "author_id": "f126",
+      "category_id": "",
+      "title": "امنية المعلومات ",
+      "description": "يقوم بتعليمك كيف تحمي نظامك من شتى انواع  الاختراق",
+      "content_type": "BOOK",
+      "price": 20,
+      "TextContent": "التكنولوجيا",
+      "img_path": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=400&h=600&auto=format&fit=crop",
+      "file_url": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=400&h=600&auto=format&fit=crop",
+      "language": "الإنجليزية",
+      "status": "DRAFT",
+      "created_at": "2026-06-28"
+    },
+    {
+      "id": "1782769440072",
+      "content_id": 7100,
+      "author_id": "f126",
+      "category_id": "",
+      "title": "engilsh",
+      "description": "kf;ajsdf;lk",
+      "content_type": "BOOK",
+      "price": 20,
+      "TextContent": "",
+      "img_path": "http://localhost:3000/book_details",
+      "language": "العربية",
+      "status": "DRAFT",
+      "created_at": "2026-06-29"
+    },
+    {
+      "id": "1782769622170",
+      "content_id": 8451,
+      "author_id": "f126",
+      "category_id": "",
+      "title": "كتاب عن الصحابة ",
+      "description": "هذا الكتاب يخبرنا كيف كان الصحابة يعبدون اللة",
       "content_type": "BOOK",
       "price": 20,
       "TextContent": "ديني",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1000",
+      "img_path": "http://localhost:3000/contents",
+      "language": "العربية",
       "status": "DRAFT",
-      "created_at": "2026-02-15"
+      "created_at": "2026-06-29"
     },
     {
-      "id": "a4bc",
-      "content_id": 9933,
-      "author_id": "bf54",
-      "category_id": "مقالة تكنلوجيا",
-      "title": "مقالة عن اخطر الهجمات السيبرانية",
-      "description": "",
-      "content_type": "ARTICLE",
-      "price": 20,
-      "TextContent": "مقالة عن اخطر الهجمات السيبرانية",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000",
-      "status": "PUBLISHED",
-      "created_at": "2026-02-15"
-    },
-    {
-      "id": "1771178764752",
-      "content_id": 2132,
-      "author_id": "0719",
-      "category_id": "",
-      "title": "كتاب علم الاسرار في وضح النهار",
-      "description": "كتاب علم الاسرار في وضح النهار",
-      "content_type": "COURSE",
-      "price": 20,
-      "TextContent": "",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000",
-      "status": "DRAFT",
-      "created_at": "2026-02-15"
-    },
-    {
-      "id": "1771179208381",
-      "content_id": 3174,
-      "author_id": "0719",
-      "category_id": "",
-      "title": "كتاب عن العلم ",
-      "description": "كتاب عن العلم ",
-      "content_type": "BOOK",
-      "price": 30,
-      "TextContent": "",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=1000",
-      "status": "DRAFT",
-      "created_at": "2026-02-15"
-    },
-    {
-      "id": "1771179257320",
-      "content_id": 8898,
-      "author_id": "0719",
-      "category_id": "",
-      "title": "كتاب عن لغات البرمجة",
-      "description": "كتاب عن لغات البرمجة وكيفية النجاح في تعلمها ",
-      "content_type": "BOOK",
-      "price": 35,
-      "TextContent": "التكنولوجيا",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?q=80&w=1000",
-      "status": "DRAFT",
-      "created_at": "2026-02-15"
-    },
-    {
-      "id": "45a8",
-      "content_id": 5788,
-      "author_id": "0719",
-      "category_id": "مقالة تكنلوجيا",
-      "title": "كيفية النجاح من الذكاء الاصطناعي ",
-      "description": "",
-      "content_type": "ARTICLE",
-      "price": 20,
-      "TextContent": "كيفية النجاح من الذكاء الاصطناعي ",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000",
-      "status": "PUBLISHED",
-      "created_at": "2026-02-15"
-    },
-    {
-      "id": "f791",
-      "content_id": 5272,
-      "author_id": "0719",
+      "id": "af9e",
+      "content_id": 3326,
+      "author_id": "f126",
       "category_id": "مقالة عن الطبيعة",
-      "title": "مقالة عن الحياه كما كان القدماء",
+      "title": "مقاله عن الحياه",
       "description": "",
       "content_type": "ARTICLE",
       "price": 20,
-      "TextContent": "مقالة عن الحياه كما كان القدماء",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000",
+      "img_path": "https://images.unsplash.com/photo-1543505298-b8be9b52a21a?q=80&w=1000&auto=format&fit=crop",
       "status": "PUBLISHED",
-      "created_at": "2026-02-16"
+      "created_at": "2026-06-29",
+      "TextContent": "ه>ه المقاله تصف الحياه ومعاناتها "
     },
     {
-      "id": "1771253459787",
-      "content_id": 1245,
-      "author_id": "0719",
-      "category_id": "",
-      "title": "كتاب علم الاقتصاد ",
-      "description": "علم الاقتصاد يقوم  ",
-      "content_type": "BOOK",
-      "price": 33,
-      "TextContent": "عملي",
-      "content": "",
-      "img_path": "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?q=80&w=1000",
-      "status": "DRAFT",
-      "created_at": "2026-02-16"
-    },
-    {
-      "id": "8cac",
-      "content_id": 8287,
-      "author_id": "bf54",
-      "category_id": "مقالة رياضة",
-      "title": "العمل عند الكبار ",
+      "id": "1aa5",
+      "content_id": 5277,
+      "author_id": "f126",
+      "category_id": "مقالة تكنلوجيا",
+      "title": "سبيشب",
       "description": "",
       "content_type": "ARTICLE",
       "price": 20,
-      "TextContent": "العمل عند الكبار يكون صحة لهم  يجعلهم يحافظون على نشاطهم ",
-      "content": "",
-      "img_path": "",
+      "img_path": "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1000&auto=format&fit=crop",
       "status": "PUBLISHED",
-      "created_at": "2026-03-23"
+      "created_at": "2026-06-29",
+      "TextContent": "ه>ه المقاله تصف الحياه ومعاناتها "
     },
     {
-      "id": "1782156682042",
-      "content_id": 3003,
-      "author_id": "bf54",
+      "id": "2d37",
+      "content_id": 6651,
+      "author_id": "f126",
+      "category_id": "مقالة تكنلوجيا",
+      "title": "كيف تواجة الحياه",
+      "description": "",
+      "content_type": "ARTICLE",
+      "price": 20,
+      "img_path": "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&auto=format&fit=crop",
+      "status": "PUBLISHED",
+      "created_at": "2026-06-29",
+      "TextContent": "const urlArticleDeatils=\"http://localhost:3000/articles_details\"\nconst urlArticleDeatils=\"http://localhost:3000/articles_details\"\n"
+    },
+    {
+      "id": "1782940007343",
+      "author_id": "f126",
       "category_id": "",
-      "title": "كتاب اسرار النجاح ",
-      "description": "هذا الكتاب يدل على كيفية النجاح في زمن التكنولوجيا مع ذكر بعض الشخصيات الناجحة ",
+      "title": "منهجية البحث ",
+      "description": "تتعلم كيف تكون باحث ممتاز يصيغ البحث بامتياز",
       "content_type": "BOOK",
-      "price": 210,
+      "price": 20,
       "TextContent": "عملي",
-      "content": "",
-      "img_path": "",
+      "img_path": "http://localhost:3000/users",
+      "language": "العربية",
       "status": "DRAFT",
-      "created_at": "2026-06-22"
+      "created_at": "2026-07-01"
+    },
+    {
+      "id": "1782940007344",
+      "file_url": "http://localhost:3000/users",
+      "pages_count": 320,
+      "content_id": "1782940007343"
     }
   ],
   "categories": [
     {
+      "id": "0c9f",
       "category_id": 1,
       "name": "البرمجة والتطوير",
-      "slug": "programming-development",
       "description": "كل ما يتعلق بلغات البرمجة، تطوير تطبيقات الويب، والذكاء الاصطناعي.",
       "status": "ACTIVE",
-      "created_at": "2024-01-10T08:00:00Z",
-      "id": "0c9f"
-    },
-    {
-      "category_id": 2,
-      "name": "التصميم الإبداعي",
-      "slug": "creative-design",
-      "description": "دروس ومصادر في تصميم الواجهات UI/UX،   التصميم الجرافيكي، والتحريك.",
-      "status": "ACTIVE",
-      "created_at": "2024-01-12T10:30:00Z",
-      "id": "f15f"
-    },
-    {
-      "category_id": 3,
-      "name": "الأعمال والريادة",
-      "slug": "business-entrepreneurship",
-      "description": "استراتيجيات التسويق، إدارة المشاريع، وطرق بناء الشركات الناشئة.",
-      "status": "ACTIVE",
-      "created_at": "2024-02-01T14:15:00Z",
-      "id": "5a9d"
-    },
-    {
-      "category_id": 4,
-      "name": "العلوم الإنسانية",
-      "slug": "humanities",
-      "description": "مقالات وكتب في علم النفس، الاجتماع، وتطوير الذات.",
-      "status": "ACTIVE",
-      "created_at": "2024-02-15T09:00:00Z",
-      "id": "6c85"
-    },
-    {
-      "category_id": 5,
-      "name": "التكنولوجيا والعتاد",
-      "slug": "tech-hardware",
-      "description": "مراجعات الأجهزة الحديثة، الأمن السيبراني، وشبكات الحاسوب.",
-      "status": "INACTIVE",
-      "created_at": "2024-03-01T11:45:00Z",
-      "id": "b2da"
-    }
-  ],
-  "orders": [
-    {
-      "order_id": 8001,
-      "buyer_id": 103,
-      "total_amount": 49.99,
-      "order_status": "COMPLETED",
-      "created_at": "2026-01-30T10:15:00Z",
-      "id": "e122"
-    },
-    {
-      "order_id": 8002,
-      "buyer_id": 104,
-      "total_amount": 15,
-      "order_status": "COMPLETED",
-      "created_at": "2026-02-01T14:20:00Z",
-      "id": "4eba"
-    },
-    {
-      "order_id": 8003,
-      "buyer_id": 105,
-      "total_amount": 29,
-      "order_status": "PENDING",
-      "created_at": "2026-02-02T09:00:00Z",
-      "id": "62a4"
-    }
-  ],
-  "order_items": [
-    {
-      "order_item_id": 9001,
-      "order_id": 8001,
-      "content_id": 101,
-      "unit_price": 49.99,
-      "id": "185c"
-    },
-    {
-      "order_item_id": 9002,
-      "order_id": 8002,
-      "content_id": 102,
-      "unit_price": 15,
-      "id": "2607"
-    },
-    {
-      "order_item_id": 9003,
-      "order_id": 8003,
-      "content_id": 103,
-      "unit_price": 29,
-      "id": "f6ff"
+      "created_at": "2024-01-10T08:00:00Z"
     }
   ],
   "book_details": [
     {
+      "id": "733b",
       "content_id": 101,
-      "TextContent": "/secure/books/react_pro_2026.pdf",
+      "file_url": "/secure/books/react_pro_2026.pdf",
       "pages_count": 320,
       "language": "Arabic",
       "img_book": "/public/covers/react_book_cover.jpg",
-      "id": "733b"
+      "page_account": " "
     },
     {
-      "content_id": 103,
-      "TextContent": "/secure/books/marketing_strategies.epub",
-      "pages_count": 150,
-      "language": "Arabic",
-      "img_book": "/public/covers/marketing_cover.jpg",
-      "id": "a9b3"
+      "id": "5342",
+      "content_id": 7100,
+      "file_url": "http://localhost:3000/book_details",
+      "pages_count": 320,
+      "language": ""
     },
     {
-      "content_id": 105,
-      "TextContent": "/secure/books/work_psychology.pdf",
-      "pages_count": 210,
-      "language": "Arabic",
-      "img_book": "/public/covers/psychology_cover.jpg",
-      "id": "8adf"
+      "id": "6502",
+      "content_id": 8451,
+      "file_url": "http://localhost:3000/contents",
+      "pages_count": 320
+    },
+    {
+      "id": "7757",
+      "content_id": 3326,
+      "body_html": "ه&gt;ه المقاله تصف الحياه ومعاناتها&nbsp;ه&gt;ه المقاله تصف الحياه ومعاناتها&nbsp;",
+      "pages_count": 320
+    },
+    {
+      "id": "8056",
+      "content_id": 5277,
+      "body_html": "ه&gt;ه المقاله تصف الحياه ومعاناتها&nbsp;",
+      "pages_count": 320
     }
   ],
   "articles_details": [
     {
+      "id": "a3b4",
       "content_id": 102,
       "body_html": "<article><h1>أساسيات التصميم</h1><p>هذا النص يمثل محتوى المقالة الاحترافي...</p></article>",
       "word_count": 1250,
       "reading_time": "8 min",
-      "img": "/public/articles/ui_ux_thumb.jpg",
-      "id": "a3b4"
+      "img": "/public/articles/ui_ux_thumb.jpg"
     },
     {
-      "content_id": 104,
-      "body_html": "<article><h1>بناء أنظمة Node.js</h1><p>شرح معمق للتقنيات الخلفية في البرمجة...</p></article>",
-      "word_count": 2100,
-      "reading_time": "15 min",
-      "img": "/public/articles/backend_thumb.jpg",
-      "id": "bb57"
+      "id": "6299",
+      "content_id": 6651,
+      "body_html": "بكينتسشكسشنمتبكنتبشكنبتيشنتبكشنتب",
+      "pages_count": 320
     }
   ],
-  "earnings": [
+  "purchases": [
     {
-      "earning_id": 701,
-      "author_id": 1,
+      "id": "12",
       "content_id": 101,
-      "order_item_id": 9001,
-      "gross_amount": 49.99,
-      "platform_fee": 5,
-      "net_amount": 44.99,
-      "earning_status": "AVAILABLE",
-      "id": "31fb"
+      "payer_id": "f21k",
+      "author_amount": 24,
+      "platform_commission": 6,
+      "price": 30,
+      "payment_status": "COMPLETED",
+      "payment_method": "الكريمي",
+      "transaction_reference": "TXN-992811",
+      "purchased_at": "2026-06-28T22:00:00Z"
+    },
+    {
+      "id": 86475,
+      "content_id": 7846,
+      "payer_id": "f126",
+      "author_amount": 32,
+      "platform_commission": 8,
+      "price": 40,
+      "payment_status": "COMPLETED",
+      "payment_method": "الكريمي",
+      "transaction_reference": "TXN-797278",
+      "purchased_at": "2026-07-01T20:51:13.850Z"
     }
   ],
-  "balances": [
+  "logs": [
     {
-      "balance_id": 1,
-      "user_id": 1,
-      "available_balance": 44.99,
-      "pending_balance": 0,
-      "id": "bba3"
+      "id": "log-01",
+      "user_id": "f126",
+      "action": "CREATE",
+      "description": "قام المستخدم بإضافة كتاب دليل احتراف React",
+      "target_type": "BOOK",
+      "target_id": "101",
+      "created_at": "2026-06-28T22:05:00Z"
     }
   ],
-  "withdraw_requests": [
+  "expenses": [
     {
-      "withdraw_id": 301,
-      "user_id": 1,
-      "amount": 40,
-      "method": "PayPal",
-      "withdraw_status": "PENDING",
-      "id": "22af"
-    }
-  ],
-  "transactions": [
-    {
-      "transaction_id": 4001,
-      "user_id": 1,
-      "transaction_type": "SALE",
-      "amount": 44.99,
-      "reference_id": 701,
-      "id": "483d"
-    }
-  ],
-  "ratings": [
-    {
-      "rating_id": 601,
-      "content_id": 101,
-      "user_id": 2,
-      "rating_value": 5,
-      "comment": "شرح رائع جداً",
-      "id": "af62"
+      "id": "exp-01",
+      "title": "تجديد سيرفر منصة اليعري وتراخيص النطاق",
+      "content_id": null,
+      "category": "سيرفرات وتقنية",
+      "amount": 45,
+      "currency": "USD",
+      "payment_method": "Visa Card",
+      "receipt_url": "/secure/receipts/rec_01.pdf",
+      "created_by": "f126",
+      "notes": "تم التجديد السنوي بنجاح لتجنب انقطاع الخدمة",
+      "spent_at": "2026-06-01T10:00:00Z",
+      "logged_at": "2026-06-01T10:15:00Z"
     }
   ]
 }

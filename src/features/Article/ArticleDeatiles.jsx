@@ -1,29 +1,33 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import ArticlesData from './apiArticles.json'
+// تم إبقاء استيراد ملف الـ JSON إذا كنت تحتاجه احتياطياً، ولكن الاعتماد الحالي على الـ Context
+// import ArticlesData from './apiArticles.json'; 
 import { useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { Heart, Share2, Bookmark, Quote, Clock } from 'lucide-react'; 
+import Navbar from '../../App/Public/Layout/Hedder';
+import CommentsSection from './CommentsSection';
+import { ContentDataContext } from '../../pages/User/Content Adminstorition/ArticlesHome/ArticlesContext';
 
-import { 
-  Heart,Share2, Bookmark, 
-Quote, Clock, 
-} from 'lucide-react'; // تأكد من المسار الصحيح للهيدر الذي صممناه
-import Navbar from'../../App/Public/Layout/Hedder'
-import CommentsSection from './CommentsSection'
 const CreativeArticleView = () => {
   const { ArticleId } = useParams();
-  // جلب المقال المختار من البيانات
-
-const article=  Object.values(ArticlesData).map((category) => {
-    
-      if (category.id == ArticleId) {
-       return category;
-      }
   
-  });
- console.log(" article ",article)
- 
-  // في حال لم يتم العثور على المقال
-  if (!article) return <div className="text-white text-center py-20">جاري التحميل أو المقال غير موجود...</div>;
+  // جلب البيانات من الـ Context
+  const { ContentData } = useContext(ContentDataContext);
+
+  // تأكد من الهيكلية: هنا قمنا بدعم الحالتين (إذا كانت مصفوفة مباشرة أو كائن يحتوي على مصفوفة)
+  const articlesArray = Array.isArray(ContentData) ? ContentData : ContentData?.ContentData;
+
+  const article = articlesArray?.find((b) => String(b.content_id) === String(ArticleId));
+
+  // في حال لم يتم العثور على المقال أو جاري التحميل
+  if (!article) {
+    return (
+      <div className="bg-[#020617] text-white text-center py-20 min-h-screen flex items-center justify-center">
+        <p className="text-xl font-bold">جاري التحميل أو المقال غير موجود...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -31,7 +35,7 @@ const article=  Object.values(ArticlesData).map((category) => {
 
       <div className="bg-[#f8fafc] min-h-screen font-sans pb-20" dir="rtl">
         
-        {/* 1. Hero Header - ديناميكي */}
+        {/* 1. Hero Header - ديناميكي ومصلح */}
         <header className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden">
           <motion.div 
             initial={{ scale: 1.1 }}
@@ -39,8 +43,9 @@ const article=  Object.values(ArticlesData).map((category) => {
             transition={{ duration: 1.5 }}
             className="absolute inset-0"
           >
+            {/* تم تصحيح الخطأ هنا من book إلى article */}
             <img 
-              src={article.img} 
+              src={article.img_path} 
               className="w-full h-full object-cover"
               alt={article.title}
             />
@@ -61,16 +66,16 @@ const article=  Object.values(ArticlesData).map((category) => {
               </h1>
               
               <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white/90">
-                  <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md p-1.5 pl-5 rounded-full border border-white/20">
-                      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white">
-                        {article.author}
-                      </div>
-                      <span className="font-bold text-[3.5vw] md:text-[1.1vw]">{article.author}</span>
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md p-1.5 pl-5 rounded-full border border-white/20">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white">
+                    {article.author_id ? article.author_id[0] : "م"}
                   </div>
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Clock size={18} className="text-blue-400" />
-                    <span className="font-medium text-[3.2vw] md:text-[1vw]">{article.time} للقراءة</span>
-                  </div>
+                  <span className="font-bold text-[3.5vw] md:text-[1.1vw]">{article.author_id}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Clock size={18} className="text-blue-400" />
+                  <span className="font-medium text-[3.2vw] md:text-[1vw]">{article.author_id || "5 دقائق"} للقراءة</span>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -80,7 +85,7 @@ const article=  Object.values(ArticlesData).map((category) => {
         <main className="container mx-auto px-[5vw] -mt-12 relative z-20">
           <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
             
-            {/* الأزرار العائمة - متجاوبة */}
+            {/* الأزرار العائمة */}
             <aside className="lg:w-20 flex lg:flex-col gap-4 sticky top-24 h-fit order-2 lg:order-1 justify-center md:justify-start">
               {[
                 { icon: <Heart size={24} />, color: "hover:text-red-500", count: "1.2k" },
@@ -112,20 +117,26 @@ const article=  Object.values(ArticlesData).map((category) => {
                 <div className="relative my-12 md:my-16 py-4">
                   <Quote className="text-blue-500/10 absolute -right-6 md:-right-12 -top-6 w-20 h-20 md:w-32 md:h-32" />
                   <h3 className="text-2xl md:text-4xl font-black text-gray-900 pr-6 md:pr-10 border-r-8 border-blue-600 leading-snug">
-                    "إن الكلمات هي جسر العبور من عالم الخيال إلى واقع التأثير، ومداد هو القلم الذي يبني هذا الجسر."
+                   {article.TextContent}
                   </h3>
                 </div>
 
-                {/* نص تجريبي (يمكنك استبداله بـ article.content إذا توفر) */}
+                {/* نص المقال الديناميكي */}
                 <div className="space-y-6 text-gray-700 text-lg md:text-xl font-medium">
-                  <p>هنا يبدأ سرد التفاصيل العميقة. نحن نؤمن أن المعرفة ليست مجرد معلومات، بل هي تجربة بصرية وفكرية متكاملة. من خلال هذا المنشور، نسلط الضوء على الزوايا الخفية التي تجعل من القراءة متعة حقيقية.</p>
-                  
-                  {/* صورة داخلية متناسقة */}
-                  <div className="my-10 rounded-3xl overflow-hidden shadow-2xl">
-                    <img src={article.img} className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity" alt="content" />
-                  </div>
+                  {article.content ? (
+                    <p className="whitespace-pre-line">{article.content}</p>
+                  ) : (
+                    <>
+                      <p>هنا يبدأ سرد التفاصيل العميقة للمقال. نحن نؤمن أن المعرفة ليست مجرد معلومات، بل هي تجربة بصرية وفكرية متكاملة تهدف لإثراء القارئ العربي وتوسيع مداركه في شتى المجالات.</p>
+                      
+                      {/* صورة داخلية متناسقة */}
+                      <div className="my-10 rounded-3xl overflow-hidden shadow-2xl">
+                        <img src={article.img_path} className="w-full h-auto opacity-90 hover:opacity-100 transition-opacity" alt={article.title} />
+                      </div>
 
-                  <p>وفي الختام، يبقى الإبداع هو المحرك الأساسي لكل ما نقدمه في منصة مداد. شكراً لكونك جزءاً من هذه الرحلة المعرفية.</p>
+                      <p>وفي الختام، يبقى الإبداع هو المحرك الأساسي لكل ما نقدمه في منصتنا الرقمية. شكراً لكونك جزءاً من هذه الرحلة المعرفية المتميزة.</p>
+                    </>
+                  )}
                 </div>
               </div>
 

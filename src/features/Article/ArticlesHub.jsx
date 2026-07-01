@@ -13,8 +13,10 @@ const Articles = () => {
       {/* <ArticleHero /> المقالة الرئيسية في الأعلى */}
       <ArticleHero />   
       <ArticleCategories />
-      <TrendingArticles /> {/* مقالات شائعة بسلايدر */}
-      <TrendingArticles /> {/* مقالات شائعة بسلايدر */}
+      <TrendingArticles title={"مقالات تشكل مستقبلك "}  /> {/* مقالات شائعة بسلايدر */}
+      <TrendingArticles title={"المقالات الاكثر شهرة هذا الاسبوع"} /> {/* مقالات شائعة بسلايدر */}
+      <TrendingArticles title={"المقالات الحديثة"}  /> {/* مقالات شائعة بسلايدر */}
+      <TrendingArticles title={"المقالات الاكثر تقييما هذا الاسبوع"}   /> {/* مقالات شائعة بسلايدر */}
       <EliteAuthors /> {/* نخبة الكتاب */}
       <ArticleCTA /> {/* زر لنشر مقالات جديدة */}
       <Footer />

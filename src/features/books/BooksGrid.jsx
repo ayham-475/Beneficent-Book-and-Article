@@ -1,11 +1,22 @@
 import React, { useContext } from 'react';
 import { Star, ShoppingCart, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BookCardInfo } from './BookCardContext'
-const BooksSlider = () => {
-  // console.log(" boo " ,BookCardInfo)
-const{ CardInfo= []}=useContext(BookCardInfo);
-// console.log("book ",books)
+import { AuthContext } from '../auth/auther';
+import { ContentDataContext } from '../../pages/User/Content Adminstorition/ArticlesHome/ArticlesContext';
+const   BooksSlider = () => {
+
+ const { ContentData } = useContext(ContentDataContext);
+ 
+   // 1. استخراج المصفوفة الأساسية بأمان لحمايتها من الـ undefined
+   const allContent = Array.isArray(ContentData) 
+     ? ContentData 
+     : (ContentData?.contents || []);
+ 
+   // 2. التصفية الصارمة: جلب العناصر التي نوعها مقالة فقط (BOOKS)
+   const booksArray = allContent.filter(item => item.content_type === "BOOK");
+
+
+const {user}=useContext(AuthContext);
   return (
     <section className="py-[8vw] md:py-[6vw] px-[4vw] bg-[#020617]" dir="rtl">
       {/* عنوان القسم - تكبير الخط في الجوال ليكون واضحاً */}
@@ -27,8 +38,8 @@ const{ CardInfo= []}=useContext(BookCardInfo);
       WebkitOverflowScrolling: 'touch' 
     }}
   >
-    {CardInfo.map((book) => (
-      <Link to={`/BookCardDeatils/${book.id}`} key={book.id} className="flex-none">
+    {booksArray.map((book) => (
+      
         <div 
           className="w-[29.3vw] md:w-[18vw] group/card bg-[#1e293b]/40 border border-white/10 rounded-2xl p-[1.5vw] hover:border-blue-500/50 transition-all relative"
         >
@@ -41,11 +52,13 @@ const{ CardInfo= []}=useContext(BookCardInfo);
 
           {/* غلاف الكتاب */}
           <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-[2vw] md:mb-[1.5vw] bg-black">
-            <img src={book.img} alt={book.title} className="w-full h-full object-cover opacity-90 group-hover/card:scale-105 transition-transform duration-500" />
+            <img src={book.img_path} alt={book.title} className="w-full h-full object-cover opacity-90 group-hover/card:scale-105 transition-transform duration-500" />
             
             <div className="hidden md:flex absolute inset-0 items-center justify-center gap-[1vw] opacity-0 group-hover/card:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
               <button className="p-[0.8vw] bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"><Eye size={"1.2vw"}/></button>
-              <button className="p-[0.8vw] bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"><ShoppingCart size={"1.2vw"}/></button>
+           <Link to={`/BookCardDeatils/${book.content_id}`} key={book.content_id} className="flex-none">
+             <button className="p-[0.8vw] bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors">
+              <ShoppingCart size={"1.2vw"}/></button></Link> 
             </div>
           </div>
 
@@ -62,12 +75,12 @@ const{ CardInfo= []}=useContext(BookCardInfo);
               <span className="text-emerald-400 font-black text-[3.5vw] md:text-[1.8vw] leading-none">${book.price}</span>
               <span className="text-gray-500 line-through text-[2.2vw] md:text-[1vw]">${book.oldPrice}</span>
             </div>
-            <button className="mt-2 md:mt-0 bg-blue-600/20 text-blue-400 border border-blue-500/30 p-[1.5vw] md:p-[0.7vw] rounded-xl hover:bg-blue-600 hover:text-white transition-all flex justify-center">
+           <Link to={ (user)?`/BookCardDeatils/${book.content_id}`:`/login`} key={book.content_id} className="flex-none"> <button className="mt-2 md:mt-0 bg-blue-600/20 text-blue-400 border border-blue-500/30 p-[1.5vw] md:p-[0.7vw] rounded-xl hover:bg-blue-600 hover:text-white transition-all flex justify-center">
                <ShoppingCart size={"3.5vw"} className="md:w-[1.4vw] md:h-[1.4vw]" />
-            </button>
+            </button></Link>
           </div>
         </div>
-      </Link>
+      
     ))}
   </div>
 </div>

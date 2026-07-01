@@ -15,7 +15,7 @@ const AuthPage = () => {
   const [name, setName] = useState("");
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  // الرابط العالمي الخاص بك على MockAPI
+  // الرابط العالمي ]   MockAPI
   // const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/users";
   const API_URL = "http://localhost:3000/users";
 
@@ -74,7 +74,7 @@ const AuthPage = () => {
       const checkRes = await fetch(API_URL);
       const users = await checkRes.json();
       const isExist = users.some(u => u.email === email);
-
+      
       if (isExist) {
         setMessage({ text: "هذا البريد الإلكتروني مسجل مسبقاً.", type: "error" });
         return;

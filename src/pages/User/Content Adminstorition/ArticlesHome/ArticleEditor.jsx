@@ -6,14 +6,14 @@ import {
 } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-
+import { ToastContext } from '../../../../App/Public/Contexts/ToastContext';
 function ArticleEditor() {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const { showHideToast } = useContext(ToastContext);
   const dataArticle = location.state?.articledata; // البيانات القادمة من صفحة الإدارة
 
-  const [message, setMessage] = useState({ text: "", type: "" });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef(null);
 
@@ -26,8 +26,6 @@ function ArticleEditor() {
     description: '',
     content_type: 'ARTICLE',
     price: 20,
-    TextContent: "",
-    content: "", // المحتوى الخاص بالمحرر
     img_path: "",
     status: 'DRAFT',
     created_at: new Date().toISOString().split('T')[0]
@@ -48,6 +46,14 @@ function ArticleEditor() {
       });
     }
   }, [dataArticle]);
+
+  const [dataArticleeatils,SetDataArticleDeatils]=useState({
+      id: Math.floor(Math.random() * 10000),
+        content_id:articleData.content_id,
+        body_html: "",
+        pages_count: 320,
+        
+    })
 
   // أنماط التصميم
   const glassStyle = {
@@ -82,7 +88,28 @@ function ArticleEditor() {
     setArticleData(prev => ({ ...prev, content: editorRef.current.innerHTML }));
   };
 
-  const API_URL = "http://localhost:3000/contents";
+const API_URL = "http://localhost:3000/contents";
+const urlArticleDeatils="http://localhost:3000/articles_details"
+  const AddArticleDeatils =async()=>{
+ try{
+      const res =await fetch(urlArticleDeatils,{
+        method:"POST",
+         headers: { "Content-Type": "application/json" },
+         body:JSON.stringify(dataArticleeatils)
+        
+      })
+       if (res.ok) {
+        showHideToast("تم إنشاء الكتاب بنجاح");
+      
+      } else {
+        alert("فشل الإرسال: تأكد أن السيرفر يعمل");
+      }
+    }catch (error) {
+      console.error("خطأ في الاتصال:", error);
+      alert("تعذر الوصول للسيرفر");
+    }
+
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,17 +125,15 @@ function ArticleEditor() {
       });
 
       if (res.ok) {
-        setMessage({ 
-          text: dataArticle ? "تم تحديث المقالة بنجاح!" : "تم إنشاء المقالة بنجاح!", 
-          type: "success" 
-        });
+        showHideToast("تم إنشاء المقالة بنجاح");
+         AddArticleDeatils()
         setTimeout(() => navigate('/ArticlesManager'), 2000);
       }
-    } catch (error) {
+    }
+    catch (error) {
       setMessage({ text: "حدث خطأ أثناء الاتصال بالسيرفر.", type: "error" });
     }
   };
-
   return (
     <div className={`min-h-screen bg-[#E0E5EC] pb-20 font-sans text-gray-800 ${isFullscreen ? 'fixed inset-0 z-[999] overflow-y-auto' : ''}`}>
       <div className={`max-w-6xl mx-auto pt-16 px-4 ${isFullscreen ? 'w-full' : ''}`} dir="rtl">
@@ -227,7 +252,7 @@ function ArticleEditor() {
             <div
               ref={editorRef}
               contentEditable={true}
-              onInput={(e) => setArticleData({ ...articleData, content: e.target.innerHTML })}
+              onInput={(e) => SetDataArticleDeatils({ ...dataArticleeatils, body_html: e.target.innerHTML })}
               className="w-full min-h-[400px] p-8 bg-white/80 rounded-3xl shadow-inner border border-gray-100 outline-none focus:ring-2 ring-[#319795]/20 text-xl leading-relaxed transition-all"
               dangerouslySetInnerHTML={{ __html: articleData.content }}
             ></div>
@@ -257,13 +282,7 @@ function ArticleEditor() {
             </div>
           </div>
 
-          {message.text && (
-            <div className={`mt-10 p-5 rounded-3xl text-center font-black shadow-lg animate-bounce ${
-              message.type === "error" ? "bg-rose-100 text-rose-600 border border-rose-200" : "bg-emerald-100 text-emerald-600 border border-emerald-200"
-            }`}>
-              {message.text}
-            </div>
-          )}
+          
         </form>
       </div>
     </div>

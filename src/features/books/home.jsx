@@ -1,7 +1,7 @@
 import React from 'react';
 import Hero from './Hero';
 import StatsBar from './StatsBar';
-import CategorySliderResponsive    from './Features';
+import CategorySliderResponsive from './Features';
 import BooksStore from './BooksGrid';
 // import FlashSales from './Earnings';
 import PromoBanner from './CTA';
@@ -13,15 +13,13 @@ const HomeBook = () => {
 
       <Header />
       <Hero />
-          <PromoBanner />
+      <PromoBanner />
       <StatsBar />
-      
-
       <CategorySliderResponsive />
       <BooksStore />
       <BooksStore />
       <Footer />
-  
+
     </div>
   );
 };
