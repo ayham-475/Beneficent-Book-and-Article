@@ -5,22 +5,50 @@ import { Search, Plus, Zap, Crown, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const UsersManager = () => {
-  const [Users, setUser] = useState([]);
-  const [UserBalance, SetUserBalance] = useState([]);
+ const [UserBalance, SetUserBalance] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // حالة البحث الجديدة
+  
   const API_URL = "http://localhost:3000/users";
   const API_URL_profile = "http://localhost:3000/profiles";
-  const GetUsers = async () => {
-    const users = await fetch(API_URL);
-    const usersdata = await users.json();
-    const usersProfile = await fetch(API_URL_profile);
-    const usersdata_profile = await usersProfile.json();
-    setUser(usersdata);
-    SetUserBalance(usersdata_profile)
-  }
 
+  const GetUsers = async () => {
+    try {
+      const users = await fetch(API_URL);
+      const usersdata = await users.json();
+      
+      const usersProfile = await fetch(API_URL_profile);
+      const usersdata_profile = await usersProfile.json();
+      
+     
+      
+      // دمج البيانات لضمان وجود جميع المعلومات في مصفوفة واحدة للبحث والعرض الاحترافي
+      const mergedData = usersdata_profile.map(profile => {
+        const correspondingUser = usersdata.find(u => String(u.id) === String(profile.user_id));
+        return {
+          ...profile,
+          email: correspondingUser ? correspondingUser.email : "", // إذا كنت تحتاج البحث بالإيميل أيضاً
+        
+        };
+      });
+
+      SetUserBalance(mergedData);
+    } catch (error) {
+      console.error("Error fetching users data:", error);
+    }
+  }
   useEffect(() => {
     GetUsers();
   }, [])
+
+  // تصفية المستخدمين بناءً على النص المدخل في خانة البحث
+  const filteredUsers = UserBalance.filter(user => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (user.display_name && user.display_name.toLowerCase().includes(searchLower)) ||
+      (user.user_id && String(user.id).toLowerCase().includes(searchLower)) ||
+      (user.email && user.email.toLowerCase().includes(searchLower))
+    );
+  });
   
   return (
     // h-screen + overflow-hidden تضمن ثبات الصفحة بالكامل
@@ -49,7 +77,9 @@ const UsersManager = () => {
                 <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
                 <input
                   type="text"
-                  placeholder="بحث سريع..."
+                  placeholder="بحث سريع بالاسم أو المعرف..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)} // تحديث النص فوراً عند الكتابة
                   className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pr-10 pl-4 text-xs focus:outline-none focus:border-emerald-500/50 transition-all"
                 />
               </div>
@@ -71,46 +101,54 @@ const UsersManager = () => {
           `}</style>
 
           <div className="grid grid-cols-1 gap-4">
-            {UserBalance.map((user, index) => (
-              <div
-                key={index}
-                className="
-                  group relative bg-[#121214]/40 border border-white/[0.03] 
-                  hover:bg-[#161618] hover:border-emerald-500/20 
-                  rounded-2xl p-4 transition-all duration-300
-                  flex items-center justify-between gap-4
-                "
-              >
-                {/* المحتوى الأفقي داخل البطاقة */}
-                <div className="flex items-center gap-4 flex-1">
-                  <img src={user.avatar_url} className="w-10 h-10 rounded-lg object-cover" alt="img" />
-                  <div className="grid grid-cols-2 md:grid-cols-4 flex-1 items-center gap-4">
-                    <div className="min-w-[120px]">
-                      <h3 className="text-sm font-bold text-gray-100">{user.display_name}</h3>
-                      <p className="text-[10px] text-gray-500 truncate">{user.payout_details}</p>
-                    </div>
-                    <div className="hidden md:block">
-                      <span className="bg-white/5 text-[9px] px-2 py-1 rounded-md text-gray-400 border border-white/5">{user.payout_details}</span>
-                    </div>
-                    <div className="hidden md:block">
-                      <span className="text-sm font-mono text-emerald-400 font-bold">{user.user_id}</span>
-                    </div>
-                    <div className="w-24">
-                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500" style={{ width: `${user.payout_method}%` }}></div>
+            {/* قمنا باستبدال الخريطة لتعرض المصفوفة المصفاة filteredUsers بدلاً من القديمة */}
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user, index) => (
+                <div
+                  key={index}
+                  className="
+                    group relative bg-[#121214]/40 border border-white/[0.03] 
+                    hover:bg-[#161618] hover:border-emerald-500/20 
+                    rounded-2xl p-4 transition-all duration-300
+                    flex items-center justify-between gap-4
+                  "
+                >
+                  {/* المحتوى الأفقي داخل البطاقة */}
+                  <div className="flex items-center gap-4 flex-1">
+                    <img src={user.avatar_url} className="w-10 h-10 rounded-lg object-cover" alt="img" />
+                    <div className="grid grid-cols-2 md:grid-cols-4 flex-1 items-center gap-4">
+                      <div className="min-w-[120px]">
+                        <h3 className="text-sm font-bold text-gray-100">{user.display_name}</h3>
+                        <p className="text-[10px] text-gray-500 truncate">{user.payout_details}</p>
+                      </div>
+                      <div className="hidden md:block">
+                        <span className="bg-white/5 text-[9px] px-2 py-1 rounded-md text-gray-400 border border-white/5">{user.payout_details}</span>
+                      </div>
+                      <div className="hidden md:block">
+                        <span className="text-sm font-mono text-emerald-400 font-bold">{user.user_id}</span>
+                      </div>
+                      <div className="w-24">
+                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500" style={{ width: `${user.payout_method}%` }}></div>
+                        </div>  
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <Link to='/ContentModeration' state={{ user: user }}><button className="text-gray-600 hover:text-emerald-500 transition-colors">
-                  <Filter size={14} />تفاصيل
-                </button>
-                </Link>
+                  <Link to='/ContentModeration' state={{ user: user }}><button className="text-gray-600 hover:text-emerald-500 transition-colors flex items-center gap-1 text-xs">
+                    <Filter size={14} />تفاصيل
+                  </button>
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12 text-gray-500 text-sm">
+                لا يوجد مستخدمين يطابقون بحثك الحالي.
               </div>
-            ))}
+            )}
           </div>
         </div>
+        
         {/* قسم "النشاط المباشر" السفلي - يزيد من جمال الصفحة */}
         <section className="mt-16 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 rounded-[3rem] p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
@@ -134,5 +172,5 @@ const UsersManager = () => {
     </div>
   );
 };
-``
+
 export default UsersManager;

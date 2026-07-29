@@ -1,11 +1,10 @@
 import { useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./auther";
-
+  
 const ProtectedRoute = ({ children ,allowedRoles}) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
-
   // 1. إذا كان الكونتكت لا يزال يفحص الذاكرة، لا تفعل شيئاً (انتظر)
   if (loading) {
     return (
@@ -16,7 +15,7 @@ const ProtectedRoute = ({ children ,allowedRoles}) => {
   }
 
   // 2. إذا لم يجد مستخدماً مسجلاً، انقله لصفحة اللوجن
-  if (allowedRoles && !allowedRoles.includes(user.profile.type)) {
+  if (allowedRoles && !allowedRoles.includes(user.type)) {
     // نستخدم state لحفظ المكان الذي كان يحاول المستخدم دخوله لنعيده إليه بعد التسجيل
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

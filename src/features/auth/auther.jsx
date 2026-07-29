@@ -44,22 +44,23 @@ export const AuthProvider = ({ children }) => {
   };
   // 4. دالة تسجيل الخروج
   const logout = () => {
-    // const confirmDelete = window.confirm(" هل انت متاكد من تسجيل الخروج");
-    // if (confirmDelete) {
-    //   setUser(null);
-    //   localStorage.removeItem('elite_user');
-    //   localStorage.removeItem('elite_token');
-    //   localStorage.removeItem('user');
-    //   navigate("/");
-    // }
-    // else {
 
-    // }
-      setUser(null);
-      localStorage.removeItem('elite_user');
-      localStorage.removeItem('elite_token');
-      localStorage.removeItem('user');
-      navigate("/");
+  // 1. تنظيف شامل لكل التوكينات والبيانات المخزنة
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("elite_token");
+  localStorage.removeItem("elite_user");
+  localStorage.removeItem("token sw");
+
+  // أو يمكنك مسح كل شيء دفعة واحدة بحذر عبر:
+  // localStorage.clear();
+
+  // 2. تحديث الـ State في React
+  setUser(null);
+
+  // 3. التوجيه لصفحة تسجيل الدخول
+  navigate("/login");
+  
   };
 
   // القيم التي سيراها أي مكون يستخدم useContext(AuthContext)

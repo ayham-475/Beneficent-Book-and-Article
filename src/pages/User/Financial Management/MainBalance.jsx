@@ -1,26 +1,102 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Wallet, ArrowDownLeft, Plus, Zap } from 'lucide-react';
+import { ArrowUpRight, Wallet, Plus, Zap } from 'lucide-react';
+import { AuthContext } from '../../../features/auth/auther';
 
 const MainBalance = () => {
-  // i am ayham alyaari iam single
+  const { user } = useContext(AuthContext);
+
+  // روابط الـ API
+  const Url = "http://localhost:3000/purchases";
+  const UrlContent = "http://localhost:3000/contents";
+  const UrlUsers = "http://localhost:3000/users"; 
+
+  const [salesData, SetsalesData] = useState([]);
+  const [mainbalance, setmainbalance] = useState(0);
+
+  // ✅ جلب البيانات عند تحميل الكومبوننت والتأكد من وجود الـ user.id
+  useEffect(() => {
+    if (user?.id) {
+      GetPurchures();
+    }
+  }, [user?.id]);
+
+  // ✅ مراقبة salesData وحساب الرصيد فور تحديثها تلقائياً
+  useEffect(() => {
+    if (salesData.length > 0) {
+      const count = salesData.reduce((total, sale) => {
+        // تأكد من طرح عمولة المنصة بشكل صحيح (إذا لم تكن موجودة تفترض صفر)
+        const commission = sale.platform_commission ? Number(sale.platform_commission) : 0;
+        return total + (Number(sale.price) - commission);
+      }, 0);
+      
+      setmainbalance(count);
+    }
+  }, [salesData]); // تعاد الحسبة فوراً عندما تتغير الـ salesData
+
+  const GetPurchures = async () => {
+    try {
+      const purchasesResponse = await fetch(Url);
+      const contentsResponse = await fetch(UrlContent);
+      const usersResponse = await fetch(UrlUsers);
+
+      const Datapurchases = await purchasesResponse.json();
+      const DataContent = await contentsResponse.json();
+      const DataUsers = await usersResponse.json();
+
+      // المحتويات الخاصة بالمؤلف الحالي
+      const myContents = DataContent.filter(
+        (content) => content.author_id === user?.id
+      );
+
+      // دمج البيانات
+      const sales = Datapurchases
+        .filter((purchase) =>
+          myContents.some(
+            (content) => content.content_id == purchase.content_id
+          )
+        )
+        .map((purchase) => {
+          const content = myContents.find(
+            (item) => item.content_id == purchase.content_id
+          );
+
+          const buyer = DataUsers.find(
+            (item) => item.id === purchase.payer_id
+          );
+
+          return {
+            ...purchase,
+            title: content?.title || "محتوى غير معروف",
+            image: content?.img_path || content?.image, 
+            price: content?.price || 0,
+            customer: buyer?.profile?.name || buyer?.name || "مستخدم غير معروف", 
+          };
+        });
+
+      SetsalesData(sales);
+      
+    } catch (error) {
+      console.error("خطأ في جلب بيانات المبيعات:", error);
+    }
+  };
 
   return (
     <div className="grid mt-20 mr-20 grid-cols-1 lg:grid-cols-3 gap-6" dir="rtl">
       {/* البطاقة الكبيرة - الرصيد */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="lg:col-span-2  relative overflow-hidden bg-[#0a0a0a] rounded-[3rem] p-10 border border-white/5 shadow-2xl"
+        className="lg:col-span-2 relative overflow-hidden bg-[#0a0a0a] rounded-[3rem] p-10 border border-white/5 shadow-2xl"
       >
         <div className="relative z-10 flex flex-col h-full justify-between">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-emerald-500 font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
-                <Zap size={14} fill="currentColor"/> إجمالي المحفظة المالية
+                <Zap size={14} fill="currentColor" /> إجمالي المحفظة المالية
               </p>
               <h2 className="text-5xl md:text-7xl font-black text-white tabular-nums tracking-tighter">
-                $42,850<span className="text-2xl text-gray-600">.00</span>
+                ${mainbalance}<span className="text-2xl text-gray-600">.00</span>
               </h2>
             </div>
             <div className="bg-emerald-500/10 p-4 rounded-3xl border border-emerald-500/20">
@@ -43,7 +119,7 @@ const MainBalance = () => {
       </motion.div>
 
       {/* بطاقة إحصائية سريعة - الأرباح الشهرية */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-[3rem] p-8 border border-gray-100 shadow-xl flex flex-col justify-between"
@@ -54,10 +130,10 @@ const MainBalance = () => {
             <h3 className="text-4xl font-black text-gray-800">$12,400</h3>
             <span className="text-emerald-500 font-bold text-sm mb-1">+24%</span>
           </div>
-          {/* رسم بياني مصغر تفاعلي (بسيط) */}
+          {/* رسم بياني مصغر تفاعلي */}
           <div className="h-20 w-full flex items-end gap-1 px-2">
             {[40, 70, 45, 90, 65, 80, 50].map((h, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 initial={{ height: 0 }}
                 animate={{ height: `${h}%` }}
@@ -73,4 +149,5 @@ const MainBalance = () => {
     </div>
   );
 };
-export default MainBalance
+
+export default MainBalance;

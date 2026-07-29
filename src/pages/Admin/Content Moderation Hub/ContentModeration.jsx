@@ -43,17 +43,6 @@ const UserManagement = () => {
     }
   ];
 
-  // {
-  //     "profile_id": 1,
-  //     "user_id": "1a44",
-  //     "display_name": "المهندس أيهم اليعري",
-  //     "bio": "خبير في تطوير البرمجيات وكاتب تقني مهتم بنشر المعرفة الرقمية.",
-  //     "avatar_url": "/imgs/Ayham",
-  //     "payout_method": "PayPal",
-  //     "payout_details": "ayham.admin@example.com",
-  //     "id": "e152"
-  //   },
-  
   return (
     <div className="h-screen bg-[#050505] flex overflow-hidden text-white font-sans selection:bg-blue-500/30" dir="rtl">
       <Sidebar />

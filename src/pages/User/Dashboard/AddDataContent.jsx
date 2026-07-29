@@ -13,10 +13,10 @@ function AddDataContent() {
   const bookdata = location.state?.BookData; // البيانات القادمة من صفحة الإدارة عند التعديل
   const { user } = useContext(AuthContext);
   const { showHideToast } = useContext(ToastContext);
-
   // 1. تعريف الكيان الأول (المحتوى الأساسي)
   const [ContentData, SetContentData] = useState({
     author_id: user?.id || "",
+    
     category_id: "",
     title: '',
     description: '',
@@ -25,7 +25,7 @@ function AddDataContent() {
     TextContent: "عملي", // القيمة الافتراضية متطابقة مع أول خيار في الـ Select
     img_path: "",
     language: "العربية",
-    status: 'DRAFT',
+    status: 'Pending',
     created_at: new Date().toISOString().split('T')[0]
   });
 
@@ -63,7 +63,7 @@ function AddDataContent() {
 
   // روابط الـ API الخاصة بـ Beeceptor
   const urlContents = "http://localhost:3000/contents";
-  const urlBookDetails = "http://localhost:3000/contents";
+  const urlBookDetails = "http://localhost:3000/book_details";
 
   // دالة المعالجة وحفظ البيانات في الجدولين بشكل مترابط ومتزامن
   const handlAddContent = async (e) => {
@@ -79,7 +79,7 @@ function AddDataContent() {
     // تجهيز بيانات جدول contents الفريد بأعمدته
     const contentPayload = {
       ...ContentData,
-      id: currentContentId,
+      content_id: currentContentId,
       price: parseFloat(ContentData.price) || 0,
     };
 
@@ -91,7 +91,7 @@ function AddDataContent() {
     };
 
     // روابط الإرسال حسب نمط العملية (إضافة أم تعديل)
-    const contentTargetUrl = isEdit ? `${urlContents}${bookdata.id}` : urlContents;
+    const contentTargetUrl = isEdit ? `${urlContents}${bookdata.content_id}` : urlContents;
     const detailsTargetUrl = isEdit ? `${urlBookDetails}${currentDetailId}` : urlBookDetails;
 
     try {

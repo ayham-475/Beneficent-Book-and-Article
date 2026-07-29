@@ -40,6 +40,7 @@ const Sidebar = () => {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+  console.log("profile ",profile)
   const menuItems = [
     { id: 'dashboard', icon: <LayoutDashboard size={22} />, label: 'لوحة التحكم', path: '/dashboard' },
     { id: 'content', icon: <FileText size={22} />, label: 'مراجعة المحتوى', path: '/content' },
@@ -154,7 +155,7 @@ const Sidebar = () => {
               <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#0d0d0d] rounded-full shadow-[0_0_5px_#10b981]" />
             </div>
             <div className={`flex flex-col transition-all duration-300 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-              <span className="text-xs font-black text-white whitespace-nowrap">م :  {user.profile.name}</span>
+              <span className="text-xs font-black text-white whitespace-nowrap">م :  {loading?profile[0].display_name:''}</span>
               <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter italic">Main Developer</span>
             </div>
             <div className='mr-10'> <button onClick={() => { setShowLogout(true) }} className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} text-gray-300 hover:text-red-500 transition-all`}>

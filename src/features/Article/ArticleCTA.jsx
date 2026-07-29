@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Feather } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ArticleCTA = () => {
   return (
@@ -25,10 +26,11 @@ const ArticleCTA = () => {
           <p className="text-blue-100 text-[2.5vw] md:text-[1.8vw] mb-[4vw] max-w-[80%] md:max-w-[70%] font-medium leading-relaxed">
             شارك مقالاتك مع آلاف القراء واجعل صوتك مسموعاً. نحن نؤمن بقوة الأفكار.
           </p>
-
+          <Link to="/login">
           <button className="px-[5vw] py-[2vw] md:px-[4vw] md:py-[1.8vw] bg-white text-purple-800 rounded-[1.5vw] font-black text-[3.5vw] md:text-[2vw] shadow-2xl hover:bg-purple-50 transition-all">
             ابدأ بكتابة مقال
           </button>
+          </Link>
         </div>
       </div>
     </section>

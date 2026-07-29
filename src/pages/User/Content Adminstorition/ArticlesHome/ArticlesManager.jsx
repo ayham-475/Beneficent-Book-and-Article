@@ -2,19 +2,35 @@ import React, { useContext, useState ,useEffect } from 'react';
 import { 
   Plus, Search, Filter, Clock
 } from 'lucide-react';
-
+import { ContentDataContext } from '../ArticlesHome/ArticlesContext';
+import { AuthContext } from '../../../../features/auth/auther';
 import { Link } from 'react-router-dom';
 import ArticlesTable from "./ArticlesTable"
 const ArticlesManager = () => {
+
   
   const [searchTerm, setSearchTerm] = useState("");
+    const ContentData = useContext(ContentDataContext)
+    const { user } = useContext(AuthContext);
+    const UserArticles = ContentData.filter((book) => {
+    if (book.content_type === "ARTICLE") {
+      return (book.author_id == user.id)
+    }
+  });
+
+  const SerchedArticles=UserArticles.filter((Article)=>{
+    const nameArticle=searchTerm.toLowerCase(searchTerm);
+    return(
+      (Article.title&&Article.title.toLowerCase().includes(nameArticle))||
+      (Article.content_id&&String(Article.content_id).toLowerCase().includes(nameArticle))
+
+    )
+
+  })
+
 
   // بيانات تجريبية تحاكي الواقع
-  const myArticles = [
-    { id: 1, title: "مستقبل الذكاء الاصطناعي في 2026", status: "منشور", views: "1.2k", comments: 45, date: "2026-02-01", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=200" },
-    { id: 2, title: "كيف تبني براند شخصي كمبرمج؟", status: "مسودة", views: "0", comments: 0, date: "2026-02-05", image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=200" },
-    { id: 3, title: "أسرار تجربة المستخدم في التطبيقات", status: "مراجعة", views: "850", comments: 12, date: "2026-01-28", image: "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?auto=format&fit=crop&q=80&w=200" },
-  ];
+
   const cardStyle = {
     background: "rgba(255, 255, 255, 0.4)",
     backdropFilter: "blur(15px)",
@@ -31,13 +47,9 @@ const ArticlesManager = () => {
         <header className="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 mb-12">
           <div>
             <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-3">مقالاتي</h1>
-            <p className="text-gray-500 font-bold text-lg">لديك <span className="text-[#319795]">{myArticles.length}</span> مقالات منشورة ومسودات.</p>
+            <p className="text-gray-500 font-bold text-lg">لديك <span className="text-[#319795]"></span> مقالات منشورة ومسودات.</p>
           </div>
-          <Link to="/ArticleEditor" >
-          <button className="flex items-center gap-2 bg-[#319795] text-white px-8 py-4 rounded-3xl font-black shadow-lg shadow-[#319795]/30 hover:scale-105 transition-transform">
-            <Plus size={24} /> كتابة مقال جديد
-          </button>
-          </Link>
+          
         </header>
 
         {/* Search & Filter Bar */}
@@ -47,6 +59,7 @@ const ArticlesManager = () => {
             <input 
               type="text"
               placeholder="ابحث عن عنوان مقال..."
+              value={searchTerm}
               className="w-full bg-white/50 border-none rounded-2xl py-4 pr-12 pl-4 focus:ring-2 ring-[#319795]/20 outline-none font-bold"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -61,7 +74,7 @@ const ArticlesManager = () => {
         </div>
 
         {/* Articles List / Grid */}
-       <ArticlesTable  />
+       <ArticlesTable SerchedArticles={SerchedArticles}  />
       </div>
     </div>
   );

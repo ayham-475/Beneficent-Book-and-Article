@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { 
-  Edit3, Trash2, Eye, Calendar, 
+  Edit3, Trash2, Eye, Calendar, Plus,
   MessageSquare, MoreVertical, Share2
 } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
 import ArticleEditor from './ArticleEditor';
 import { Link } from 'react-router-dom';
-const SmartArticlesManager = () => {
+const SmartArticlesManager = ({SerchedArticles}) => {
   const { user } = useContext(AuthContext);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,10 +65,11 @@ const SmartArticlesManager = () => {
             <h2 className="text-xl md:text-3xl font-black text-gray-900 tracking-tighter">إدارة المقالات</h2>
             <p className="text-[10px] md:text-sm font-bold text-gray-500 mt-1">لديك {articles.length} أعمال إبداعية</p>
           </div>
-          <button className="bg-[#319795] text-white p-3 md:px-8 md:py-4 rounded-2xl md:rounded-3xl font-black text-xs md:text-base shadow-lg shadow-[#319795]/30 hover:scale-105 transition-all active:scale-95">
-            <span className="hidden md:inline">إضافة مقال جديد</span>
-            <span className="md:hidden text-lg">+</span>
+          <Link to="/ArticleEditor" >
+          <button className="flex items-center gap-2 bg-[#319795] text-white px-7 py-3 rounded-3xl font-black shadow-lg shadow-[#319795]/30 hover:scale-105 transition-transform">
+            <Plus size={24} /> كتابة مقال جديد
           </button>
+          </Link>
         </div>
 
         {/* --- Main Content Container --- */}
@@ -87,7 +88,7 @@ const SmartArticlesManager = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/30">
-                {articles.map((art) => (
+                {SerchedArticles.map((art) => (
                   <tr key={art.content_id} className="hover:bg-white/40 transition-all group">
                     <td className="px-10 py-6">
                       <div className="font-bold text-gray-800 text-lg group-hover:text-[#319795] transition-colors">{art.title}</div>

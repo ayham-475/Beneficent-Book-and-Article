@@ -2,60 +2,62 @@ import React, { useState, useRef, useContext, useEffect } from 'react';
 import {
   ArrowLeft, Edit3, 
   Maximize2, Minimize2,
-  Bold, Italic, Underline, List, ListOrdered, Link as AlignLeft, AlignCenter, AlignRight
+  Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ToastContext } from '../../../../App/Public/Contexts/ToastContext';
+
 function ArticleEditor() {
   const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { showHideToast } = useContext(ToastContext);
-  const dataArticle = location.state?.articledata; // البيانات القادمة من صفحة الإدارة
+  const dataArticle = location.state?.articledata;
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef(null);
 
-  // الحالة الابتدائية (للإضافة)
+  // 1. بيانات المقال الأساسية (تتطابق مع نموذج Content في Django)
   const [articleData, setArticleData] = useState({
-    content_id: Math.floor(Math.random() * 10000), // توليد ID عشوائي مؤقت
-    author_id: user?.id,
-    category_id: "مقالة تكنلوجيا",
     title: '',
     description: '',
+    category_id: 'مقالة تكنلوجيا',
     content_type: 'ARTICLE',
-    price: 20,
-    img_path: "",
-    status: 'DRAFT',
-    created_at: new Date().toISOString().split('T')[0]
+    price: 0,
+    img_path: '',
+    status: 'DRAFT'
   });
 
-  // معالجة البيانات القادمة من التعديل (تستخدم useEffect لمنع الـ Infinite Loop)
+  // 2. بيانات محتوى المقال التفصيلي
+  const [articleDetails, setArticleDetails] = useState({
+    body_html: '',
+    pages_count: 1
+  });
+
+  // جلب البيانات وتعبئتها عند التعديل
   useEffect(() => {
     if (dataArticle) {
       setArticleData({
-        ...dataArticle,
-        // نضمن أن الحقول ليست undefined لتجنب الأخطاء في الـ Input
-        title: dataArticle.title || "",
-        content_type: dataArticle.content_type || "ARTICLE",
-        img_path: dataArticle.img_path || "",
-        category_id: dataArticle.category_id || "مقالة تكنلوجيا",
-        TextContent: dataArticle.TextContent || "",
-        content: dataArticle.content || ""
+        title: dataArticle.title || '',
+        description: dataArticle.description || dataArticle.text_content || '',
+        category_id: dataArticle.category_id || 'مقالة تكنلوجيا',
+        content_type: dataArticle.content_type || 'ARTICLE',
+        price: dataArticle.price || 0,
+        img_path: dataArticle.img_path || '',
+        status: dataArticle.status || 'DRAFT'
       });
+
+      const initialHtml = dataArticle.body_html || dataArticle.text_content || '';
+      setArticleDetails(prev => ({ ...prev, body_html: initialHtml }));
+      
+      if (editorRef.current) {
+        editorRef.current.innerHTML = initialHtml;
+      }
     }
   }, [dataArticle]);
 
-  const [dataArticleeatils,SetDataArticleDeatils]=useState({
-      id: Math.floor(Math.random() * 10000),
-        content_id:articleData.content_id,
-        body_html: "",
-        pages_count: 320,
-        
-    })
-
-  // أنماط التصميم
+  // أنماط التصميم (Neumorphic & Glassmorphism)
   const glassStyle = {
     background: "rgba(255, 255, 255, 0.25)",
     backdropFilter: "blur(12px)",
@@ -82,58 +84,99 @@ function ArticleEditor() {
     outline: "none"
   };
 
+  // التحكم في شريط أدوات النصوص
   const handleEditorCommand = (command, value = null) => {
     document.execCommand(command, false, value);
-    // تحديث المحتوى في الـ State عند التنسيق
-    setArticleData(prev => ({ ...prev, content: editorRef.current.innerHTML }));
+    if (editorRef.current) {
+      const updatedHtml = editorRef.current.innerHTML;
+      setArticleDetails(prev => ({ ...prev, body_html: updatedHtml }));
+    }
   };
 
-const API_URL = "http://localhost:3000/contents";
-const urlArticleDeatils="http://localhost:3000/articles_details"
-  const AddArticleDeatils =async()=>{
- try{
-      const res =await fetch(urlArticleDeatils,{
-        method:"POST",
-         headers: { "Content-Type": "application/json" },
-         body:JSON.stringify(dataArticleeatils)
+  // عناوين الـ API
+  const API_URL = "http://127.0.0.1:8080/article/create/";
+  const URL_ARTICLE_DETAILS = "http://127.0.0.1:8080/article/create_articleDeatils/";
+
+  // دالة حفظ تفاصيل المقال (تُستدعى بعد الحصول على UUID المقال الرئيسي)
+  const addArticleDetails = async (createdContentId) => {
+    try {
+    
+      const payload = {
+        content_id: createdContentId,
+        body_html: articleDetails.body_html,
+        pages_count: articleDetails.pages_count
+      };
+   const token = localStorage.getItem("token");
+      const res = await fetch(URL_ARTICLE_DETAILS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" ,"Authorization": `Token ${token}`},
+        body: JSON.stringify(payload)
         
-      })
-       if (res.ok) {
-        showHideToast("تم إنشاء الكتاب بنجاح");
-      
-      } else {
-        alert("فشل الإرسال: تأكد أن السيرفر يعمل");
+      });
+
+      if (!res.ok) {
+        console.error("لم يتم حفظ تفاصيل المحتوى بشكل كامل.");
       }
-    }catch (error) {
-      console.error("خطأ في الاتصال:", error);
-      alert("تعذر الوصول للسيرفر");
+    } catch (error) {
+      console.error("خطأ أثناء الاتصال بـ API تفاصيل المقال:", error);
     }
+  };
 
-  }
+  // دالة الحفظ الرئيسية (تستقبل الحالة المباشرة لتفادي مشكلة race condition)
+  const saveArticle = async (targetStatus) => {
+    const isEditing = Boolean(dataArticle?.content_id || dataArticle?.id);
+    const method = isEditing ? "PUT" : "POST";
+    const targetId = dataArticle?.content_id || dataArticle?.id;
+    const url = isEditing ? `${API_URL}${targetId}/` : API_URL;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // تحديد النوع: إذا كان هناك ID فهو تعديل (PUT)، وإلا فهو إضافة (POST)
-    const method = dataArticle ? "PUT" : "POST";
-    const url = dataArticle ? `${API_URL}/${dataArticle.id}` : API_URL;
+    // تجهيز البيانات المرسلة للـ Backend
+    const payload = {
+
+      title: articleData.title,
+      description: articleData.description,
+      category_id: articleData.category_id,
+      content_type: articleData.content_type,
+      price: articleData.price,
+      img_path: articleData.img_path,
+      status: targetStatus,
+      text_content: articleDetails.body_html
+    };
 
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(articleData)
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`
+        },
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
-        showHideToast("تم إنشاء المقالة بنجاح");
-         AddArticleDeatils()
-        setTimeout(() => navigate('/ArticlesManager'), 2000);
+        const resData = await res.json();
+        // أخذ الـ UUID الراجع من السيرفر أو المعرّف الحالي في حالة التعديل
+        const savedContentId = resData.id || targetId;
+    
+        // إرسال تفاصيل المحتوى
+        if (savedContentId) {
+          await addArticleDetails(savedContentId);
+        }
+
+        const successMessage = isEditing ? "تم تعديل المقال بنجاح ✨" : "تم نشر المقال بنجاح ✨";
+        showHideToast(successMessage);
+
+        setTimeout(() => navigate('/ArticlesManager'), 1200);
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || errorData.detail || "حدث خطأ أثناء حفظ المقال.");
       }
-    }
-    catch (error) {
-      setMessage({ text: "حدث خطأ أثناء الاتصال بالسيرفر.", type: "error" });
+    } catch (error) {
+      console.error("خطأ الاتصال بالسيرفر:", error);
+      alert("تعذر الاتصال بالسيرفر. يرجى التحقق من الخادم.");
     }
   };
+
   return (
     <div className={`min-h-screen bg-[#E0E5EC] pb-20 font-sans text-gray-800 ${isFullscreen ? 'fixed inset-0 z-[999] overflow-y-auto' : ''}`}>
       <div className={`max-w-6xl mx-auto pt-16 px-4 ${isFullscreen ? 'w-full' : ''}`} dir="rtl">
@@ -147,7 +190,7 @@ const urlArticleDeatils="http://localhost:3000/articles_details"
               </span>
               {dataArticle ? "تعديل المقال" : "كتابة مقال جديد"}
             </h1>
-            <p className="text-gray-600 font-medium mr-16 italic">مرحباً {user?.name}، محتواك الإبداعي يبدأ من هنا.</p>
+            <p className="text-gray-600 font-medium mr-16 italic">مرحباً {user?.name || "بالكاتب"}، أبدع في كتابة محتواك اليوم.</p>
           </div>
           <button
             type="button"
@@ -159,8 +202,8 @@ const urlArticleDeatils="http://localhost:3000/articles_details"
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          {/* تفاصيل المقال */}
+        <form onSubmit={(e) => e.preventDefault()}>
+          {/* التفاصيل الأساسية */}
           <div style={neumorphicCardStyle} className="p-8 md:p-12 mb-10">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-2 h-8 bg-[#319795] rounded-full"></div>
@@ -172,38 +215,38 @@ const urlArticleDeatils="http://localhost:3000/articles_details"
                 <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">عنوان المقال *</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.title || ""}
+                  value={articleData.title}
                   onChange={(e) => setArticleData({ ...articleData, title: e.target.value })}
                   type="text"
                   required
-                  placeholder="أدخل عنواناً ملهماً..."
+                  placeholder="أدخل عنوان المقال..."
                 />
               </div>
               <div className="space-y-4">
                 <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">نوع المحتوى *</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.content_type || ""}
+                  value={articleData.content_type}
                   onChange={(e) => setArticleData({ ...articleData, content_type: e.target.value })}
                   type="text"
-                  placeholder="ARTICLE, NEWS..."
+                  placeholder="ARTICLE..."
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-8">
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">رابط صورة الغلاف *</label>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">رابط صورة الغلاف</label>
                 <input
                   style={neumorphicInputStyle}
-                  value={articleData.img_path || ""}
+                  value={articleData.img_path}
                   onChange={(e) => setArticleData({ ...articleData, img_path: e.target.value })}
                   type="text"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://example.com/cover.jpg"
                 />
               </div>
               <div className="space-y-4">
-                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">التصنيف المختص *</label>
+                <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">التصنيف *</label>
                 <select
                   value={articleData.category_id}
                   onChange={(e) => setArticleData({ ...articleData, category_id: e.target.value })}
@@ -218,18 +261,18 @@ const urlArticleDeatils="http://localhost:3000/articles_details"
             </div>
 
             <div className="space-y-4">
-              <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">ملخص سريع (Description)</label>
+              <label className="text-sm font-black text-gray-500 mr-2 uppercase tracking-widest">الملخص (Description)</label>
               <textarea
                 style={neumorphicInputStyle}
-                value={articleData.TextContent || ""}
-                onChange={(e) => setArticleData({ ...articleData, TextContent: e.target.value })}
+                value={articleData.description}
+                onChange={(e) => setArticleData({ ...articleData, description: e.target.value })}
                 rows="3"
-                placeholder="اكتب نبذة مختصرة تجذب القراء..."
+                placeholder="نبذة مختصرة عن المقال..."
               ></textarea>
             </div>
           </div>
 
-          {/* محرر النص الغني */}
+          {/* محرر النصوص الغني */}
           <div style={neumorphicCardStyle} className="p-8 md:p-12 mb-10">
             <div className="flex items-center gap-3 mb-8 text-[#319795]">
               <div className="w-2 h-8 bg-[#319795] rounded-full"></div>
@@ -252,37 +295,34 @@ const urlArticleDeatils="http://localhost:3000/articles_details"
             <div
               ref={editorRef}
               contentEditable={true}
-              onInput={(e) => SetDataArticleDeatils({ ...dataArticleeatils, body_html: e.target.innerHTML })}
+              onInput={(e) => setArticleDetails(prev => ({ ...prev, body_html: e.currentTarget.innerHTML }))}
               className="w-full min-h-[400px] p-8 bg-white/80 rounded-3xl shadow-inner border border-gray-100 outline-none focus:ring-2 ring-[#319795]/20 text-xl leading-relaxed transition-all"
-              dangerouslySetInnerHTML={{ __html: articleData.content }}
             ></div>
           </div>
 
-          {/* أزرار التحكم والرسائل */}
+          {/* أزرار الإرسال والإلغاء */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <Link to="/user-content-manager" className="flex items-center gap-2 text-gray-500 font-bold hover:text-rose-500 transition-colors">
-              <ArrowLeft size={20} /> إلغاء وحذف التغييرات
+            <Link to="/ArticlesManager" className="flex items-center gap-2 text-gray-500 font-bold hover:text-rose-500 transition-colors">
+              <ArrowLeft size={20} /> إلغاء والتراجع
             </Link>
 
             <div className="flex gap-4 w-full md:w-auto">
               <button 
                 type="button" 
-                onClick={() => setArticleData({...articleData, status: 'DRAFT'})}
+                onClick={() => saveArticle('DRAFT')}
                 className="flex-1 md:flex-none px-10 py-4 bg-gray-400 text-white rounded-2xl font-black shadow-lg hover:bg-gray-500 transition-all active:scale-95"
               >
                 حفظ مسودة
               </button>
               <button 
-                type="submit" 
-                onClick={() => setArticleData({...articleData, status: 'PUBLISHED'})}
+                type="button" 
+                onClick={() => saveArticle('PUBLISHED')}
                 className="flex-1 md:flex-none px-10 py-4 bg-[#319795] text-white rounded-2xl font-black shadow-xl shadow-[#319795]/30 hover:bg-[#2a8381] transition-all active:scale-95"
               >
                 {dataArticle ? "تحديث الآن" : "نشر المقال"}
               </button>
             </div>
           </div>
-
-          
         </form>
       </div>
     </div>

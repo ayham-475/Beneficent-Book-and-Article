@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { use, useContext, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Plus, Search, Book, ShieldCheck, Globe,
   ArrowUpRight, Zap
 } from 'lucide-react';
 import BooksTable from './BooksTable';
+import { ContentDataContext } from '../ArticlesHome/ArticlesContext';
+import { AuthContext } from '../../../../features/auth/auther';
 
 import { Link } from 'react-router-dom';
 const SuperBooksManager = () => {
+  const [InputSearch, SetInputSerch] = useState("");
+  const ContentData = useContext(ContentDataContext)
+  const { user } = useContext(AuthContext);
+  const UserBooks = ContentData.filter((book) => {
+    if (book.content_type == "BOOK") {
+      return (book.author_id == user.id)
+    }
+  })
+
+  const BooKsSerched = UserBooks.filter((book) => {
+    const serchedname = InputSearch.toLowerCase();
+    return (
+      (book.title && book.title.toLowerCase().includes(serchedname)) ||
+      (book.content_id && String(book.content_id).toLowerCase().includes(serchedname))
+    );
+
+
+  });
+ 
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-10 mt-20" dir="rtl">
@@ -34,7 +55,6 @@ const SuperBooksManager = () => {
           </motion.div>
         ))}
       </div>
-
       {/* 2. رأس الجدول (Table Header) */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
         <div className="flex items-center gap-4">
@@ -47,7 +67,8 @@ const SuperBooksManager = () => {
         <div className="flex gap-2 w-full md:w-auto">
           <div className="relative flex-1">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input type="text" placeholder="بحث عن كتاب..." className="w-full bg-gray-50 border-none rounded-2xl py-3 pr-10 text-sm focus:ring-2 ring-[#319795]/20" />
+            <input value={InputSearch} onChange={(e) => { SetInputSerch(e.target.value) }}
+              type="text" placeholder="بحث عن كتاب..." className="w-full bg-gray-50 border-none rounded-2xl py-3 pr-10 text-sm focus:ring-2 ring-[#319795]/20" />
           </div>
           <Link to="/AddDataContent" >
             <button className="bg-[#319795] text-white px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2">
@@ -56,7 +77,8 @@ const SuperBooksManager = () => {
           </Link>
         </div>
       </div>
-      <BooksTable />
+
+      <BooksTable BooKsSerched={BooKsSerched} />
 
       {/* 4. قسم "لماذا نحن؟" (Footer Features) */}
       <div className="bg-black rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden">

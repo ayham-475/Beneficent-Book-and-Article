@@ -4,12 +4,11 @@ import { Edit3, Trash2, Eye, Star, BookOpen } from 'lucide-react';
 import { AuthContext } from '../../../../features/auth/auther';
 import { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-const BooksTable = () => {
+const BooksTable = ({BooKsSerched}) => {
   const { user } = useContext(AuthContext);
   const [Books, SetBook] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: "", type: "" });
-
 
   const API_URL = "http://localhost:3000/contents";
   // const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
@@ -73,7 +72,7 @@ const BooksTable = () => {
             </thead>
 
             <tbody className="divide-y divide-gray-100/50">
-              {Books.map((book, index) => (
+              {BooKsSerched.map((book, index) => (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}

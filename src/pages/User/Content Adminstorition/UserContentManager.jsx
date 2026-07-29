@@ -5,6 +5,7 @@ import {
     ArrowUpRight, Users, Clock, Plus,
     ChevronLeft, Star
 } from 'lucide-react';
+import RecentContentCard from './RecentContentCard';
 
 const CreativeHub = () => {
     // بيانات وهمية للإحصائيات العامة
@@ -90,39 +91,7 @@ const CreativeHub = () => {
                     <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
                 </motion.div>
 
-                {/* 4. قسم إدارة المقالات - Articles Management Card */}
-                <motion.div
-                    whileHover={{ y: -5 }}
-                    className="relative bg-[#319795] rounded-[3rem] p-8 text-white shadow-2xl overflow-hidden"
-                >
-                    <div className="relative z-10 h-full flex flex-col justify-between">
-                        <div>
-                            <div className="flex justify-between items-start mb-8">
-                                <div className="p-4 bg-black/10 backdrop-blur-md rounded-3xl border border-white/20">
-                                    <FileText size={32} />
-                                </div>
-                                <button className="p-3 bg-white/20 rounded-2xl hover:bg-white/30 transition-all">
-                                    <ArrowUpRight size={20} />
-                                </button>
-                            </div>
-                            <h2 className="text-3xl font-black mb-3">المقالات</h2>
-                            <p className="text-teal-100 font-bold text-sm leading-relaxed mb-6">
-                                قمت بنشر <span className="text-white">8 مقالات</span> هذا الأسبوع. واصل الإبداع!
-                            </p>
-                        </div>
-{/* ينكمتشمنبتشكمنبت */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 bg-black/10 p-3 rounded-2xl">
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span className="text-xs font-bold">آخر مقال: مستقبل الويب (منشور)</span>
-                            </div>
-                            <button className="w-full py-4 bg-white text-[#319795] rounded-2xl font-black text-sm shadow-xl">
-                                دخول المحرر
-                            </button>
-                        </div>
-                    </div>
-                </motion.div>
-
+                <RecentContentCard />
                 {/* 5. قسم النشاط الأخير - Recent Activity */}
                 <div className="lg:col-span-3 bg-white/70 backdrop-blur-2xl rounded-[3.5rem] p-6 md:p-10 border border-white shadow-2xl shadow-gray-200/50">
 

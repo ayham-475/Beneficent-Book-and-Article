@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReviewList from './ReviewList';
 import ContentPreview from './ContentPreview';
-import DecisionPanel from './DecisionPanel';
+import DecisionPanel from "./DecisionPanel";
 
 const AdminPendingReviews = () => {
   const [ContentPreviewData, setContentPreviewData] = useState({});
@@ -33,7 +33,8 @@ const AdminPendingReviews = () => {
          
           <div className="w-full lg:flex-1 space-y-6 md:space-y-10">
             <ContentPreview ContentPreviewData={ContentPreviewData} />
-            <DecisionPanel />
+            <DecisionPanel ContentPreviewData={ContentPreviewData} />
+        
           </div>
            <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
             <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import LogoutModal from '../../../features/auth/LogoutModal';
 import { AuthContext } from '../../../features/auth/auther';
+
 const Sidebar = () => {
 
   const [activeItem, setActiveItem] = useState('الرئيسية');
@@ -21,25 +22,27 @@ const Sidebar = () => {
   const API_URL = "http://localhost:3000/profiles";
 
   const GetProfiles = async () => {
-    const profiles = await fetch(API_URL);
-    const DataProfile = await profiles.json();
-    const userCurrent = DataProfile.filter((profile) => {
-      return profile.user_id == user.id;
-
-    })
-    SetProfile(userCurrent)
-    setloading(true)
-
+    try {
+      const profiles = await fetch(API_URL);
+      const DataProfile = await profiles.json();
+      const userCurrent = DataProfile.filter((profile) => {
+        return profile.user_id == user?.id;
+      });
+      SetProfile(userCurrent);
+      setloading(true);
+    } catch (error) {
+      console.error("Error fetching profiles:", error);
+      setloading(true); // لإنهاء حالة الانتظار حتى لو فشل الاتصال
+    }
   }
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    GetProfiles();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
 
-  }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      GetProfiles();
+    }
+  }, [user]);
 
   const menuItems = [
     { id: 'main', title: 'الرئيسية', icon: <Layout size={22} />, path: '/dashboardUser' },
@@ -51,7 +54,6 @@ const Sidebar = () => {
         { title: 'المحتوى', path: '/content_user' },
         { title: 'كتبي الرقمية', path: '/BookContentHome' },
         { title: 'مقالاتي', path: '/ArticlesManager' },
-
       ]
     },
     {
@@ -73,7 +75,7 @@ const Sidebar = () => {
       <div className="md:hidden fixed top-4 right-4 z-[110]">
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="p-3 bg-[#319795] text-white rounded-2xl shadow-xl shadow-[#319795]/30"
+          className="p-3 bg-[#319795] text-white rounded-2xl shadow-xl shadow-[#319795]/30 cursor-pointer"
         >
           {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -94,7 +96,6 @@ const Sidebar = () => {
 
       {/* 3. السايدبار الرئيسي */}
       <motion.aside
-        // التحكم في العرض بناءً على نوع الشاشة وحالة الفتح
         initial={isMobile ? { x: '100%' } : { width: '90px' }}
         animate={
           isMobile
@@ -116,7 +117,7 @@ const Sidebar = () => {
 
         {/* الشعار */}
         <div className="h-24 flex items-center px-6 shrink-0 overflow-hidden">
-          <div className="min-w-[50px] h-[50px] bg-gradient-to-br from-[#319795] to-[#4FD1C5] rounded-2xl flex items-center justify-center text-green  shadow-lg shadow-[#319795]/20 shrink-0">
+          <div className="min-w-[50px] h-[50px] bg-gradient-to-br from-[#319795] to-[#4FD1C5] rounded-2xl flex items-center justify-center text-white  shadow-lg shadow-[#319795]/20 shrink-0">
             <BarChart2 size={24} />
           </div>
           <motion.div className={`mr-4 flex flex-col ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500`}>
@@ -184,25 +185,54 @@ const Sidebar = () => {
 
         {/* منطقة البروفايل السفلية */}
         <div className="p-4 border-t border-gray-50 shrink-0">
-          <div className="flex items-center bg-[#F7FAFC] p-3 rounded-[2rem] border border-gray-100 overflow-hidden">
-            <div className="min-w-[42px] h-[42px] bg-white rounded-xl flex items-center justify-center shadow-sm font-black text-[#319795] shrink-0">
-              <img src={loading ? profile[0].avatar_url : ''}
-              
-                className="w-[45px] h-[45px] rounded-xl object-cover border border-white/10"
-                alt="User"
-              />
-            </div>
-            <div className={`mr-3 flex flex-col ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500`}>
-              <span className="text-xs font-black text-gray-800 whitespace-nowrap">{user.profile.name}</span>
-              <span className="text-[9px] text-[#319795] font-bold mt-1 uppercase whitespace-nowrap">مؤلف مميز</span>
-            </div>
-            <button onClick={() => setShowLogout(true)} className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}  bg-black text-gray-300 hover:text-red-500 transition-all`}>
+          <div className="flex items-center bg-[#F7FAFC] p-3 rounded-[2rem] border border-gray-100 overflow-hidden min-h-[68px]">
+            
+            {/* عرض الصورة والـ Skeleton الفاخر أثناء التحميل */}
+            {loading && profile.length > 0 ? (
+              <>
+                <div className="min-w-[42px] h-[42px] bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden shrink-0 border border-gray-200">
+                  <img 
+                    src={profile[0].avatar_url}
+                    className="w-full h-full object-cover"
+                    alt="User Avatar"
+                    onError={(e) => { 
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80"; 
+                    }}
+                  />
+                </div>
+                
+                <div className={`mr-3 flex flex-col ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500 flex-1 overflow-hidden`}>
+                  <span className="text-xs font-black text-gray-800 whitespace-nowrap truncate">
+                    {profile[0].display_name || "مؤلف جديد"}
+                  </span>
+                  <span className="text-[9px] text-[#319795] font-bold mt-1 uppercase whitespace-nowrap">
+                    مؤلف مميز
+                  </span>
+                </div>
+              </>
+            ) : (
+              /* تصميم الـ Skeleton المتنقل الذكي المؤقت قبل وصول البيانات */
+              <>
+                <div className="min-w-[42px] h-[42px] bg-gray-200 rounded-xl animate-pulse shrink-0" />
+                <div className={`mr-3 flex flex-col gap-2 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-500 flex-1`}>
+                  <div className="w-24 h-3 bg-gray-200 rounded animate-pulse" />
+                  <div className="w-12 h-2 bg-teal-100 rounded animate-pulse" />
+                </div>
+              </>
+            )}
+
+            {/* زر تسجيل الخروج والمودال */}
+            <button 
+              onClick={() => setShowLogout(true)} 
+              className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer`}
+            >
               <LogOut size={18} />
             </button>
+            
             <LogoutModal
               isOpen={showLogout}
-              onClose={() => setShowLogout(false)} // إذا ضغط "إلغاء" يعيدها لـ false
-              onConfirm={logout}       // إذا ضغط "تأكيد" ينفذ الدالة
+              onClose={() => setShowLogout(false)} 
+              onConfirm={logout}       
             />
           </div>
         </div>

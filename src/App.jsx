@@ -2,7 +2,7 @@ import React, { useState ,useEffect} from 'react'
 
 import './App.css'; // تأكد من المسار الصحيح
 import AuthPage from './features/auth/login.jsx';
-import Articles from './features/Article/ArticlesHub.jsx'
+import content_user from './features/Article/ArticlesHub.jsx'
 import AuthorDashboard from './pages/User/Dashboard/dashboard.jsx'
 import { Routes, Route } from 'react-router-dom';
 
@@ -36,32 +36,19 @@ import SettingsManager from './pages/Admin/System Settings/SettingsManager.jsx';
 import UserManagement from './pages/Admin/Content Moderation Hub/ContentModeration.jsx';
 import ReaderCategoryView from './features/Categories/ReaderCategoryView.jsx';
 import ArticleCategoryView from './features/Categories/ArticleCard.jsx';
-import MySnakbar from './App/Public/Toast.jsx';
+import MySnakbar from './App/Public/Components/Toast.jsx';
 import { ToastContext } from './App/Public/Contexts/ToastContext.jsx';
 import { ContentDataContext } from './pages/User/Content Adminstorition/ArticlesHome/ArticlesContext.jsx';
+import ProfileEditor from './features/auth/Profile.jsx';
+import Articles from './features/Article/ArticlesHub.jsx';
 function App() {
-  const [ContentData,setContentdata]=useState({
-        id: "1782678868584",
-      content_id: 5800,
-      author_id: "f126",
-      category_id: "",
-      title: "",
-      description: "",
-      content_type: "BOOK",
-      price: 20,
-      TextContent: "",
-      img_path: "",
-      file_url: "",
-      language: "",
-      status: "DRAFT",
-      created_at: ""
-  })
+  const [ContentData,setContentdata]=useState([])
   const APT_URL="http://localhost:3000/contents";
     const GetDatacontent=async()=>{
       const res = await fetch(APT_URL);
 
       const contentdat = await res.json();
-      console.log("s ",contentdat)
+    
       setContentdata(contentdat)
   }
  useEffect(() => {
@@ -78,14 +65,14 @@ const [open, setOpen] = React.useState(false);
   },2000)
   setMessage(message)
  }
-// console.log("app ",ContentData)
-  return (
+
+  return (  
     //i am ayham alyaari
     <div>
       <MySnakbar open={open}  message={message} />
       <AuthProvider>
         <ToastContext.Provider value={{showHideToast}}>
-          <ContentDataContext.Provider value={{ContentData}}>
+          <ContentDataContext.Provider value={ContentData}>
        
             <Routes>
 
@@ -93,6 +80,7 @@ const [open, setOpen] = React.useState(false);
               <Route path="/" element={<HomeH />} />
               <Route path="s" element={<MySnakbar />} />
               <Route path="/login" element={<AuthPage />} />
+              <Route path="/profile/:userId" element={<ProfileEditor />} />
               <Route path="/category" element={<CategoriesPage />} />
               <Route path="/Categories" element={<ReaderCategoryView />} />
               <Route path="/CategoriesArticle" element={<ArticleCategoryView />} />
@@ -118,8 +106,8 @@ const [open, setOpen] = React.useState(false);
 
               </Route>
 
-              {/* 3. مسارات الأدمن (إذا أردت لها سلايد بار مختلف أو نفس الشيء) */}
-              <Route element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
+              {/* 3. مسارات الأدمن (إذا أردت لها سلايد بار مخت\لف أو نفس الشيء) */}
+              <Route element={<ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>}>
                 <Route path="/dashboard" element={<AdminUsers />} />
                 
                 <Route path="/users" element={<UsersManager />} />

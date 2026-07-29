@@ -9,7 +9,7 @@ import Footer from '../../App/Public/Layout/Fotter';
 const Articles = () => {
   return (
     <div className="bg-[#020617] min-h-screen text-white font-sans overflow-x-hidden" dir="rtl">
-        <Header />
+      <Header />
       {/* <ArticleHero /> المقالة الرئيسية في الأعلى */}
       <ArticleHero />   
       <ArticleCategories />
@@ -17,7 +17,7 @@ const Articles = () => {
       <TrendingArticles title={"المقالات الاكثر شهرة هذا الاسبوع"} /> {/* مقالات شائعة بسلايدر */}
       <TrendingArticles title={"المقالات الحديثة"}  /> {/* مقالات شائعة بسلايدر */}
       <TrendingArticles title={"المقالات الاكثر تقييما هذا الاسبوع"}   /> {/* مقالات شائعة بسلايدر */}
-      <EliteAuthors /> {/* نخبة الكتاب */}
+      <EliteAuthors contentType="ARTICLE"  /> {/* نخبة الكتاب */}
       <ArticleCTA /> {/* زر لنشر مقالات جديدة */}
       <Footer />
     </div>

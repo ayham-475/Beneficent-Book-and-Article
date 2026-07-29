@@ -32,16 +32,20 @@ const ReviewList = ({ ChangeContentPreviewData }) => {
     const startTime = now.getTime() - (hours * 60 * 60 * 1000);
     
     return usersList.filter(user => {
+      const isNotActive=user.status!="Publishable";
       // نستخدم createdAt أو الحقل الزمني القادم من السيرفر
       const userDate = new Date(user.created_at).getTime();
-      return userDate >= startTime;
+      const isRecent= userDate >= startTime;
+      return isNotActive&&isRecent;
     });
   };
 
   // 4. تشغيل الجلب عند فتح المكون لأول مرة
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers();   
+  
+     }, []);
+
 
   return (
     <div className="bg-[#161616] mt-10 rounded-[2.5rem] border border-white/5 h-[calc(100vh-100px)] flex flex-col overflow-hidden shadow-2xl sticky top-8">
@@ -88,6 +92,8 @@ const ReviewList = ({ ChangeContentPreviewData }) => {
         ) : (
           /* عرض القائمة بنجاح */
           dbUsers.map((item) => (
+        
+           
             <motion.button
               key={item.id || item._id}
               whileHover={{ scale: 1.02, x: -5 }}
