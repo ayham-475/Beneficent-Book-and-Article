@@ -91,8 +91,8 @@ const [open, setOpen] = React.useState(false);
               <Route path="/homeBook" element={<HomeBook />} />
 
               {/* 2. مسارات لوحة التحكم (هنا السحر! السلايد بار سيظهر في كل هؤلاء) */}
-              <Route element={<ProtectedRoute allowedRoles={['user']}><UserLayout /></ProtectedRoute>}>
-
+              <Route element={<ProtectedRoute allowedRoles={[true]}><UserLayout /></ProtectedRoute>}>
+                 
                 {/* كل هذه الصفحات ستظهر داخل الـ Outlet وتأخذ السلايد بار تلقائياً */}
                 <Route path="/dashboardUser" element={<AuthorDashboard />} />
                 <Route path="/content_user" element={<CreativeHub />} />
@@ -107,7 +107,7 @@ const [open, setOpen] = React.useState(false);
               </Route>
 
               {/* 3. مسارات الأدمن (إذا أردت لها سلايد بار مخت\لف أو نفس الشيء) */}
-              <Route element={<ProtectedRoute allowedRoles={['Admin']}><AdminLayout /></ProtectedRoute>}>
+              <Route element={<ProtectedRoute allowedRoles={[true]}><AdminLayout /></ProtectedRoute>}>
                 <Route path="/dashboard" element={<AdminUsers />} />
                 
                 <Route path="/users" element={<UsersManager />} />

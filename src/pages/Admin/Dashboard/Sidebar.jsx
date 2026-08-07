@@ -18,15 +18,16 @@ const Sidebar = () => {
   const [Showlogout, setShowLogout] = useState(false)
   const [profile,SetProfile]=useState([]);
   const [loading,setloading]=useState(false)
-    const API_URL = "http://localhost:3000/profiles";
-
+    const API_URL = "http://127.0.0.1:8080/rest/Profile/";
    const GetProfiles=async()=>{
     const profiles=await fetch(API_URL);
     const DataProfile= await profiles.json();
+    
      const userCurrent =DataProfile.filter((profile)=>{
-       return profile.user_id==user.id;
+       return profile.user==user.id;
           
      })
+     console.log("profile  : ",userCurrent)
      SetProfile(userCurrent)
      setloading(true);
 
@@ -148,14 +149,14 @@ const Sidebar = () => {
           <div className="flex items-center gap-3">
             <div className="relative min-w-[45px]">
               <img
-                src={loading?profile[0].avatar_url:''}
+                src={loading?profile.avatar_url:''}
                 className="w-[45px] h-[45px] rounded-xl object-cover border border-white/10"
                 alt="Admin"
               />
               <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#0d0d0d] rounded-full shadow-[0_0_5px_#10b981]" />
             </div>
             <div className={`flex flex-col transition-all duration-300 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-              <span className="text-xs font-black text-white whitespace-nowrap">م :  {loading?profile[0].display_name:''}</span>
+              <span className="text-xs font-black text-white whitespace-nowrap">م :  {loading?profile.display_name:''}</span>
               <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-tighter italic">Main Developer</span>
             </div>
             <div className='mr-10'> <button onClick={() => { setShowLogout(true) }} className={`mr-auto ml-1 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} text-gray-300 hover:text-red-500 transition-all`}>

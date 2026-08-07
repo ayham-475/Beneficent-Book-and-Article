@@ -11,8 +11,8 @@ function ProfileEditor() {
 
   // حالة البيانات الأساسية بدون حقل الصورة
   const [profileData, setProfileData] = useState({
-    profile_id: String(Math.floor(Math.random() * 100000)),
-    user_id: userId,
+    // profile_id: String(Math.floor(Math.random() * 100000)),
+    user: userId,
     display_name: "",
     bio: "",
     payout_method: "PayPal",
@@ -24,7 +24,7 @@ function ProfileEditor() {
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
 
-  const UrlProfile = "http://127.0.0.1:8080/auth/profile/";
+  const UrlProfile = "http://127.0.0.1:8080/rest/Profile/";
 
   // دالة الإرسال وحفظ البيانات
   const handleSubmit = async (e) => {
@@ -32,7 +32,7 @@ function ProfileEditor() {
     setMessage({ text: "", type: "" });
 
     // جلب التوكن من متصفح المستخدم لكي يتعرف الديجانغو على هويتك
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token  sw"); 
 
     try {
       const res = await fetch(UrlProfile, {
@@ -102,7 +102,7 @@ function ProfileEditor() {
             <p className="text-gray-600 font-medium mr-14 text-sm">أهلاً بك، خصص هويتك الرقمية وطريقة استلام أرباحك.</p>
           </div>
           <span className="text-xs font-bold text-[#1a73e8] bg-white/60 px-4 py-2 rounded-full border border-[#c1daff]">
-            معرّف المستخدم: {profileData.user_id}
+            معرّف المستخدم: {profileData.user}
           </span>
         </div>
 

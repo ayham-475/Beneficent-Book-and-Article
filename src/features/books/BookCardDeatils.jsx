@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, BookOpen, Users, ShieldCheck, Zap } from 'lucide-react';
@@ -10,7 +10,27 @@ import { ToastContext } from '../../App/Public/Contexts/ToastContext';
 const BookDetails = () => {
 
   const {ContentData}=useContext(ContentDataContext);
-  console.log("dea",ContentData)
+  
+const [Books,SetBooks]=useState([])
+  const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
+  useEffect(()=>{
+    const GetContentId=async ()=>{
+    try{
+      const Contents=await fetch(urlContents)
+    const ContentsJson=await Contents.json()
+    SetBooks(ContentsJson)
+    console.log("dea",ContentsJson)
+    }catch(error)
+    {
+      console.log(" error   : ",error)
+    }
+    
+
+  }
+  GetContentId()
+
+  },[])
+  
   // 1. سحب بيانات الكتب من الـ Context
   const { user } = useContext(AuthContext);
  const navigate =useNavigate()
@@ -39,7 +59,7 @@ const BookDetails = () => {
   //  const booksArray = allContent.filter(item => item.content_type === "BOOK");
 
   // 3. البحث عن الكتاب المطابق باستخدام الـ id الفعلي
-  const book = allContent.find((b) => String(b.content_id) === String(bookId));
+  const book = Books.find((b) => String(b.content_id) === String(bookId));
 
   // 4. حزام أمان لمنع الانهيار
   if (!book) {

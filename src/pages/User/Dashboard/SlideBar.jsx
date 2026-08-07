@@ -19,14 +19,15 @@ const Sidebar = () => {
 
   const [profile, SetProfile] = useState([]);
 
-  const API_URL = "http://localhost:3000/profiles";
+  // const API_URL = "htt/p://localhost:3000/profiles";
+    const API_URL = "http://127.0.0.1:8080/rest/Profile/";
 
   const GetProfiles = async () => {
     try {
       const profiles = await fetch(API_URL);
       const DataProfile = await profiles.json();
       const userCurrent = DataProfile.filter((profile) => {
-        return profile.user_id == user?.id;
+        return profile.user == user?.id;
       });
       SetProfile(userCurrent);
       setloading(true);

@@ -13,13 +13,11 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState(""); 
+  const [name, setName] = useState("");
   const [message, setMessage] = useState({ text: "", type: "" });
 
   // رابط السيرفر الموحد لـ Django
   const BASE_URL = "http://127.0.0.1:8080/auth";
-  // const BASE_URL = "http://localhost:3000/users";
-
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   // 1. منطق تسجيل الدخول
@@ -38,29 +36,44 @@ const AuthPage = () => {
 
       if (res.ok) {
         setMessage({ text: `أهلاً بعودتك!`, type: "success" });
-        
-        // حفظ بيانات المستخدم والتوكن الحقيقي المستلم من Django
+
+        // استخراج التوكن ونوع المستخدم بحسب ما يرجعه الباك إند
+        const userToken = data.token || data.access;
+        const userRole = data.user?.type || data.user?.role; // يفحص type أو role
+
+        // حفظ بيانات التوثيق
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", userToken);
 
         setTimeout(() => {
-          login(data.user, data.token);
-            
-          if (data.user.type === "Admin") {
+          // تحديث حالة التوثيق في React Context
+          if (typeof login === 'function') {
+            login(data.user, userToken);
+          }
+
+          // التوجيه بناءً على نوع المستخدم (مع مراعاة الأحرف الكبيرة والصغيرة)
+          if (data.user.is_superuser==true ) {
+            // توجيه الأدمن / الموظف إلى لوحة التحكم الرئيسية
             navigate(`/dashboard`);
+
           } else {
+            // توجيه المستخدم العادي إلى صفحته
             navigate(`/dashboardUser`);
           }
         }, 1500);
+
       } else {
-        // طباعة رسالة الخطأ القادمة من السيرفر مباشرة
-        setMessage({ text: data.error || "الإيميل أو كلمة المرور غير صحيحة.", type: "error" });
+        // طباعة رسالة الخطأ القادمة من السيرفر
+        setMessage({
+          text: data.error || data.detail || "الإيميل أو كلمة المرور غير صحيحة.",
+          type: "error"
+        });
       }
     } catch (error) {
+      console.error("Login Error:", error);
       setMessage({ text: "فشل الاتصال بالسيرفر. تأكد من تشغيل الباك-أند.", type: "error" });
     }
   };
-
   // 2. منطق تسجيل حساب جديد ومراعاة الصلاحيات فوراً
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -108,7 +121,7 @@ const AuthPage = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full" />
 
       <div className="relative w-full max-w-md bg-[#1e293b]/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl p-10">
-        
+
         <div className="text-center mb-10">
           <div className="inline-flex w-20 h-20 bg-blue-500/10 border border-blue-500/30 rounded-3xl items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
             <BookOpen size={40} className="text-blue-400" />
@@ -122,7 +135,7 @@ const AuthPage = () => {
         </div>
 
         <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-5">
-          
+
           {!isLogin && (
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-400 mr-2">الاسم الكامل / اسم الكاتب</label>
@@ -200,7 +213,7 @@ const AuthPage = () => {
           >
             {isLogin ? "دخول" : "إنشاء الحساب"}
           </button>
-            
+
         </form>
 
         <div className="mt-8 text-center">
@@ -216,11 +229,10 @@ const AuthPage = () => {
         </div>
 
         {message.text && (
-          <div className={`mt-6 p-4 rounded-2xl text-center text-xs font-bold ${
-            message.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
-            message.type === "success" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-            "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-          }`}>
+          <div className={`mt-6 p-4 rounded-2xl text-center text-xs font-bold ${message.type === "error" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
+              message.type === "success" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
+                "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+            }`}>
             {message.text}
           </div>
         )}

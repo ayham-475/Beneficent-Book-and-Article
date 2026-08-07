@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import {
-  ArrowLeft, Edit3, 
+  ArrowLeft, Edit3,
   Maximize2, Minimize2,
   Bold, Italic, Underline, List, ListOrdered, AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
@@ -18,13 +18,16 @@ function ArticleEditor() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const editorRef = useRef(null);
 
-  // 1. بيانات المقال الأساسية (تتطابق مع نموذج Content في Django)
+  // 1. بيانات المقال الأساسية (تصحيح الـ Syntax)
   const [articleData, setArticleData] = useState({
+    user: user?.id || null,
     title: '',
     description: '',
     category_id: 'مقالة تكنلوجيا',
     content_type: 'ARTICLE',
     price: 0,
+    text_content: '',
+    language: 'ar',
     img_path: '',
     status: 'DRAFT'
   });
@@ -35,27 +38,30 @@ function ArticleEditor() {
     pages_count: 1
   });
 
-  // جلب البيانات وتعبئتها عند التعديل
+  // جلب البيانات وتعبئتها عند التعديل (تصحيح الـ Syntax)
   useEffect(() => {
     if (dataArticle) {
       setArticleData({
+        user: user?.id || null,
         title: dataArticle.title || '',
         description: dataArticle.description || dataArticle.text_content || '',
         category_id: dataArticle.category_id || 'مقالة تكنلوجيا',
         content_type: dataArticle.content_type || 'ARTICLE',
         price: dataArticle.price || 0,
+        text_content: dataArticle.text_content || '',
+        language: dataArticle.language || 'ar',
         img_path: dataArticle.img_path || '',
         status: dataArticle.status || 'DRAFT'
       });
 
       const initialHtml = dataArticle.body_html || dataArticle.text_content || '';
       setArticleDetails(prev => ({ ...prev, body_html: initialHtml }));
-      
+
       if (editorRef.current) {
         editorRef.current.innerHTML = initialHtml;
       }
     }
-  }, [dataArticle]);
+  }, [dataArticle, user]);
 
   // أنماط التصميم (Neumorphic & Glassmorphism)
   const glassStyle = {
@@ -94,24 +100,22 @@ function ArticleEditor() {
   };
 
   // عناوين الـ API
-  const API_URL = "http://127.0.0.1:8080/article/create/";
+  const API_URL = "http://127.0.0.1:8080/rest/Content-articles/";
   const URL_ARTICLE_DETAILS = "http://127.0.0.1:8080/article/create_articleDeatils/";
 
-  // دالة حفظ تفاصيل المقال (تُستدعى بعد الحصول على UUID المقال الرئيسي)
+  // دالة حفظ تفاصيل المقال
   const addArticleDetails = async (createdContentId) => {
     try {
-    
       const payload = {
         content_id: createdContentId,
         body_html: articleDetails.body_html,
         pages_count: articleDetails.pages_count
       };
-   const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       const res = await fetch(URL_ARTICLE_DETAILS, {
         method: "POST",
-        headers: { "Content-Type": "application/json" ,"Authorization": `Token ${token}`},
+        headers: { "Content-Type": "application/json", "Authorization": `Token ${token}` },
         body: JSON.stringify(payload)
-        
       });
 
       if (!res.ok) {
@@ -122,24 +126,25 @@ function ArticleEditor() {
     }
   };
 
-  // دالة الحفظ الرئيسية (تستقبل الحالة المباشرة لتفادي مشكلة race condition)
+  // دالة الحفظ الرئيسية (إصلاح الـ payload)
   const saveArticle = async (targetStatus) => {
     const isEditing = Boolean(dataArticle?.content_id || dataArticle?.id);
     const method = isEditing ? "PUT" : "POST";
     const targetId = dataArticle?.content_id || dataArticle?.id;
     const url = isEditing ? `${API_URL}${targetId}/` : API_URL;
 
-    // تجهيز البيانات المرسلة للـ Backend
+    // ✅ تجهيز الـ payload بشكل سليم مع إضافة الـ user والمحتوى النصي
     const payload = {
-
+      user: user?.id, // 👈 تم التثبيت هنا لمنع خطأ null value in column user_id
       title: articleData.title,
       description: articleData.description,
       category_id: articleData.category_id,
-      content_type: articleData.content_type,
-      price: articleData.price,
-      img_path: articleData.img_path,
+      content_type: articleData.content_type || 'ARTICLE',
+      price: articleData.price || 0,
+      img_path: articleData.img_path || '',
+      language: articleData.language || 'ar',
       status: targetStatus,
-      text_content: articleDetails.body_html
+      text_content: articleDetails.body_html || articleData.description
     };
 
     try {
@@ -155,10 +160,8 @@ function ArticleEditor() {
 
       if (res.ok) {
         const resData = await res.json();
-        // أخذ الـ UUID الراجع من السيرفر أو المعرّف الحالي في حالة التعديل
         const savedContentId = resData.id || targetId;
-    
-        // إرسال تفاصيل المحتوى
+
         if (savedContentId) {
           await addArticleDetails(savedContentId);
         }
@@ -169,7 +172,9 @@ function ArticleEditor() {
         setTimeout(() => navigate('/ArticlesManager'), 1200);
       } else {
         const errorData = await res.json();
-        alert(errorData.error || errorData.detail || "حدث خطأ أثناء حفظ المقال.");
+        // 💡 يطبع تفاصيل أخطاء الـ Serializer بدقة لمعرفتها فوراً
+        console.error("تفاصيل خطأ السيرفر:", errorData);
+        alert(JSON.stringify(errorData) || "حدث خطأ أثناء حفظ المقال.");
       }
     } catch (error) {
       console.error("خطأ الاتصال بالسيرفر:", error);
@@ -307,15 +312,15 @@ function ArticleEditor() {
             </Link>
 
             <div className="flex gap-4 w-full md:w-auto">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => saveArticle('DRAFT')}
                 className="flex-1 md:flex-none px-10 py-4 bg-gray-400 text-white rounded-2xl font-black shadow-lg hover:bg-gray-500 transition-all active:scale-95"
               >
                 حفظ مسودة
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => saveArticle('PUBLISHED')}
                 className="flex-1 md:flex-none px-10 py-4 bg-[#319795] text-white rounded-2xl font-black shadow-xl shadow-[#319795]/30 hover:bg-[#2a8381] transition-all active:scale-95"
               >

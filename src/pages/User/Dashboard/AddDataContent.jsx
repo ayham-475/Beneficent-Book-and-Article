@@ -13,20 +13,19 @@ function AddDataContent() {
   const bookdata = location.state?.BookData; // البيانات القادمة من صفحة الإدارة عند التعديل
   const { user } = useContext(AuthContext);
   const { showHideToast } = useContext(ToastContext);
+
   // 1. تعريف الكيان الأول (المحتوى الأساسي)
   const [ContentData, SetContentData] = useState({
-    author_id: user?.id || "",
-    
+    user: user?.id || null,
     category_id: "",
     title: '',
     description: '',
     content_type: 'BOOK',
     price: 20,
-    TextContent: "عملي", // القيمة الافتراضية متطابقة مع أول خيار في الـ Select
+    text_content: "",
     img_path: "",
-    language: "العربية",
-    status: 'Pending',
-    created_at: new Date().toISOString().split('T')[0]
+    language: "ar",
+    status: 'PENDING',
   });
 
   // 2. تعريف الكيان الثاني (تفاصيل الملف الرقمي)
@@ -37,92 +36,92 @@ function AddDataContent() {
 
   // 3. منطق التعديل (تعبئة الحقول بالبيانات القادمة)
   useEffect(() => {
+    if (user?.id) {
+      SetContentData(prev => ({ ...prev, user: user.id }));
+    }
+
     if (bookdata) {
       SetContentData({
-        author_id: bookdata.author_id || user?.id || "",
+        user: bookdata.user || user?.id || null,
         category_id: bookdata.category_id || "",
         title: bookdata.title || "",
         content_type: bookdata.content_type || "BOOK",
         description: bookdata.description || "",
         price: bookdata.price || 20,
         img_path: bookdata.img_path || "",
-        TextContent: bookdata.TextContent || "عملي",
-        language: bookdata.language || "العربية",
+        text_content: bookdata.text_content || "",
+        language: bookdata.language || "ar",
         status: bookdata.status || 'DRAFT',
-        id: bookdata.id // المحافظة على المعرف الرئيسي للتعديل
       });
 
-      // جلب تفاصيل الكتاب المرتبطة بالتعديل إذا كانت متوفرة
-      SetDataBookDetails({
-        file_url: bookdata.file_url || "",
-        pages_count: bookdata.pages_count || 320,
-        id: bookdata.detail_id // المعرف الفريد لجدول التفاصيل
-      });
+      if (bookdata.file_url) {
+        SetDataBookDetails({
+          file_url: bookdata.file_url || "",
+          pages_count: bookdata.pages_count || 320,
+        });
+      }
     }
   }, [bookdata, user]);
 
-  // روابط الـ API الخاصة بـ Beeceptor
-  const urlContents = "http://localhost:3000/contents";
-  const urlBookDetails = "http://localhost:3000/book_details";
+  // روابط الـ API
+  const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
 
-  // دالة المعالجة وحفظ البيانات في الجدولين بشكل مترابط ومتزامن
-  const handlAddContent = async (e) => {
+  // دالة المعالجة وحفظ البيانات
+ const handlAddContent = async (e) => {
     if (e) e.preventDefault();
 
-    const isEdit = Boolean(bookdata?.id);
+    // استخدام content_id أو id الموجود في الكيان
+    const targetId = bookdata?.content_id || bookdata?.id;
+    const isEdit = Boolean(targetId);
     const method = isEdit ? "PUT" : "POST";
+    const requestUrl = isEdit ? `${urlContents}${targetId}/` : urlContents;
 
-    // توليد معرفات موحدة وآمنة لإرسالها فوراً دون انتظار تحديث الـ State
-    const currentContentId = isEdit ? bookdata.id : String(Date.now());
-    const currentDetailId = isEdit ? (bookdata.detail_id || String(Date.now() + 1)) : String(Date.now() + 1);
-
-    // تجهيز بيانات جدول contents الفريد بأعمدته
-    const contentPayload = {
-      ...ContentData,
-      content_id: currentContentId,
-      price: parseFloat(ContentData.price) || 0,
+    // تجهيز الـ payload بدقة لتناسب الـ Model
+    const payload = {
+      user: user?.id || ContentData.user, // رقم ID المستخدم
+      category_id: ContentData.category_id || "عملي", // CharField يقبل نص
+      title: ContentData.title,
+      description: ContentData.description || "",
+      content_type: ContentData.content_type || "BOOK", // يطابق ContentType.BOOK
+      price: parseFloat(ContentData.price) || 0.00,
+      text_content: ContentData.text_content || "",
+      img_path: ContentData.img_path || "https://via.placeholder.com/600x400",
+      language: ContentData.language || "ar",
+      
+      // إرسال إما 'DRAFT' أو 'PUBLISHED' حصراً
+      status: (ContentData.status === 'PUBLISHED') ? 'PUBLISHED' : 'DRAFT',
     };
-
-    // تجهيز بيانات جدول book_details الفريد بأعمدته والربط عبر التمرير المباشر لـ content_id
-    const detailsPayload = {
-      ...dataBookDetails,
-      id: currentDetailId,
-      content_id: currentContentId
-    };
-
-    // روابط الإرسال حسب نمط العملية (إضافة أم تعديل)
-    const contentTargetUrl = isEdit ? `${urlContents}${bookdata.content_id}` : urlContents;
-    const detailsTargetUrl = isEdit ? `${urlBookDetails}${currentDetailId}` : urlBookDetails;
 
     try {
-      // أولاً: إنشاء أو تحديث جدول contents
-      const resContent = await fetch(contentTargetUrl, {
+      const token = localStorage.getItem("token");
+
+      const resContent = await fetch(requestUrl, {
         method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(contentPayload)
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": token ? `Token ${token}` : ""
+        },
+        body: JSON.stringify(payload)
       });
 
-      if (!resContent.ok) throw new Error("فشل في إنشاء أو تحديث البيانات الأساسية (contents)");
+      if (!resContent.ok) {
+        const errorData = await resContent.json();
+        console.error("تفاصيل خطأ Django:", errorData);
+        alert("خطأ من السيرفر: " + JSON.stringify(errorData));
+        return;
+      }
 
-      // ثانياً: إنشاء أو تحديث جدول book_details تلقائياً
-      const resDetails = await fetch(detailsTargetUrl, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(detailsPayload)
-      });
+      const responseData = await resContent.json();
+      console.log("تم الحفظ بنجاح:", responseData);
 
-      if (!resDetails.ok) throw new Error("فشل في إنشاء أو تحديث تفاصيل الملف الرقمي (book_details)");
-
-      // نجاح العملية بالكامل
-      showHideToast(isEdit ? "تم تحديث البيانات والداول بنجاح" : "تم إنشاء الجداول وحفظ البيانات بنجاح");
-      setTimeout(() => navigate('/BookContentHome'), 2000);
+      showHideToast(isEdit ? "تم تحديث البيانات بنجاح" : "تم حفظ البيانات بنجاح");
+      setTimeout(() => navigate('/BookContentHome'), 1500);
 
     } catch (error) {
-      console.error("خطأ أثناء الاتصال بالسيرفر:", error);
-      alert(error.message || "تعذر الوصول للسيرفر، يرجى التحقق من الشبكة");
+      console.error("خطأ شبكة/سيرفر:", error);
+      alert("تعذر الاتصال بالسيرفر");
     }
   };
-
   return (
     <div className="min-h-screen mt-20 bg-[#F0F4F8] pb-20 font-sans">
       <div className="max-w-4xl mx-auto mt-12 px-4" dir="rtl">
@@ -258,8 +257,8 @@ function AddDataContent() {
                 <h3 className="font-black text-gray-700">تصنيف المحتوى</h3>
               </div>
               <select
-                value={ContentData.TextContent}
-                onChange={(e) => SetContentData({ ...ContentData, TextContent: e.target.value })}
+                value={ContentData.text_content}
+                onChange={(e) => SetContentData({ ...ContentData, text_content: e.target.value })}
                 className="w-full p-5 bg-[#F8FAFB] border-2 border-transparent rounded-2xl outline-none focus:border-blue-400 transition-all font-bold text-gray-600 shadow-sm"
               >
                 <option value="عملي">كتاب عن العلم (PDF)</option>
@@ -277,7 +276,7 @@ function AddDataContent() {
             </Link>
 
             <div className="flex gap-4 w-full md:w-auto order-1 md:order-2">
-              <Link to="/UploadFiles" state={{ currentData: ContentData }}>
+              <Link to="/UploadFiles" state={{ currentData: ContentData, bookDetails: dataBookDetails }}>
                 <button type="button" className="bg-gray-800 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-900 shadow-lg">
                   التالي (رفع الملفات)
                 </button>

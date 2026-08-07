@@ -10,14 +10,17 @@ const BooksTable = ({BooKsSerched}) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  const API_URL = "http://localhost:3000/contents";
+  // const API_URL = "http://localhost:3000/contents";
+    const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
+
   // const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
   const HandleDelete = async (id) => {
+
     const confirmDelete = window.confirm(id + "هل أنت متأكد من حذف هذا الكتاب ؟");
     if (!confirmDelete)
       return;
     try {
-      const contentData = await fetch(`${API_URL}/${id}`, {
+      const contentData = await fetch(`${urlContents}${id}`, {
         method: "DELETE",
       });
       if (contentData.ok) {
@@ -35,12 +38,13 @@ const BooksTable = ({BooKsSerched}) => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const res = await fetch(API_URL);
+        const res = await fetch(urlContents);
         const contents = await res.json();
-        const userArticles = contents.filter(
-          (item) => item.author_id === user.id && item.content_type === "BOOK"
+        const userBooks = contents.filter(
+          (item) => item.user === user.id && item.content_type === "BOOK"
         );
-        SetBook(userArticles);
+         console.log("userBooks : ",Books)
+        SetBook(userBooks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching Books:", error);
@@ -72,7 +76,7 @@ const BooksTable = ({BooKsSerched}) => {
             </thead>
 
             <tbody className="divide-y divide-gray-100/50">
-              {BooKsSerched.map((book, index) => (
+              {Books.map((book, index) => (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -139,11 +143,11 @@ const BooksTable = ({BooKsSerched}) => {
                         <Edit3 size={18} />
                       </button>
                       </Link>
-                      <button
-                        onClick={() => HandleDelete(book.id)} // ✅ مررنا الآيدي الخاص بالكتاب في هذه اللفة
+                      <button 
+                        onClick={() => HandleDelete(book.content_id)} // ✅ مررنا الآيدي الخاص بالكتاب في هذه اللفة
                         className="p-3 bg-white shadow-sm border border-gray-100 rounded-2xl text-gray-400 hover:text-red-500 hover:shadow-md transition-all active:scale-90"
                       >
-                        <Trash2 size={18} />
+                        <Trash2  size={18} />
                       </button>
                     </div>
                   </td>
@@ -185,7 +189,7 @@ const BooksTable = ({BooKsSerched}) => {
                       <Link to="/AddDataContent" state={{ BookData: book }} ><button className="p-2.5 bg-gray-50 rounded-xl text-gray-400"><Edit3 size={16} /></button></Link>
 
                       <button
-                        onClick={() => HandleDelete(book.id)} // ✅ تأكد من التعديل هنا أيضاً
+                        onClick={() => HandleDelete(book.content_id)} // ✅ تأكد من التعديل هنا أيضاً
                         className="p-2.5 bg-red-50 text-red-500 rounded-xl"
                       >
                         <Trash2 size={16} />

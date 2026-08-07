@@ -10,20 +10,31 @@ const SmartArticlesManager = ({SerchedArticles}) => {
   const { user } = useContext(AuthContext);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+  const [n,setn]=useState(1)
   
   // const API_URL = "https://698292229c3efeb892a2ab23.mockapi.io/api/v1/contents"; 
-  const API_URL = "http://localhost:3000/contents"; 
+  // const API_URL = "http://localhost:3000/co/ntents"; 
+    const API_URL = "http://127.0.0.1:8080/rest/Content-articles/";
+
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         const res = await fetch(API_URL);
+        
         const contents = await res.json();
         const userArticles = contents.filter(
-          (item) => item.author_id === user.id && item.content_type === "ARTICLE"
+            
+
+          (item) => item.user === user.id && item.content_type === "ARTICLE"
+          
         );
+          console.log("contents w  : ",userArticles)
+
+                 setn(n+1)
+
         setArticles(userArticles);
         setLoading(false);
+
       } catch (error) {
         console.error("Error fetching articles:", error);
         setLoading(false);
@@ -33,23 +44,30 @@ const SmartArticlesManager = ({SerchedArticles}) => {
     if (user?.id) fetchArticles();
   }, [user?.id]);
 
-  const handlDelete =async(id)=>{
-    const confirmDelete=window.confirm("هل انت متاكد من حذف هذه المقالة ؟");
+ const handlDelete = async (id) => {
+   alert(id)
+    const confirmDelete = window.confirm("هل أنت تأكد من حذف هذه المقالة ؟");
+    if (!confirmDelete) return; // ✅ الإلغاء إذا لم يوافق المستخدم
 
-    try{
-      const articlesData=await fetch(API_URL,{
-        method:"DELETE"
-      })
-      if(confirmDelete){
-       setArticles(articles.filter(item=> item.content_id!=id))
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}${id}`, { // ✅ إضافة الـ ID إلى الرابط
+        method: "DELETE",
+        headers: {
+          "Authorization": `Token ${token}`
+        }
+      });
+
+      if (res.ok) {
+        // تحديث الواجهة وحذف المقال من الـ State
+        setArticles(prev => prev.filter(item => (item.content_id || item.id) !== id));
+      } else {
+        alert("فشل حذف المقالة من السيرفر.");
       }
-
-
-    }catch(error){
-      alert(error)
+    } catch (error) {
+      alert("حدث خطأ في الاتصال: " + error.message);
     }
-
-  }
+  };
   if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
   function handlupdateArticle(art){
      
@@ -88,7 +106,7 @@ const SmartArticlesManager = ({SerchedArticles}) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/30">
-                {SerchedArticles.map((art) => (
+                {articles.map((art) => (
                   <tr key={art.content_id} className="hover:bg-white/40 transition-all group">
                     <td className="px-10 py-6">
                       <div className="font-bold text-gray-800 text-lg group-hover:text-[#319795] transition-colors">{art.title}</div>
@@ -108,7 +126,8 @@ const SmartArticlesManager = ({SerchedArticles}) => {
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex gap-2 justify-end">
-                     <Link to="/ArticleEditor"  state={{articledata:art}} >  <button  className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-[#319795] hover:shadow-md transition-all"><Edit3 size={18}/></button> </Link> 
+                     <Link to="/ArticleEditor"  state={{articledata:art}} > 
+                      <button  className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-[#319795] hover:shadow-md transition-all"><Edit3 size={18}/></button> </Link> 
                         <button className="p-2.5 bg-white rounded-xl shadow-sm text-gray-400 hover:text-rose-500 hover:shadow-md transition-all"  onClick={()=>handlDelete(art.content_id)}><Trash2 size={18}/></button>
                       </div>
                     </td>
