@@ -1,51 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function DecisionPanel({ ContentPreviewData }) {
-  const [ChangeStatusContent, SetChangeStatusContent] = useState("");
+
+  const GetContentToUpdate = async (newContentPreviewData) => {
+    try {
+
+      // الخطوة 2: الآن نرسل طلب التعديل (PATCH) على الرابط الذي يفهمه السيرفر 100%
+      const response = await fetch(`http://127.0.0.1:8080/rest/Content-articles/${ContentPreviewData.content_id}`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newContentPreviewData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`السيرفر رفض التعديل برقم: ${response.status}`);
+      }
+
+      const result = await response.json();
+      alert("تم التعديل بنجاح!");
+      console.log("النتيجة النهائية بعد التعديل:", result);
+
+    } catch (error) {
+      alert(`خطأ في التعديل: ${error.message}`);
+    }
+  }
   function HandlChangeState() {
-    SetChangeStatusContent("Publishable");
-    GetContentToUpdate();
+    const newContentPreviewData={...ContentPreviewData};
+    newContentPreviewData.status="PUBLISHED";
+    GetContentToUpdate(newContentPreviewData);
   }
-  const GetContentToUpdate = async () => {
-try {
-  console.log("المعرف المرسل هو:", ContentPreviewData?.content_id);
-  
-  // الخطوة 1: نسأل السيرفر "أين العنصر الذي يملك content_id يساوي هذا الرقم؟"
-  const searchResponse = await fetch(`http://localhost:3000/contents?content_id=${ContentPreviewData.content_id}`);
-  const searchResult = await searchResponse.json(); // سيرجع مصفوفة تحتوي على العنصر
-  
-  // فحص: إذا لم يجد السيرفر هذا الـ content_id أصلاً في البيانات
-  if (!searchResult || searchResult.length === 0) {
-    alert("عذراً، لم يتم العثور على هذا المحتوى في قاعدة البيانات.");
-    return;
-  }
-  
-  // استخراج الـ id الداخلي الذي يفضله السيرفر (والذي وضعه json-server تلقائياً)
-  const serverInternalId = searchResult[0].id; 
-
-  // الخطوة 2: الآن نرسل طلب التعديل (PATCH) على الرابط الذي يفهمه السيرفر 100%
-  const response = await fetch(`http://localhost:3000/contents/${serverInternalId}`, {
-    method: "PATCH",
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ status: ChangeStatusContent })
-  });
-
-  if (!response.ok) {
-    throw new Error(`السيرفر رفض التعديل برقم: ${response.status}`);
-  }
-
-  const result = await response.json();
-  alert("تم التعديل بنجاح!");
-  console.log("النتيجة النهائية بعد التعديل:", result);
-
-} catch (error) {
-  alert(`خطأ في التعديل: ${error.message}`);
-}
-  }
-
-  console.log("st ", ContentPreviewData)
 
   return (
     <div className="w-full bg-[#161616] p-6 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl relative overflow-hidden group">

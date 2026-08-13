@@ -1,7 +1,7 @@
 import React from 'react';
 import { User, Tag, Calendar, Quote, Sparkles } from 'lucide-react';
 
-const ContentPreview = ({ ContentPreviewData }) => {
+const ContentPreview = ({ ContentPreviewData ,user}) => {
   return (
     <div className="bg-[#161616] rounded-[2.5rem] mt-10   border border-white/5 shadow-2xl overflow-hidden flex flex-col">
       
@@ -36,7 +36,7 @@ const ContentPreview = ({ ContentPreviewData }) => {
             </div>
             <div>
               <p className="text-[10px] text-gray-500 font-bold uppercase">الكاتب المعتمد</p>
-              <p className="text-white font-black">أحمد المنصوري</p>
+              <p className="text-white font-black"> {user.username}</p>
             </div>
           </div>
 
@@ -65,7 +65,7 @@ const ContentPreview = ({ ContentPreviewData }) => {
         <article className="max-w-4xl mx-auto space-y-8">
           <h1 className="text-5xl font-black text-white leading-[1.15] tracking-tight">
             {ContentPreviewData.title}
-\         </h1>
+         </h1>
           
           <div className="relative">
             <Quote className="absolute -right-16 -top-4 text-emerald-500/10 w-32 h-32" />

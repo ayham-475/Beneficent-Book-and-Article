@@ -6,9 +6,9 @@ const RecentSales = () => {
   const { user } = useContext(AuthContext);
   
   // روابط الـ API
-  const Url = "http://localhost:3000/purchases";
-  const UrlContent = "http://localhost:3000/contents";
-  const UrlUsers = "http://localhost:3000/users"; // ✅ تم إضافة المتغير الغائب هنا لإصلاح الانهيار
+  const Url = "http://127.0.0.1:8080/rest/Purchases/";
+  const UrlContent = "http://127.0.0.1:8080/rest/Content-articles/";
+  const UrlUsers = "http://127.0.0.1:8080/rest/Profile/"; // ✅ تم إضافة المتغير الغائب هنا لإصلاح الانهيار
 
   const [salesData, SetsalesData] = useState([]);
 
@@ -31,42 +31,45 @@ const RecentSales = () => {
 
       // المحتويات الخاصة بالمؤلف الحالي
       const myContents = DataContent.filter(
-        (content) => content.author_id === user?.id
+        (content) => content.user === user?.id
       );
           
       // دمج البيانات
-      const sales = Datapurchases
+    const sales = Datapurchases
         .filter((purchase) =>
           myContents.some(
-            (content) => content.content_id == purchase.content_id
+            // تصحيح: استخدام content بحرف صغير
+            (content) => (content.content_id || content.id) === purchase.content
           )
         )
-        .map((purchase) => {    
-          // بيانات المحتوى
+        .map((purchase) => {
+          // بيانات المحتوى (تصحيح: purchase.content)
           const content = myContents.find(
-            (item) => item.content_id == purchase.content_id
+            (item) => (item.content_id || item.id) === purchase.content
           );
 
-          // بيانات المشتري
+          // بيانات المشتري (تصحيح: purchase.payer)
           const buyer = DataUsers.find(
-            (item) => item.id === purchase.payer_id
+            (item) => (item.profile_id || item.id) === purchase.payer
           );
+           console.log("buyer:",buyer)
 
           return {
             ...purchase,
             title: content?.title || "محتوى غير معروف",
             image: content?.img_path || content?.image, // التوافق مع التسميات لديك
             price: content?.price || 0,
-            customer: buyer?.profile?.name || buyer?.name || "مستخدم غير معروف", // اسم المشتري المدمج
+            customer: buyer?.profile?.display_name || buyer?.display_name || "مستخدم غير معروف", // اسم المشتري المدمج
           };
         });
 
       SetsalesData(sales);
+      console.log("salesData  :", salesData, "myContents  : ",myContents,"sales : ",sales,"Datapurchases : ",Datapurchases,"DataUsers :",DataUsers)
+
     } catch (error) {
       console.error("خطأ في جلب بيانات المبيعات:", error);
     }
   };
-
   return (
     <div className="bg-white/80 backdrop-blur-xl mx-4 md:mr-36 mb-10 rounded-[2rem] md:rounded-[3rem] p-4 md:p-8 border border-white shadow-[0_20px_50px_rgba(0,0,0,0.02)] h-[600px] md:h-[550px] flex flex-col transition-all duration-300">
       

@@ -7,7 +7,7 @@ const ReviewList = ({ ChangeContentPreviewData }) => {
   const [dbUsers, setDbUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://localhost:3000/contents";
+  const API_URL = "http://127.0.0.1:8080/rest/Content-articles/";
 
   // 2. دالة جلب البيانات من السيرفر
   const fetchUsers = async () => {
@@ -32,7 +32,7 @@ const ReviewList = ({ ChangeContentPreviewData }) => {
     const startTime = now.getTime() - (hours * 60 * 60 * 1000);
     
     return usersList.filter(user => {
-      const isNotActive=user.status!="Publishable";
+      const isNotActive=user.status!="PUBLISHED";
       // نستخدم createdAt أو الحقل الزمني القادم من السيرفر
       const userDate = new Date(user.created_at).getTime();
       const isRecent= userDate >= startTime;

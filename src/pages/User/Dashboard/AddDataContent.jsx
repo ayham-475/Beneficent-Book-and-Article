@@ -67,7 +67,7 @@ function AddDataContent() {
   const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
 
   // دالة المعالجة وحفظ البيانات
- const handlAddContent = async (e) => {
+  const handlAddContent = async (e) => {
     if (e) e.preventDefault();
 
     // استخدام content_id أو id الموجود في الكيان
@@ -87,7 +87,7 @@ function AddDataContent() {
       text_content: ContentData.text_content || "",
       img_path: ContentData.img_path || "https://via.placeholder.com/600x400",
       language: ContentData.language || "ar",
-      
+
       // إرسال إما 'DRAFT' أو 'PUBLISHED' حصراً
       status: (ContentData.status === 'PUBLISHED') ? 'PUBLISHED' : 'DRAFT',
     };
@@ -97,7 +97,7 @@ function AddDataContent() {
 
       const resContent = await fetch(requestUrl, {
         method: method,
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": token ? `Token ${token}` : ""
         },

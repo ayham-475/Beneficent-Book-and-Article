@@ -530,6 +530,28 @@
       "payment_method": "الكريمي",
       "transaction_reference": "TXN-299431",
       "purchased_at": "2026-07-03T20:21:15.896Z"
+    },
+    {
+      "id": 27572,
+      "payer_id": 8,
+      "author_amount": 28,
+      "platform_commission": 7,
+      "price": "35.00",
+      "payment_status": "COMPLETED",
+      "payment_method": "الكريمي",
+      "transaction_reference": "TXN-448174",
+      "purchased_at": "2026-08-10T18:25:44.489Z"
+    },
+    {
+      "id": 83275,
+      "payer_id": 14,
+      "author_amount": 16,
+      "platform_commission": 4,
+      "price": "20.00",
+      "payment_status": "COMPLETED",
+      "payment_method": "الكريمي",
+      "transaction_reference": "TXN-319046",
+      "purchased_at": "2026-08-10T18:48:14.097Z"
     }
   ],
   "logs": [

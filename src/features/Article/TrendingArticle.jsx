@@ -4,17 +4,8 @@ import { Flame, Clock, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ContentDataContext } from '../../pages/User/Content Adminstorition/ArticlesHome/ArticlesContext';
 
-const TrendingArticles = ({ title }) => {
-  const { ContentData } = useContext(ContentDataContext);
-
-  // 1. استخراج المصفوفة الأساسية بأمان لحمايتها من الـ undefined
-  const allContent = Array.isArray(ContentData) 
-    ? ContentData 
-    : (ContentData?.contents || []);
-
-  // 2. التصفية الصارمة: جلب العناصر التي نوعها مقالة فقط (ARTICLE)
-  const articlesArray = allContent.filter(item => item.content_type === "ARTICLE");
-
+const TrendingArticles = ({ title,Articles }) => {
+ 
   return (
     <section className="py-[10vw] md:py-[6vw] px-[4vw] bg-[#020617]" dir="rtl">
       {/* رأس القسم */}
@@ -49,8 +40,8 @@ const TrendingArticles = ({ title }) => {
           `}} />
 
           {/* عرض المقالات المصفاة فقط */}
-          {articlesArray.length > 0 ? (
-            articlesArray.map((article) => (
+          {Articles.length > 0 ? (
+            Articles.map((article) => (
               <Link 
                 to={`/ArticleDetail/${article.content_id}`} 
                 key={article.id} 

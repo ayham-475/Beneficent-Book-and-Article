@@ -28,16 +28,16 @@ const CategorySliderResponsive = () => {
 
       {/* حاوية السلايدر */}
       <div className="relative overflow-visible">
-      <Link to='/Categories' >  <div 
+        <Link to='/Categories' >  <div
           className="flex flex-row gap-[3vw] md:gap-[2.5vw] overflow-x-auto no-scrollbar scroll-smooth pb-[4vw] md:pb-[2vw]"
-          style={{ 
-            scrollbarWidth: 'none', 
+          style={{
+            scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch' // لتنعيم التمرير في الآيفون
           }}
         >
           {cats.map((cat, i) => (
-            <motion.div 
+            <motion.div
               key={i}
               whileTap={{ scale: 0.95 }}
               className={`
@@ -56,7 +56,7 @@ const CategorySliderResponsive = () => {
               <span className="text-[8vw] md:text-[5vw] mb-[1.5vw] group-hover:scale-110 transition-transform duration-300">
                 {cat.i}
               </span>
-              
+
               {/* اسم الفئة - خط عريض واضح */}
               <span className="text-[2.8vw] md:text-[1.6vw] font-black text-white/90 text-center px-1">
                 {cat.n}

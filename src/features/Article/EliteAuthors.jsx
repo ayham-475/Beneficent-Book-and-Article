@@ -1,28 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const EliteAuthors = ({contentType}) => {
+const EliteAuthors = ({ contentType }) => {
   const [authors, setAuthors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const UserUrl = "http://localhost:3000/users";
-  const ContentUrl = "http://localhost:3000/contents";
+  const UserUrl = "http://127.0.0.1:8080/rest/Users/";
+  const ProfileUrl = "http://127.0.0.1:8080/rest/Profile/";
+  const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
+
+
+  // const UserUrl = "http://localhost:3000/users";
+  // const ContentUrl = "http://localhost:3000/contents";
   useEffect(() => {
     const fetchEliteAuthors = async () => {
       try {
         // جلب البيانات من الروابط بالتوازي
-        const [usersRes, contentsRes] = await Promise.all([
+        const [usersRes, contentsRes, ProfilesRes] = await Promise.all([
           fetch(UserUrl),
-          fetch(ContentUrl)
-        ]);
+          fetch(urlContents),
+          fetch(ProfileUrl),
 
-        const users = await usersRes.json();
-        const contents = await contentsRes.json();
+        ]);
+       
+          const users = await usersRes.json();
+          const contents = await contentsRes.json();
+          const profiles = await ProfilesRes.json();
+
+          // دمَج المستخدم مع البروفايل المطابق
+          const userProfiles = users.map((user) => {
+            // البحث عن البروفايل الخاص بهذا المستخدم تحديداً
+            const userProfile = profiles.find((p) => p.user === user.id);
+            return {
+              id: user.id,
+              name: userProfile ? userProfile.display_name : user.username || "بدون اسم",
+              img: userProfile ? userProfile.avatar_url : null,
+              // يمكنك استخدام contents هنا إن أردت ربط محتويات المستخدم
+            };
+          });
+
+          console.log(userProfiles);
 
         // 1. حساب عدد الكتب لكل كاتب (بشرط أن يكون نوع المحتوى BOOK)
         const booksCountByAuthor = contents.reduce((acc, content) => {
           if (content.content_type === contentType) {
-            const authorId = content.author_id;
+            const authorId = content.user;
             acc[authorId] = (acc[authorId] || 0) + 1;
           }
           return acc;
@@ -32,18 +54,21 @@ const EliteAuthors = ({contentType}) => {
         const compiledAuthors = users
           .map((user) => {
             const bookCount = booksCountByAuthor[user.id] || 0;
+          // console.log(" alkfja  ",userProfiles);
+             const userData = userProfiles.find((p) => p.id === user.id);
+
             return {
               id: user.id,
-              name: user.profile?.name || "كاتب غير معروف",
+              name:userData.name,
               // إذا كان لديك رابط صورة في البروفايل استخدمه، وإلا يتم استخدام صورة افتراضية مبنية على اسمه
-              pic: user.profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.profile?.name || 'Author')}&background=7c3aed&color=fff`,
+              pic:userData.img,
               books: bookCount
             };
           })
           // 3. تصفية المستخدمين الذين لديهم كتاب واحد على الأقل
           .filter(author => author.books > 0)
           // 4. الترتيب من الأكثر كتباً إلى الأقل
-          .sort((a,   b) => b.books -   a.books)
+          .sort((a, b) => b.books - a.books)
           // 5. أخذ أعلى 4 كتاب فقط ليناسب تصميم السطر
           .slice(0, 4);
 
@@ -59,6 +84,7 @@ const EliteAuthors = ({contentType}) => {
     fetchEliteAuthors();
   }, []);
 
+  console.log(" authors : ",authors)
   if (loading) {
     return (
       <section className="py-[6vw] px-[4vw] bg-[#0f172a] text-center text-white" dir="rtl">
@@ -76,12 +102,12 @@ const EliteAuthors = ({contentType}) => {
       {authors.length === 0 ? (
         <p className="text-center text-gray-400 text-[1.5vw]">لا يوجد كتاب لديهم كتب منشورة حالياً.</p>
       ) : (
-        <div 
+        <div
           className="flex flex-row justify-center gap-[4vw] md:gap-[2vw] overflow-x-auto no-scrollbar pb-[2vw]"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {authors.map((author) => (
-            <motion.div 
+            <motion.div
               key={author.id}
               whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(124,58,237,0.3)" }}
               className="flex-none w-[40vw] md:w-[21vw] text-center bg-white/5 border border-purple-500/20 rounded-[3vw] p-[2.5vw] cursor-pointer group"

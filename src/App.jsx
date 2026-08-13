@@ -41,6 +41,7 @@ import { ToastContext } from './App/Public/Contexts/ToastContext.jsx';
 import { ContentDataContext } from './pages/User/Content Adminstorition/ArticlesHome/ArticlesContext.jsx';
 import ProfileEditor from './features/auth/Profile.jsx';
 import Articles from './features/Article/ArticlesHub.jsx';
+import UserVerificationDashboard from './pages/Admin/Dashboard/UserVerificationDashboard.jsx';
 function App() {
   const [ContentData,setContentdata]=useState([])
   const APT_URL="http://localhost:3000/contents";
@@ -111,6 +112,7 @@ const [open, setOpen] = React.useState(false);
                 <Route path="/dashboard" element={<AdminUsers />} />
                 
                 <Route path="/users" element={<UsersManager />} />
+                <Route path="/UserVerificationDashboard" element={<UserVerificationDashboard />} />
                 <Route path="/ContentModeration" element={<UserManagement />} />
                 <Route path="/content" element={<AdminPendingReviews />} />
                 <Route path="/FinanceManager" element={<FinanceManager />} />

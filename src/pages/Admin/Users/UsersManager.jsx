@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../Dashboard/Sidebar';
 // ملاحظة: تأكد أن مكون UserIdentityCard لا يحتوي على هوامش ضخمة لتناسب التصميم الجديد
-import { Search, Plus, Zap, Crown, Filter } from 'lucide-react';
+import { Search, Plus, Zap, ShieldCheck, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const UsersManager = () => {
- const [UserBalance, SetUserBalance] = useState([]);
+  const [UserBalance, SetUserBalance] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); // حالة البحث الجديدة
   
-  const API_URL = "http://localhost:3000/users";
+  // const API_URL = "http://localhost:3000/users";
+  const User_URL = "http://127.0.0.1:8080/rest/Users/";
   const API_URL_profile = "http://127.0.0.1:8080/rest/Profile/";
-  
 
   const GetUsers = async () => {
     try {
-      const users = await fetch(API_URL);
+      const users = await fetch(User_URL);
       const usersdata = await users.json();
       
       const usersProfile = await fetch(API_URL_profile);
       const usersdata_profile = await usersProfile.json();
       
-     
+      console.log(" users  : ", usersdata, "Profiles  d: ", usersdata_profile);
       
       // دمج البيانات لضمان وجود جميع المعلومات في مصفوفة واحدة للبحث والعرض الاحترافي
       const mergedData = usersdata_profile.map(profile => {
@@ -28,7 +28,6 @@ const UsersManager = () => {
         return {
           ...profile,
           email: correspondingUser ? correspondingUser.email : "", // إذا كنت تحتاج البحث بالإيميل أيضاً
-        
         };
       });
 
@@ -37,6 +36,7 @@ const UsersManager = () => {
       console.error("Error fetching users data:", error);
     }
   }
+
   useEffect(() => {
     GetUsers();
   }, [])
@@ -52,49 +52,51 @@ const UsersManager = () => {
   });
   
   return (
-    // h-screen + overflow-hidden تضمن ثبات الصفحة بالكامل
-    <div className="h-screen bg-[#080809] flex overflow-hidden font-sans text-white" dir="rtl">
+    // h-screen + overflow-hidden تضمن ثبات الصفحة بالكامل مع ألوان Slate-950
+    <div className="h-screen bg-slate-950 flex overflow-hidden font-sans text-slate-100" dir="rtl">
       {/* <Sidebar /> */}
 
       <main className="flex-1 md:pr-[110px] relative flex flex-col h-full overflow-hidden">
-        {/* تأثير الإضاءة الخلفي الثابت */}
-        <div className="absolute top-[-10%] left-[20%] w-[500px] h-[300px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+        {/* تأثير الإضاءة الخلفي الثابت بدرجات الـ Indigo والـ Violet */}
+        <div className="absolute top-[-10%] left-[20%] w-[500px] h-[300px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {/* --- الهيدر (ثابت لا يتحرك) --- */}
-        <header className="px-6 md:px-12 pt-10 pb-6 shrink-0 relative z-20 bg-[#080809]/50 backdrop-blur-md">
+        <header className="px-6 md:px-12 pt-10 pb-6 shrink-0 relative z-20 bg-slate-950/60 backdrop-blur-xl border-b border-slate-800/50">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Crown className="text-black" size={24} />
+              <div className="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-indigo-400 shadow-lg shadow-indigo-900/20">
+                <ShieldCheck size={26} />
               </div>
               <div>
-                <h1 className="text-2xl font-black tracking-tight text-white">إدارة المجتمع</h1>
-                <p className="text-emerald-500/80 text-[9px] font-black uppercase tracking-[0.2em] mt-1">Elite System Active</p>
+                <h1 className="text-2xl font-bold tracking-tight text-white">إدارة المجتمع</h1>
+                <p className="text-indigo-400 text-[10px] font-semibold uppercase tracking-[0.2em] mt-1">
+                  نظام إدارة المنظمين والمستخدمين
+                </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="relative group flex-1 md:ml-100 md:w-100">
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={16} />
                 <input
                   type="text"
                   placeholder="بحث سريع بالاسم أو المعرف..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)} // تحديث النص فوراً عند الكتابة
-                  className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pr-10 pl-4 text-xs focus:outline-none focus:border-emerald-500/50 transition-all"
+                  className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl py-3 pr-10 pl-4 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all"
                 />
               </div>
-              <Link to={"/login"} ><button className="bg-emerald-500 text-black p-3 rounded-xl hover:bg-emerald-400 transition-all active:scale-95">
-                <Plus size={20} />
-              </button>
+              <Link to={"/login"}>
+                <button className="bg-indigo-600 text-white p-3 rounded-2xl hover:bg-indigo-500 shadow-lg shadow-indigo-900/20 transition-all active:scale-95 border border-indigo-500/30">
+                  <Plus size={20} />
+                </button>
               </Link>
             </div>
           </div>
         </header>
 
-
         {/* --- منطقة البطاقات (هذا الجزء الوحيد الذي يتحرك) --- */}
-        <div className="flex-1 overflow-y-auto px-6 md:px-12 pt-4 pb-20 no-scrollbar relative z-10">
+        <div className="flex-1 overflow-y-auto px-6 md:px-12 pt-6 pb-20 no-scrollbar relative z-10">
           {/* إخفاء السكرول بار بذكاء */}
           <style>{`
             .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -102,73 +104,80 @@ const UsersManager = () => {
           `}</style>
 
           <div className="grid grid-cols-1 gap-4">
-            {/* قمنا باستبدال الخريطة لتعرض المصفوفة المصفاة filteredUsers بدلاً من القديمة */}
+            {/* عرض مصفوفة filteredUsers المصفاة */}
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user, index) => (
                 <div
                   key={index}
                   className="
-                    group relative bg-[#121214]/40 border border-white/[0.03] 
-                    hover:bg-[#161618] hover:border-emerald-500/20 
-                    rounded-2xl p-4 transition-all duration-300
-                    flex items-center justify-between gap-4
+                    group relative bg-slate-900/50 border border-slate-800/80 
+                    hover:bg-slate-900 hover:border-indigo-500/40 
+                    rounded-3xl p-4 backdrop-blur-md transition-all duration-300
+                    flex items-center justify-between gap-4 shadow-sm
                   "
                 >
                   {/* المحتوى الأفقي داخل البطاقة */}
                   <div className="flex items-center gap-4 flex-1">
-                    <img src={user.avatar_url} className="w-10 h-10 rounded-lg object-cover" alt="img" />
+                    <img src={user.avatar_url} className="w-11 h-11 rounded-2xl object-cover border border-slate-800 group-hover:border-indigo-500/30 transition-all" alt="img" />
                     <div className="grid grid-cols-2 md:grid-cols-4 flex-1 items-center gap-4">
                       <div className="min-w-[120px]">
-                        <h3 className="text-sm font-bold text-gray-100">{user.display_name}</h3>
-                        <p className="text-[10px] text-gray-500 truncate">{user.payout_details}</p>
+                        <h3 className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">{user.display_name}</h3>
+                        <p className="text-[10px] text-slate-400 truncate">{user.payout_details}</p>
                       </div>
                       <div className="hidden md:block">
-                        <span className="bg-white/5 text-[9px] px-2 py-1 rounded-md text-gray-400 border border-white/5">{user.payout_details}</span>
+                        <span className="bg-slate-800/60 text-[10px] px-3 py-1 rounded-xl text-slate-300 border border-slate-700/50">
+                          {user.payout_details}
+                        </span>
                       </div>
                       <div className="hidden md:block">
-                        <span className="text-sm font-mono text-emerald-400 font-bold">{user.user_id}</span>
+                        <span className="text-xs font-mono text-indigo-400 font-semibold bg-indigo-500/10 px-2.5 py-1 rounded-xl border border-indigo-500/20">
+                          #{user.user_id}
+                        </span>
                       </div>
                       <div className="w-24">
-                        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500" style={{ width: `${user.payout_method}%` }}></div>
+                        <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+                          <div className="h-full bg-indigo-500" style={{ width: `${user.payout_method}%` }}></div>
                         </div>  
                       </div>
                     </div>
                   </div>
 
-                  <Link to='/ContentModeration' state={{ user: user }}><button className="text-gray-600 hover:text-emerald-500 transition-colors flex items-center gap-1 text-xs">
-                    <Filter size={14} />تفاصيل
-                  </button>
+                  <Link to='/ContentModeration' state={{ user: user }}>
+                    <button className="text-slate-400 hover:text-indigo-300 bg-slate-800/40 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/30 px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 text-xs font-medium">
+                      <Filter size={14} /> التفاصيل
+                    </button>
                   </Link>
                 </div>
               ))
             ) : (
-              <div className="text-center py-12 text-gray-500 text-sm">
+              <div className="text-center py-16 text-slate-500 text-sm bg-slate-900/30 border border-slate-800/50 rounded-3xl backdrop-blur-md">
                 لا يوجد مستخدمين يطابقون بحثك الحالي.
               </div>
             )}
           </div>
+
+          {/* قسم "النشاط المباشر" السفلي بتصميمه الفخم المحدث */}
+          <section className="mt-12 bg-slate-900/50 border border-slate-800/80 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden backdrop-blur-md">
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 mx-auto mb-4">
+                <Zap className="animate-pulse" size={24} />
+              </div>
+              <h2 className="text-2xl font-bold mb-2 text-white">رؤية كاملة لمجتمعك</h2>
+              <p className="text-slate-400 text-xs md:text-sm max-w-lg mx-auto leading-relaxed font-normal">
+                أنت الآن تشرف على 5,230 مستخدم. تم رصد 12 مستخدم جديد خلال الساعة الماضية يحتاجون لمراجعة بياناتهم.
+              </p>
+              <button className="mt-6 px-7 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-semibold text-xs shadow-lg shadow-indigo-900/20 border border-indigo-500/30 transition-all active:scale-95">
+                عرض تقرير الأداء السنوي
+              </button>
+            </div>
+            {/* زينة خلفية */}
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute -top-20 -left-20 w-64 h-64 bg-violet-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+          </section>
         </div>
-        
-        {/* قسم "النشاط المباشر" السفلي - يزيد من جمال الصفحة */}
-        <section className="mt-16 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 rounded-[3rem] p-8 md:p-12 text-center relative overflow-hidden">
-          <div className="relative z-10">
-            <Zap className="mx-auto text-blue-500 mb-4 animate-pulse" size={32} />
-            <h2 className="text-2xl font-black mb-2">رؤية كاملة لمجتمعك</h2>
-            <p className="text-gray-500 text-sm max-w-lg mx-auto leading-relaxed font-medium">
-              أنت الآن تشرف على 5,230 مستخدم. تم رصد 12 مستخدم جديد خلال الساعة الماضية يحتاجون لمراجعة بياناتهم.
-            </p>
-            <button className="mt-8 px-8 py-4 bg-white text-black rounded-2xl font-black text-xs hover:bg-blue-500 hover:text-white transition-all">
-              عرض تقرير الأداء السنوي
-            </button>
-          </div>
-          {/* زينة خلفية */}
-          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full"></div>
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full"></div>
-        </section>
 
         {/* تأثير تلاشي سفلي ثابت ليعطي عمق عند انتهاء السكرول */}
-        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#080809] to-transparent pointer-events-none z-20"></div>
+        <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none z-20"></div>
       </main>
     </div>
   );

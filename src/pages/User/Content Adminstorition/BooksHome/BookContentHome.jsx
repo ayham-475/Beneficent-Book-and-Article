@@ -1,4 +1,4 @@
-import React, { use, useContext, useState } from 'react';
+import React, { use, useContext, useState,useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Plus, Search, Book, ShieldCheck, Globe,
@@ -11,15 +11,28 @@ import { AuthContext } from '../../../../features/auth/auther';
 import { Link } from 'react-router-dom';
 const SuperBooksManager = () => {
   const [InputSearch, SetInputSerch] = useState("");
-  const ContentData = useContext(ContentDataContext)
+    const [Books, SetBook] = useState([]);
   const { user } = useContext(AuthContext);
-  const UserBooks = ContentData.filter((book) => {
-    if (book.content_type == "BOOK") {
-      return (book.author_id == user.id)
-    }
-  })
+      const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
 
-  const BooKsSerched = UserBooks.filter((book) => {
+ useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const res = await fetch(urlContents);
+        const contents = await res.json();
+        const userBooks = contents.filter(
+          (item) => item.user === user.id && item.content_type === "BOOK"
+        );
+        
+        SetBook(userBooks);
+      } catch (error) {
+        console.error("Error fetching Books:", error);
+      }
+    };
+
+    if (user?.id) fetchArticles();
+  }, [user?.id]);
+  const BooKsSerched = Books.filter((book) => {
     const serchedname = InputSearch.toLowerCase();
     return (
       (book.title && book.title.toLowerCase().includes(serchedname)) ||
@@ -28,7 +41,8 @@ const SuperBooksManager = () => {
 
 
   });
- 
+          console.log("userBookqqqs : ",BooKsSerched)
+
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-10 mt-20" dir="rtl">
@@ -78,7 +92,7 @@ const SuperBooksManager = () => {
         </div>
       </div>
 
-      <BooksTable BooKsSerched={BooKsSerched} />
+      <BooksTable BooKsSerched={ (BooKsSerched)?BooKsSerched:Books} />
 
       {/* 4. قسم "لماذا نحن؟" (Footer Features) */}
       <div className="bg-black rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden">

@@ -106,7 +106,7 @@ const SmartArticlesManager = ({SerchedArticles}) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/30">
-                {articles.map((art) => (
+                {SerchedArticles.map((art) => (
                   <tr key={art.content_id} className="hover:bg-white/40 transition-all group">
                     <td className="px-10 py-6">
                       <div className="font-bold text-gray-800 text-lg group-hover:text-[#319795] transition-colors">{art.title}</div>
@@ -139,7 +139,7 @@ const SmartArticlesManager = ({SerchedArticles}) => {
 
           {/* 2. تصميم الهاتف الإبداعي (Mobile View) */}
           <div className="md:hidden p-4 space-y-4">
-            {articles.map((art) => (
+            {SerchedArticles.map((art) => (
               <div key={art.content_id} className="bg-white/60 backdrop-blur-md p-6 rounded-[2rem] border border-white/80 shadow-sm relative group active:scale-[0.98] transition-transform">
                 
                 {/* الجزء العلوي: التصنيف والإجراءات */}

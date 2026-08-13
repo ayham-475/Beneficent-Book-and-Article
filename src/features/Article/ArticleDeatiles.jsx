@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 // تم إبقاء استيراد ملف الـ JSON إذا كنت تحتاجه احتياطياً، ولكن الاعتماد الحالي على الـ Context
 // import ArticlesData from './apiArticles.json'; 
 import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext,useState,useEffect } from 'react';
 import { Heart, Share2, Bookmark, Quote, Clock } from 'lucide-react'; 
 import Navbar from '../../App/Public/Layout/Hedder';
 import CommentsSection from './CommentsSection';
@@ -11,15 +11,31 @@ import { ContentDataContext } from '../../pages/User/Content Adminstorition/Arti
 
 const CreativeArticleView = () => {
   const { ArticleId } = useParams();
+  const [Articles,SetArticles]=useState([])
+      const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
+    useEffect(()=>{
+  
+  const GetContent=async()=>{
+      const rescontentsArricles= await fetch(urlContents);
+      const ContentArticles = await rescontentsArricles.json();
+  
+      const articles=ContentArticles.filter((item)=>{
+       return  item.content_type=="ARTICLE";
+  
+      })
+      SetArticles(articles)
+
+    }
+  
+  GetContent()
+  
+  },[])
   
   // جلب البيانات من الـ Context
-  const { ContentData } = useContext(ContentDataContext);
 
   // تأكد من الهيكلية: هنا قمنا بدعم الحالتين (إذا كانت مصفوفة مباشرة أو كائن يحتوي على مصفوفة)
-  const articlesArray = Array.isArray(ContentData) ? ContentData : ContentData?.ContentData;
 
-  const article = articlesArray?.find((b) => String(b.content_id) === String(ArticleId));
-
+  const article = Articles?.find((b) => String(b.content_id) === String(ArticleId));
   // في حال لم يتم العثور على المقال أو جاري التحميل
   if (!article) {
     return (

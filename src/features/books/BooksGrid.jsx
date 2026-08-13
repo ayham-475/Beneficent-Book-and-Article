@@ -6,7 +6,7 @@ import { ContentDataContext } from '../../pages/User/Content Adminstorition/Arti
 const BooksSlider = () => {
 
   const { ContentData } = useContext(ContentDataContext);
-const [Books,SetBooks]=useState([])
+  const [Books, SetBooks] = useState([])
   // 1. استخراج المصفوفة الأساسية بأمان لحمايتها من الـ undefined
   const allContent = Array.isArray(ContentData)
     ? ContentData
@@ -14,19 +14,19 @@ const [Books,SetBooks]=useState([])
   const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
 
   useEffect(() => {
-    const ContentsData = async() => {
+    const ContentsData = async () => {
       try {
         const contentsdata = await fetch(urlContents)
         const Contents = await contentsdata.json();
-        console.log("books  : ",Contents)
+        console.log("books  : ", Contents)
 
-          const booksArray = Contents.filter(item => item.content_type === "BOOK");
-          SetBooks(booksArray)
+        const booksArray = Contents.filter(item => item.content_type === "BOOK");
+        SetBooks(booksArray)
 
-        
+
       }
-      catch(error) {
-         console.error("Error fetching Books:", error);
+      catch (error) {
+        console.error("Error fetching Books:", error);
 
       }
 

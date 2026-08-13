@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReviewList from './ReviewList';
 import ContentPreview from './ContentPreview';
 import DecisionPanel from "./DecisionPanel";
@@ -6,9 +6,41 @@ import DecisionPanel from "./DecisionPanel";
 const AdminPendingReviews = () => {
   const [ContentPreviewData, setContentPreviewData] = useState({});
 
+
+
+  const [User, SetUser] = useState({});
+  // جلب المستخدم تلقائياً كلما تغيرت بيانات المقال المختار
+  useEffect(() => {
+    const GetUser = async () => {
+      // 1. تأكد أولاً من وجود بيانات المقال ومُعرّف الكاتب
+      // (استبدل ContentPreviewData.author بالحقل الصحيح لكاتب المقال لديك مثل user أو author)
+      const authorId = ContentPreviewData.author || ContentPreviewData.user;
+
+      if (!authorId) return;
+
+      try {
+        const userdata = await fetch("http://127.0.0.1:8080/rest/Users/");
+        const users = await userdata.json();
+
+        // البحث عن المستخدم باستخدام id الكاتب
+        const UserContent = users.find((u) => u.id == authorId);
+
+        if (UserContent) {
+          SetUser(UserContent);
+        }
+      } catch (error) {
+        console.error("خطأ في جلب بيانات المستخدم:", error);
+      }
+    };
+
+    GetUser();
+  }, [ContentPreviewData]); // تموضع ContentPreviewData كـ dependency تضمن التنفيذ فور اختيار مقال جديد
+
+  // },[])
+  console.log("User ", User, "ContentPreviewData :", ContentPreviewData)
   function ChangeContentPreviewData(data) {
     setContentPreviewData(data);
-    // في الموبايل، نريد السكرول أن يرتفع لأعلى عند اختيار مقال جديد
+    // السكرول لأعلى عند اختيار مقال جديد
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -30,13 +62,13 @@ const AdminPendingReviews = () => {
           {/* منطقة العرض: flex-1 تجعلها تأخذ المساحة الكبرى */}
 
           {/* القائمة الجانبية: في الموبايل تأخذ عرض كامل، في الكبير عرض ثابت ومتحرك مع السكرول */}
-         
+
           <div className="w-full lg:flex-1 space-y-6 md:space-y-10">
-            <ContentPreview ContentPreviewData={ContentPreviewData} />
+            <ContentPreview ContentPreviewData={ContentPreviewData} user={User} />
             <DecisionPanel ContentPreviewData={ContentPreviewData} />
-        
+
           </div>
-           <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
+          <aside className="w-full lg:w-[380px] xl:w-[420px] lg:sticky lg:top-10 shrink-0 z-30">
             <ReviewList ChangeContentPreviewData={ChangeContentPreviewData} />
           </aside>
 

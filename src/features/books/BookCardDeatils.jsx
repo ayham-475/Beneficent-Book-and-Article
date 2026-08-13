@@ -9,53 +9,59 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContext } from '../../App/Public/Contexts/ToastContext';
 const BookDetails = () => {
 
-  const {ContentData}=useContext(ContentDataContext);
-  
-const [Books,SetBooks]=useState([])
+  const { ContentData } = useContext(ContentDataContext);
+
+  const [Books, SetBooks] = useState([])
+  const [Profiles, SetProfiles] = useState([])
   const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
-  useEffect(()=>{
-    const GetContentId=async ()=>{
-    try{
-      const Contents=await fetch(urlContents)
-    const ContentsJson=await Contents.json()
-    SetBooks(ContentsJson)
-    console.log("dea",ContentsJson)
-    }catch(error)
-    {
-      console.log(" error   : ",error)
+  const urlProfile = "http://127.0.0.1:8080/rest/Profile/";
+ 
+  // 
+  useEffect(() => {
+    const GetContentId = async () => {
+      try {
+        const Contents = await fetch(urlContents)
+        const ProfilesData = await fetch(urlProfile)
+        const ContentsJson = await Contents.json()
+        const ProfilesJson = await ProfilesData.json()
+        SetBooks(ContentsJson)
+        SetProfiles(ProfilesJson)
+        console.log("dea", ContentsJson)
+      } catch (error) {
+        console.log(" error   : ", error)
+      }
+
+
     }
-    
-
-  }
-  GetContentId()
-
-  },[])
+    GetContentId()
   
+
+  }, [])
+
   // 1. سحب بيانات الكتب من الـ Context
   const { user } = useContext(AuthContext);
- const navigate =useNavigate()
+  const navigate = useNavigate()
   const [Purchase, setPurchase] = useState({
-    id: Math.floor(Math.random() * 10000),
-    content_id: 101,
-    payer_id: "",
+    content: 101,
+    payer: "",
     author_amount: 24,
     platform_commission: "",
     price: 10,
     payment_status: "COMPLETED",
     payment_method: "الكريمي",
     transaction_reference: "TXN-992811",
-    purchased_at: ""
+   
   });
 
   const { showHideToast } = useContext(ToastContext);
-  
+
   // 2. استخراج معرف الكتاب (bookId) من رابط الصفحة الحالي
   const { bookId } = useParams();
- const allContent = Array.isArray(ContentData) 
-     ? ContentData 
-     : (ContentData?.contents || []);
- 
-   // 2. التصفية الصارمة: جلب العناصر التي نوعها مقالة فقط (BOOKS)
+  const allContent = Array.isArray(ContentData)
+    ? ContentData
+    : (ContentData?.contents || []);
+
+  // 2. التصفية الصارمة: جلب العناصر التي نوعها مقالة فقط (BOOKS)
   //  const booksArray = allContent.filter(item => item.content_type === "BOOK");
 
   // 3. البحث عن الكتاب المطابق باستخدام الـ id الفعلي
@@ -71,11 +77,14 @@ const [Books,SetBooks]=useState([])
     );
   }
 
-  // حساب عمولة المنصة وصافي ربح الكاتب ديناميكياً بناءً على سعر الكتاب الحالي
+   const getUserProfile=Profiles.find((profile)=>{
+    return profile.user==user.id;
+  })
+// حساب عمولة المنصة وصافي ربح الكاتب ديناميكياً بناءً على سعر الكتاب الحالي
   const platform_commission = Number((book.price * 0.2).toFixed(2)); // عمولة المنصة 20% كمثال
   const author_amount = Number((book.price - platform_commission).toFixed(2)); // الصافي للكاتب
 
-  const API_URL = "http://localhost:3000/purchases";
+  const API_URL = "http://127.0.0.1:8080/rest/Purchases/";
 
   // دمج عملية الإرسال وتمرير البيانات مباشرة
   const handleRegisterPurchase = async (pData) => {
@@ -85,7 +94,7 @@ const [Books,SetBooks]=useState([])
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pData)
       });
-      
+
       if (res.ok) {
         alert("هل انت متاكد انك تريد شراء هذا الكتاب");
         showHideToast("  تم شراء الكتاب بنجاح   شكرا")
@@ -106,16 +115,14 @@ const [Books,SetBooks]=useState([])
 
     // بناء كائن المشتريات المالي الاحترافي والمطابق لجدول الـ JSON تماماً
     const NewPurchas = {
-      id: Math.floor(Math.random() * 100000),
-      content_id: Number(bookId) || book.id,
-      payer_id: user.id,
+      content:bookId || book.id,
+      payer: getUserProfile.profile_id,
       author_amount: author_amount,
       platform_commission: platform_commission,
       price: book.price,
       payment_status: "COMPLETED",
       payment_method: "الكريمي",
       transaction_reference: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
-      purchased_at: new Date().toISOString()
     };
 
     // تحديث الـ State للواجهة 
@@ -125,14 +132,15 @@ const [Books,SetBooks]=useState([])
     handleRegisterPurchase(NewPurchas);
   }
 
+  console.log("profile  : ",Profiles,"Purchase  : ",Purchase,"getUserProfile : ",getUserProfile)
   return (
-    <> 
+    <>
       <Hedder />
       <div className="min-h-screen bg-[#050816] text-white font-sans p-4 md:p-12" dir="rtl">
-        
+
         {/* Container الرئيسي بتصميم Glassmorphism */}
         <div style={{ marginTop: "60px" }} className="max-w-6xl mx-auto bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl relative">
-          
+
           {/* شريط الإغلاق الجمالي في الأعلى */}
           <div className="absolute top-10 left-8 flex gap-2 z-20">
             <div className="w-3 h-3 bg-red-500/50 rounded-full"></div>
@@ -141,17 +149,17 @@ const [Books,SetBooks]=useState([])
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            
+
             {/* الجانب الأيمن: غلاف الكتاب والإضاءة النيون */}
             <div className="relative p-12 flex items-center justify-center bg-gradient-to-br from-blue-600/5 to-transparent">
               <div className="absolute w-[300px] h-[300px] bg-blue-500/20 blur-[100px] rounded-full animate-pulse"></div>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ rotateY: 20, perspective: 1000 }}
                 whileHover={{ rotateY: 0 }}
                 className="relative z-10 mt-10 lg:mt-20"
               >
-                <img 
+                <img
                   src={book.img_path}
                   className="w  -80 h-[450px] object-cover rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
                   alt={book.title}
@@ -206,13 +214,13 @@ const [Books,SetBooks]=useState([])
               </div>
 
               {/* زر الشراء الفوري المحسن */}
-              <button 
-                onClick={addPurchase} 
+              <button
+                onClick={addPurchase}
                 className="w-full bg-[#0FD3C4] text-black font-black py-5 rounded-2xl text-xl hover:shadow-[0_0_30px_rgba(15,211,196,0.4)] transition-all active:scale-95 shadow-lg"
               >
                 شراء وتحميل الكتاب فوراً (PDF)
               </button>
-              
+
               <p className="text-center mt-4 text-gray-500 text-xs">
                 دفع آمن 100% عبر جميع الوسائل المتاحة
               </p>

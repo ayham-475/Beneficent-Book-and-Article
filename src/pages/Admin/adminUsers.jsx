@@ -8,23 +8,24 @@ const Dashboard = () => {
 
   const [CountUser, SetCountUser] = useState(0);
   const [CountConent, SetCountContent] = useState(0);
-  const [CountOrganizers, SetCountOrganizers] = useState(0);
- 
+  const [CountOrganizers,SetCountOrganizers]=useState(0)
   const  GetCountUser=async()=>{
-   const Users=await fetch("http://localhost:3000/users");
+   const Users=await fetch("http://127.0.0.1:8080/rest/Users/");
    const DataUser=await Users.json();
    SetCountUser(DataUser)
+  
   }
 
   const GetCountContent=async()=>{
-   const content=await fetch("http://localhost:3000/contents");
+   const content=await fetch("http://127.0.0.1:8080/rest/Content-articles/");
    const DataContent=await content.json();
    SetCountContent(DataContent)
   }
-  const  GetCountOrganizers=async()=>{
-   const organizers=await fetch("http://localhost:3000/users");
-   const DataUser=await organizers.json();
-   SetCountOrganizers(DataUser)
+ 
+
+  function GetCountOrganizers(UsersOrganizerd){
+    SetCountOrganizers(UsersOrganizerd)
+
   }
   const statsData = [
     {
@@ -50,7 +51,7 @@ const Dashboard = () => {
     },
     {
       title: "طلبات الانضمام",
-      value:  CountOrganizers.length,
+      value: CountOrganizers,
       change: "Pending",
       icon: <Users size={24} />,
       color: { text: "text-amber-400", bg: "bg-amber-500/20", glow: "bg-amber-400", shadow: "bg-amber-500/20", dot: "bg-amber-400", brand: "amber-500" }
@@ -60,7 +61,7 @@ const Dashboard = () => {
   useEffect(()=>{
   GetCountUser();
   GetCountContent();
-  GetCountOrganizers();
+
   },[])
   
   return (
@@ -143,7 +144,7 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-          <RecentUsers />
+          <RecentUsers GetCountOrganizers={GetCountOrganizers}/>
         </div>
 
 

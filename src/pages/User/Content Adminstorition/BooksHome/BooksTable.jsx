@@ -24,7 +24,7 @@ const BooksTable = ({BooKsSerched}) => {
         method: "DELETE",
       });
       if (contentData.ok) {
-        SetBook(Books.filter(item => item.id != id))
+        SetBook(Books.filter(item => item.content_id != id))
         setMessage({
           text: dataArticle ? "تم حذف الكتاب بنجاح!" : "تم إنشاء الكتاب بنجاح!",
           
@@ -35,27 +35,9 @@ const BooksTable = ({BooKsSerched}) => {
       // setMessage({ text: "حدث خطأ أثناء الاتصال بالسيرفر.", type: "error" });
     }
   }
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const res = await fetch(urlContents);
-        const contents = await res.json();
-        const userBooks = contents.filter(
-          (item) => item.user === user.id && item.content_type === "BOOK"
-        );
-         console.log("userBooks : ",Books)
-        SetBook(userBooks);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching Books:", error);
-        setLoading(false);
-      }
-    };
 
-    if (user?.id) fetchArticles();
-  }, [user?.id]);
 
-  if (loading) return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
+  if(!BooKsSerched)return <div className="p-10 text-center font-black text-gray-400 animate-pulse">جاري تحميل مقالاتك الإبداعية...</div>;
 
   return (
     <div className="bg-white/40 backdrop-blur-xl rounded-[1rem] border border-white shadow-2xl overflow-hidden">
@@ -76,7 +58,7 @@ const BooksTable = ({BooKsSerched}) => {
             </thead>
 
             <tbody className="divide-y divide-gray-100/50">
-              {Books.map((book, index) => (
+              {BooKsSerched.map((book, index) => (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -161,7 +143,7 @@ const BooksTable = ({BooKsSerched}) => {
       {/* تصميم الهاتف - سكرول عمودي للبطاقات */}
       <div className="md:hidden">
         <div className="max-h-[500px] overflow-y-auto no-scrollbar p-5 space-y-5">
-          {Books.map((book) => (
+          {BooKsSerched.map((book) => (
             <div key={book.content_id} className="bg-white/80 p-5 rounded-[2.5rem] shadow-sm border border-white relative group overflow-hidden">
               <div className="flex gap-5">
                 <img src={book.img_path} className="w-24 h-32 object-cover rounded-[1.5rem] shadow-xl" />

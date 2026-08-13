@@ -101,7 +101,7 @@ function ArticleEditor() {
 
   // عناوين الـ API
   const API_URL = "http://127.0.0.1:8080/rest/Content-articles/";
-  const URL_ARTICLE_DETAILS = "http://127.0.0.1:8080/article/create_articleDeatils/";
+  const URL_ARTICLE_DETAILS = "http://127.0.0.1:8080/rest/ArticleDeatils/";
 
   // دالة حفظ تفاصيل المقال
   const addArticleDetails = async (createdContentId) => {
@@ -111,6 +111,7 @@ function ArticleEditor() {
         body_html: articleDetails.body_html,
         pages_count: articleDetails.pages_count
       };
+      
       const token = localStorage.getItem("token");
       const res = await fetch(URL_ARTICLE_DETAILS, {
         method: "POST",
@@ -180,6 +181,7 @@ function ArticleEditor() {
       console.error("خطأ الاتصال بالسيرفر:", error);
       alert("تعذر الاتصال بالسيرفر. يرجى التحقق من الخادم.");
     }
+    // console.log("articleDetails  :",articleDetails)
   };
 
   return (
@@ -321,7 +323,7 @@ function ArticleEditor() {
               </button>
               <button
                 type="button"
-                onClick={() => saveArticle('PUBLISHED')}
+                onClick={() => saveArticle('DRAFT')}
                 className="flex-1 md:flex-none px-10 py-4 bg-[#319795] text-white rounded-2xl font-black shadow-xl shadow-[#319795]/30 hover:bg-[#2a8381] transition-all active:scale-95"
               >
                 {dataArticle ? "تحديث الآن" : "نشر المقال"}

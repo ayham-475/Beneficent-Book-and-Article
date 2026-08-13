@@ -10,14 +10,29 @@ const ArticlesManager = () => {
 
   
   const [searchTerm, setSearchTerm] = useState("");
-    const ContentData = useContext(ContentDataContext)
-    const { user } = useContext(AuthContext);
-    const UserArticles = ContentData.filter((book) => {
-    if (book.content_type === "ARTICLE") {
-      return (book.author_id == user.id)
-    }
-  });
 
+        const [UserArticles, SetUserArticles] = useState([]);
+  const { user } = useContext(AuthContext);
+
+ const urlContents = "http://127.0.0.1:8080/rest/Content-articles/";
+ useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const res = await fetch(urlContents);
+        const contents = await res.json();
+        const userBooks = contents.filter(
+          (item) => item.user === user.id && item.content_type === "ARTICLE"
+        );
+        
+        SetUserArticles(userBooks);
+      } catch (error) {
+        console.error("Error fetching Books:", error);
+      }
+    };
+
+    if (user?.id) fetchArticles();
+  }, [user?.id]);
+   
   const SerchedArticles=UserArticles.filter((Article)=>{
     const nameArticle=searchTerm.toLowerCase(searchTerm);
     return(
@@ -74,7 +89,7 @@ const ArticlesManager = () => {
         </div>
 
         {/* Articles List / Grid */}
-       <ArticlesTable SerchedArticles={SerchedArticles}  />
+       <ArticlesTable SerchedArticles={(SerchedArticles)?SerchedArticles:UserArticles }/>
       </div>
     </div>
   );

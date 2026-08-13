@@ -18,6 +18,7 @@ const AuthPage = () => {
 
   // رابط السيرفر الموحد لـ Django
   const BASE_URL = "http://127.0.0.1:8080/auth";
+  // const User_URL = "http://127.0.0.1:8080/rest/Users/";
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   // 1. منطق تسجيل الدخول

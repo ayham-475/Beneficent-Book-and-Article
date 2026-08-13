@@ -1,47 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const RecentUsers = () => {
+import Sidebar from '../Dashboard/Sidebar';
+// ملاحظة: تأكد أن مكون UserIdentityCard لا يحتوي على هوامش ضخمة لتناسب التصميم الجديد
+import { Search, Plus, Zap, Crown, Filter } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const RecentUsers = ({GetCountOrganizers}) => {
   // 1. تعريف الحالة (State) لتخزين المستخدمين القادمين من الـ API
   const [dbUsers, setDbUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   
 
-  const API_URL = "http://localhost:3000/users";
+  const API_URL = "http://127.0.0.1:8080/rest/Profile/";
+  const API_URL_profile = "http://127.0.0.1:8080/rest/Users/";
 
   // 2. دالة جلب البيانات من السيرفر
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      
-      // هنا نقوم بفلترة البيانات في "المتصفح" (Frontend Filtering)
-      // لجلب من سجلوا في آخر 24 ساعة مثلاً
-      const filtered = filterRecent(data, 24); 
-      setDbUsers(filtered);
-    } catch (error) {
-      console.error("خطأ في جلب البيانات:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  // 3. دالة الفلترة (تشتغل على المصفوفة الناتجة من الـ API)
-  const filterRecent = (usersList, hours) => {
-    const now = new Date();
-    const startTime = now.getTime() - (hours * 60 * 60 * 1000);
-    
-    return usersList.filter(user => {
-      const userDate = new Date(user.createdAt).getTime();
-      return userDate >= startTime;
-    });
-  };
+ const fetchUsers = async () => {
+  try {
+    setLoading(true);
 
+    // 1. جلب البيانات من السيرفر
+    const res = await fetch(API_URL); // افترضنا أن هذه للبروفايلات Profile
+    const profiles = await res.json();
+
+    const resUser = await fetch(API_URL_profile); // افترضنا أن هذه لجدول المستخدمين User
+    const usersData = await resUser.json();
+
+    // 2. فلترة البروفايلات المسجلة حديثاً (آخر 24 ساعة)
+    const recentProfiles = filterRecent(profiles, 24);
+
+    // 3. الفلترة والدمج الصحيح
+    const nonActiveUsers = recentProfiles
+      .map((profile) => {
+        // البحث عن المستخدم المطابق الذي تكون حالته is_active == false
+        const matchingUser = usersData.find(
+          (u) => u.id == profile.user && u.is_active === false
+        );
+
+        // إذا لم نجد مستخدم مطبق أو كان مفعل، نرجع null
+        if (!matchingUser) return null;
+
+        // إرجاع الكائن المدمج بنجاح
+        return {
+          display_name: profile.display_name,
+          profile_id: profile.profile_id,
+          email: matchingUser.email,
+          created_at: profile.created_at,
+          avatar_url: profile.avatar_url,
+          is_active: matchingUser.is_active,
+          user_id: matchingUser.id,
+        };
+      })
+      // استبعاد أي عناصر null لم تطابق الشرط
+      .filter((item) => item !== null);
+
+    console.log("المستخدمون الجدد غير المكتملين/المفعلين: ", nonActiveUsers);
+
+    // 4. تعيين القائمة المحدثة في الـ State
+    setDbUsers(nonActiveUsers);
+
+  } catch (error) {
+    console.error("خطأ في جلب البيانات:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+  // 3. دالة الفلترة (تشتغل على المصفوفة الناتجة من الـ API)
+const filterRecent = (usersList, hours) => {
+  if (!Array.isArray(usersList)) return [];
+
+  const now = new Date();
+  const startTime = now.getTime() - (hours * 60 * 60 * 1000);
+
+  return usersList.filter(user => {
+      //  return (!user.is==)
+    // 1. قراءة الحقل بالشكل الصحيح لـ Django (created_at) أو المسميات الأخرى
+    const dateString = user.created_at ;
+
+    // إذا لم يكن التاريخ موجوداً في بيانات الـ API المرجعة
+    if (!dateString) {
+      console.warn("هذا العنصر لا يحتوي على حقل تاريخ:", user);
+      return false;
+    }
+    const userDate = new Date(dateString).getTime();
+    // تجنب أخطاء NaN
+    if (isNaN(userDate)) return false;
+    return userDate >= startTime;
+  });
+};
   // 4. تشغيل الدالة فور تحميل المكون
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  GetCountOrganizers(dbUsers.length);
   return (
     <div className="bg-[#161616] p-8 rounded-[2.5rem] border border-white/5 flex flex-col h-[520px] shadow-2xl relative overflow-hidden group">
       <h3 className="text-white font-black mb-6 flex items-center gap-3 flex-shrink-0 italic text-xl">
@@ -74,10 +126,10 @@ const RecentUsers = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 overflow-hidden flex-shrink-0">
-                  <img src={`https://i.pravatar.cc/100?u=${user.email}`} alt="" className="w-full h-full object-cover" />
+                  <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-sm font-black text-white group-hover/card:text-blue-400 truncate">{user.name}</p>
+                  <p className="text-sm font-black text-white group-hover/card:text-blue-400 truncate">{user.display_name }</p>
                   <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
                 </div>
               </div>
@@ -86,7 +138,17 @@ const RecentUsers = () => {
                  <span className="text-[9px] text-gray-600 font-bold">
                     {new Date(user.created_at).toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'})}
                  </span>
-                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
+                 {/* <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" /> */}
+
+                  <div>
+                  <Link  to='/UserVerificationDashboard' state={{ profile: user }}>
+                  <button className="text-gray-600 bg-gradient-to-br hover:text-emerald-500 transition-colors flex items-center gap-1 text-xs">
+                    <Filter size={14} />تفاصيل
+                  </button>
+                  </Link>
+
+                  </div>
+
               </div>
             </motion.div>
           ))

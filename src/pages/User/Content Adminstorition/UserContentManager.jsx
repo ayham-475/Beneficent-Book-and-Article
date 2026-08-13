@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { motion } from 'framer-motion';
 import {
     Book, FileText, Zap, BarChart3,
@@ -6,16 +6,46 @@ import {
     ChevronLeft, Star
 } from 'lucide-react';
 import RecentContentCard from './RecentContentCard';
+import { AuthContext } from '../../../features/auth/auther';
 
 const CreativeHub = () => {
+
+    const [Books,SetBooks]=useState([])
+    const [Articles,SetArticle]=useState([])
+ const API_URL = "http://127.0.0.1:8080/rest/Content-articles/";
+  const { user } = useContext(AuthContext);
+
+    useEffect(()=>{
+        const GetContents=async()=>{
+         try {
+        const res = await fetch(API_URL);
+        const contents = await res.json();
+
+        const Books = contents.filter(
+          (item) =>item.user === user.id && item.content_type === "BOOK"
+        );
+        
+        const Articles = contents.filter(
+          (item) =>  item.user === user.id &&item.content_type === "ARTICLE"
+        );
+        
+        SetBooks(Books);
+        SetArticle(Articles);
+
+      } catch (error) {
+        console.error("Error fetching Books:", error);
+      }
+    };
+GetContents()
+    },[])
+
     // بيانات وهمية للإحصائيات العامة
     const stats = [
-        { label: 'إجمالي المنشورات', value: '124', icon: Zap, color: 'text-orange-500', bg: 'bg-orange-50' },
-        { label: 'قراءات الشهر', value: '+45.2k', icon: BarChart3, color: 'text-[#319795]', bg: 'bg-teal-50' },
+        { label: 'إجمالي منشورات الكتب', value: Books.length, icon: Zap, color: 'text-orange-500', bg: 'bg-orange-50',isActive:"نشط",NonActive:"غير نشط" },
+        { label: 'إجمالي منشورات المقالات  ', value: Articles.length, icon: BarChart3, color: 'text-[#319795]', bg: 'bg-teal-50',isActive:"نشط",NonActive:"غير نشط" },
         { label: 'عدد المعجبون', value: '1,208', icon: Star, color: 'text-purple-500', bg: 'bg-purple-50' },
         { label: 'المتابعون الجدد', value: '342', icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
     ];
-
     return (
         <div className="w-full max-w-7xl mx-auto mt-20 px-2 md:px-0" dir="rtl">
 
@@ -49,7 +79,11 @@ const CreativeHub = () => {
                             <stat.icon size={24} />
                         </div>
                         <p className="text-gray-400 font-bold text-xs md:text-sm">{stat.label}</p>
-                        <h3 className="text-2xl md:text-3xl font-black text-gray-800 mt-1">{stat.value}</h3>
+                        <h3 className="text-2xl md:text-3xl font-black text-gray-800 mt-1">{stat.value} </h3>
+                       { (stat.isActive)?<span className="text-gray-400 font-bold text-xs md:text-sm">نشط</span> :   "" } 
+                      { (stat.NonActive=="نشط")? <h3 className="text-2xl md:text-3xl font-black text-gray-800 mt-1">{stat.value} 
+                        
+                   { (stat.NonActive)?<span className="text-gray-400 font-bold text-xs md:text-sm">ليس نشط</span> :   ""}  </h3>:""}
                     </motion.div>
                 ))}
             </div>
@@ -71,19 +105,19 @@ const CreativeHub = () => {
                             </button>
                         </div>
 
-                        <h2 className="text-4xl font-black mb-4 leading-tight">مركز إدارة الكتب</h2>
+                        <h2 className="text-4xl font-black mb-4 leading-tight">مركز إدارة المحتوى</h2>
                         <p className="text-gray-400 font-bold mb-8 max-w-sm">
-                            لديك <span className="text-white">12 كتاباً</span> نشطاً. يمكنك متابعة المبيعات، تحديث النسخ، أو إضافة غلاف جديد.
+                            لديك <span className="text-teal-500  px-2 rounded-full">{Books.length+Articles.length} محتوى</span> نشطاً. يمكنك متابعة المبيعات، تحديث النسخ، أو إضافة غلاف جديد.
                         </p>
 
                         <div className="flex gap-4">
                             <div className="bg-white/5 border border-white/10 p-4 rounded-[2rem] flex-1">
-                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">الكتب المباعة</p>
-                                <p className="text-xl font-black">450 نسخة</p>
+                                <p className="text-[23px] text-gray-500 uppercase font-black tracking-widest mb-1">الكتب المباعة</p>
+                                <p className="text-[16px] font-black bg-teal-500  px-2 rounded-full">450 نسخة</p>
                             </div>
                             <div className="bg-white/5 border border-white/10 p-4 rounded-[2rem] flex-1">
-                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">التقييم العام</p>
-                                <p className="text-xl font-black">4.9/5.0</p>
+                                <p className="text-[23px] text-gray-500 uppercase font-black tracking-widest mb-1">المقالات المقروءة</p>
+                                <p className="text-[16px] font-black bg-teal-500  px-2 rounded-full">4.9/5.0</p>
                             </div>
                         </div>
                     </div>
@@ -103,7 +137,7 @@ const CreativeHub = () => {
                             </div>
                             <div>
                                 <h2 className="text-xl font-black text-gray-800">آخر النشاطات</h2>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">متابعة فورية لكل التحديثات</p>
+                                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-tighter">متابعة فورية لكل التحديثات</p>
                             </div>
                         </div>
                         <button className="text-sm font-black text-[#319795] bg-white px-5 py-2 rounded-2xl border border-gray-100 shadow-sm hover:bg-[#319795] hover:text-white transition-all duration-300">
