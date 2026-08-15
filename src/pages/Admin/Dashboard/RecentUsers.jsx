@@ -10,7 +10,6 @@ const RecentUsers = ({GetCountOrganizers}) => {
   // 1. تعريف الحالة (State) لتخزين المستخدمين القادمين من الـ API
   const [dbUsers, setDbUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  
 
   const API_URL = "http://127.0.0.1:8080/rest/Profile/";
   const API_URL_profile = "http://127.0.0.1:8080/rest/Users/";
